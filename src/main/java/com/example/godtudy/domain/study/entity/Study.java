@@ -1,13 +1,16 @@
 package com.example.godtudy.domain.study.entity;
 
 import com.example.godtudy.domain.member.entity.Member;
-import com.example.godtudy.domain.study.dto.request.StudyDto;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 @Entity
 public class Study {
@@ -31,15 +34,4 @@ public class Study {
     private String subject;
 
     private String shortDescription;
-
-    public void updateStudy(StudyDto studyDto) {
-        this.name = studyDto.getName();
-        this.url = studyDto.getUrl();
-        this.subject = studyDto.getSubject();
-        this.shortDescription = studyDto.getShortDescription();
-    }
-
-    public void updateTeacher(Member teacher) {
-        this.teacher = teacher;
-    }
 }
