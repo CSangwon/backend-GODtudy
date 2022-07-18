@@ -38,6 +38,15 @@ public class StudyDto {
         this.shortDescription = request.getShortDescription();
     }
 
+    public StudyDto(Study study) {
+        this.name = study.getName();
+        this.url = study.getUrl();
+        this.subject = study.getSubject();
+        this.teacher = study.getTeacher();
+        this.student = study.getStudent();
+        this.shortDescription = study.getShortDescription();
+    }
+
     public Study toEntity(){
         return Study.builder()
                 .name(name)

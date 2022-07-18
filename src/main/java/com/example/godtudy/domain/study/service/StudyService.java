@@ -11,6 +11,7 @@ import com.example.godtudy.domain.study.repository.StudyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @RequiredArgsConstructor
@@ -25,8 +26,8 @@ public class StudyService {
      */
     public boolean isUrlDuplicate(String url){
 
-        Study study = studyRepository.findByUrl(url);
-        if (study!=null) {
+        List<Study> study = studyRepository.findAllByUrl(url);
+        if (study.isEmpty()) {
             return false;
         }
         return true;
@@ -36,8 +37,7 @@ public class StudyService {
 
         CreateStudyResponseDto response = null;
 
-        //TODO : url 중복확인
-        if (teacher.getRole() == Role.TEACHER) {
+        if (teacher.getRole() == Role.TEACHER && !isUrlDuplicate(request.getUrl())) {
             Member student = memberRepository.findById(request.getStudentId())
                     .orElseThrow(() -> new NoSuchElementException("해당하는 학생 정보가 없습니다."));
 
@@ -56,5 +56,10 @@ public class StudyService {
         return response;
     }
 
-    // TODO : 학생조회, 학생검색(이름), 공부방생성(admin), 공부방생성, 공부방수정(이름, 설명), 공부방 삭제, 공부방 조회
+    public StudyDto getStudy(String url) {
+        Study study = studyRepository.findByUrl(url);
+        return new StudyDto(study);
+    }
+
+    // TODO : 학생조회, 학생검색(이름), 공부방생성(admin), 공부방생성, 공부방수정(이름, 설명), 공부방 삭제
 }
