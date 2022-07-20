@@ -61,5 +61,11 @@ public class StudyService {
         return new StudyDto(study);
     }
 
-    // TODO : 학생조회, 학생검색(이름), 공부방생성(admin), 공부방생성, 공부방수정(이름, 설명), 공부방 삭제
+    public String deleteStudy(String url) {
+        Study study = studyRepository.findByUrl(url);
+        studyRepository.deleteById(study.getId());
+        return study.getUrl();
+    }
+
+    // TODO : 학생조회, 학생검색(이름), 공부방생성(admin), 공부방생성, 공부방수정(이름, 설명)
 }

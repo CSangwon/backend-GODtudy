@@ -38,9 +38,18 @@ public class StudyApiController {
     /**
      * 공부방 조회
      */
-    @GetMapping("{url}")
+    @GetMapping("/{url}")
     public ResponseEntity<StudyDto> getStudy(@PathVariable("url") String url) {
         StudyDto response = studyService.getStudy(url);
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    /**
+     * 공부방 삭제
+     */
+    @DeleteMapping("/{url}")
+    public ResponseEntity<String> deleteStudy(@PathVariable("url") String url) {
+        String deleteUrl = studyService.deleteStudy(url);
+        return new ResponseEntity<>(deleteUrl, HttpStatus.OK);
     }
 }
