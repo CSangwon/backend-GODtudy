@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,6 +31,8 @@ public class PostSaveRequestDto {
         return AdminPost.builder()
                 .title(title)
                 .content(content)
+                .files(new ArrayList<>())
                 .build();
     }
+
 }

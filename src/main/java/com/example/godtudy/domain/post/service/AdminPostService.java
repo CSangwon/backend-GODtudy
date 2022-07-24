@@ -7,6 +7,8 @@ import com.example.godtudy.domain.post.dto.request.PostSaveRequestDto;
 import com.example.godtudy.domain.post.dto.request.PostUpdateRequestDto;
 import com.example.godtudy.domain.post.entity.AdminPost;
 import com.example.godtudy.domain.post.repository.AdminPostRepository;
+import com.example.godtudy.global.file.File;
+import com.example.godtudy.global.file.FileRepository;
 import com.example.godtudy.global.file.service.FileService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,9 +22,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
+import java.io.IOException;
 import java.util.List;
-import java.util.UUID;
+
 
 @Slf4j
 @Service
@@ -30,19 +32,15 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class AdminPostService {
 
-    @Value("${spring.servlet.multipart.location}")
-    private String fileDir;
-
     private final AdminPostRepository adminPostRepository;
     private final MemberRepository memberRepository;
+    private final FileRepository fileRepository;
     private final FileService fileService;
-
 
     /**
      * 게시물 등록
      */
-
-    private AdminPost adminPost(Member member, String post, PostSaveRequestDto postSaveRequestDto) {
+    private AdminPost createAdminPostBefore(Member member, String post, PostSaveRequestDto postSaveRequestDto) {
         checkIfAdmin(member); //관리자인지 확인
         AdminPost adminPost = postSaveRequestDto.toNoticeEntity();
         adminPost.setAuthor(member); // 현재 맴버 매핑
@@ -51,47 +49,53 @@ public class AdminPostService {
 
         return adminPost;
     }
-
+    // 게시물 저장 - 파일 없음
     public ResponseEntity<?> createAdminPost(Member member, String post, PostSaveRequestDto postSaveRequestDto) {
-        AdminPost adminPost = adminPost(member, post, postSaveRequestDto);
+        AdminPost adminPost = createAdminPostBefore(member, post, postSaveRequestDto);
         adminPostRepository.save(adminPost);
 
         return new ResponseEntity<>("Notice Create", HttpStatus.OK);
     }
-
+    // 게시물 저장 - 파일 있음
     public ResponseEntity<?> createAdminPost(Member member, List<MultipartFile> files,
-                                             String post, PostSaveRequestDto postSaveRequestDto) {
-        AdminPost adminPost = adminPost(member, post, postSaveRequestDto);
+                                             String post, PostSaveRequestDto postSaveRequestDto) throws IOException {
+        AdminPost adminPost = createAdminPostBefore(member, post, postSaveRequestDto);
         //file 저장
-        fileService.save(files);
-
-//        for (MultipartFile file : files) {
-//            fileService.save(file);
-//            adminPost.updateFile(fileService.save(file));
-//        }
+        saveFile(adminPost, files);
 
         adminPostRepository.save(adminPost);
 
         return new ResponseEntity<>("Notice Create", HttpStatus.OK);
     }
-
 
     /**
      * 게시물 수정
      */
-    public ResponseEntity<?> updateAdminPost(Member member,List<MultipartFile> file,
-                                             Long id, PostUpdateRequestDto postUpdateRequestDto) {
+
+    private AdminPost updateAdminPostBefore(Member member, Long id) {
         AdminPost adminPost = adminPostRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시물이 존재하지 않습니다."));
         checkIfAdmin(member);
         checkAuthor(member, adminPost);
 
+        return adminPost;
+    }
+    // 게시물 수정 - 파일 없음
+    public ResponseEntity<?> updateAdminPost(Member member, Long id, PostUpdateRequestDto postUpdateRequestDto) throws IOException {
+        AdminPost adminPost = updateAdminPostBefore(member, id);
+        adminPost.updateAdminPost(postUpdateRequestDto);
+
+        return new ResponseEntity<>("Notice Update", HttpStatus.OK);
+
+    }
+    // 게시물 수정 - 파일 있음
+    public ResponseEntity<?> updateAdminPost(Member member, List<MultipartFile> files,
+                                             Long id, PostUpdateRequestDto postUpdateRequestDto) throws IOException {
+        AdminPost adminPost = updateAdminPostBefore(member, id);
         adminPost.updateAdminPost(postUpdateRequestDto);
 
         //file 저장
-        for (MultipartFile files : file) {
-            adminPost.updateFile(fileService.save(files));
-        }
+        saveFile(adminPost, files);
 
         return new ResponseEntity<>("Notice Update", HttpStatus.OK);
     }
@@ -105,9 +109,14 @@ public class AdminPostService {
         checkIfAdmin(member);
         checkAuthor(member, adminPost);
 
-        if (adminPost.getFile() != null) {
-            fileService.delete(adminPost.getFile());
-        }
+//        if (!adminPost.getFiles().isEmpty()) {
+//            for (String file : adminPost.getFiles()) {
+//                fileService.delete(file);
+//            }
+//        }
+//        if (adminPost.getFile() != null) {
+//            fileService.delete(adminPost.getFile());
+//        }
 
         adminPostRepository.delete(adminPost);
 
@@ -148,6 +157,18 @@ public class AdminPostService {
     private void checkAuthor(Member member, AdminPost adminPost) {
         if (!adminPost.getMember().getUsername().equals(member.getUsername())) {
             throw new AccessDeniedException("해당 기능을 사용할 수 없습니다.");
+        }
+    }
+
+    private void saveFile(AdminPost adminPost, List<MultipartFile> files) throws IOException {
+        List<String> saveFilesPath = fileService.save(files);
+        for (String filePath : saveFilesPath) {
+            File file = new File();
+            file.setTitle(filePath);
+            file.setAdminPost(adminPost);
+            adminPost.addFiles(file);
+
+            fileRepository.save(file);
         }
     }
 }

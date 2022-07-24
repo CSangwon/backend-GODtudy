@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,30 +19,25 @@ public class FileService {
     @Value("${spring.servlet.multipart.location}")
     private String fileDir;
 
-    public String save(MultipartFile multipartFile) {
+    private List<String> filePaths = new ArrayList<>();
 
+    public List<String> save(MultipartFile multipartFile) throws IOException {
         String filePath = fileDir + UUID.randomUUID() + multipartFile.getOriginalFilename();
-        try {
-            multipartFile.transferTo(new File(filePath));
-        } catch (IOException e) {
-            throw new FileException(FileExceptionType.FILE_CAN_NOT_SAVE);
-        }
+        multipartFile.transferTo(new File(filePath));
+        filePaths.add(filePath);
 
-        return filePath;
+        return filePaths;
     }
 
-    public String save(List<MultipartFile> multipartFiles) throws IOException {
+    public List<String> save(List<MultipartFile> multipartFiles) throws IOException {
+
         for (MultipartFile file : multipartFiles) {
-            String originName = file.getOriginalFilename();
-            String filePath = fileDir + UUID.randomUUID() + originName;
+            String filePath = fileDir + "/" +  UUID.randomUUID() + file.getOriginalFilename();
+            file.transferTo(new File(filePath));
 
-            File dest = new File(filePath);
-            file.transferTo(dest);
+            filePaths.add(filePath);
         }
-
-        return "uploading";
-
-
+        return filePaths;
     }
 
     public void delete(String filePath) {

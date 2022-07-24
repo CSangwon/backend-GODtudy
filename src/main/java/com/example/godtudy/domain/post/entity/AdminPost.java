@@ -6,6 +6,7 @@ import com.example.godtudy.domain.member.entity.Member;
 import com.example.godtudy.domain.member.entity.Subject;
 import com.example.godtudy.domain.member.entity.SubjectEnum;
 import com.example.godtudy.domain.post.dto.request.PostUpdateRequestDto;
+import com.example.godtudy.global.file.File;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -36,8 +37,8 @@ public class AdminPost extends BaseEntity {
     @Column(nullable = false)
     private String content;
 
-    @Lob @Basic(fetch = FetchType.EAGER)
-    private String file;
+    @OneToMany(mappedBy = "adminPost")
+    private List<File> files = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -63,6 +64,13 @@ public class AdminPost extends BaseEntity {
 //        commentList.add(comment);
 //    }
 
+    public void addFiles(File file) {
+        this.files.add(file);
+        if (file.getAdminPost()!= this) {
+            file.setAdminPost(this);
+        }
+    }
+
 
     public void setAdminPostEnum(String post){
         this.noticeOrEvent = AdminPostEnum.valueOf(post.toUpperCase());
@@ -71,9 +79,5 @@ public class AdminPost extends BaseEntity {
     public void updateAdminPost(PostUpdateRequestDto postUpdateRequestDto) {
         this.title = postUpdateRequestDto.getTitle();
         this.content = postUpdateRequestDto.getContent();
-    }
-
-    public void updateFile(String file) {
-        this.file = file;
     }
 }
