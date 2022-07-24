@@ -10,6 +10,8 @@ public class CreateStudyRequestDto {
 
     private String name;
 
+    private Long teacherId;
+
     private Long studentId;
 
     @NotEmpty

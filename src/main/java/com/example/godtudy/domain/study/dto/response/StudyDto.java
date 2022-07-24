@@ -25,9 +25,9 @@ public class StudyDto {
 
     private String subject;
 
-    private Member teacher;
+    private Teacher teacher;
 
-    private Member student;
+    private Student student;
 
     private String shortDescription;
 
@@ -42,19 +42,33 @@ public class StudyDto {
         this.name = study.getName();
         this.url = study.getUrl();
         this.subject = study.getSubject();
-        this.teacher = study.getTeacher();
-        this.student = study.getStudent();
+        this.teacher = new Teacher(study.getTeacher());
+        this.student = new Student(study.getStudent());
         this.shortDescription = study.getShortDescription();
     }
 
-    public Study toEntity(){
-        return Study.builder()
-                .name(name)
-                .url(url)
-                .subject(subject)
-                .teacher(teacher)
-                .student(student)
-                .shortDescription(shortDescription)
-                .build();
+    class Student {
+        private Long id;
+        private String name;
+        private String username;
+
+        public Student(Member student) {
+            this.id = student.getId();
+            this.name = student.getName();
+            this.username = student.getUsername();
+        }
+    }
+
+    class Teacher {
+        private Long id;
+        private String name;
+        private String username;
+
+        public Teacher(Member teacher) {
+            this.id = teacher.getId();
+            this.name = teacher.getName();
+            this.username = teacher.getUsername();
+        }
     }
 }
+
