@@ -1,4 +1,4 @@
-package com.example.godtudy.domain.study.Controller;
+package com.example.godtudy.domain.study.controller;
 
 import com.example.godtudy.domain.member.entity.CurrentMember;
 import com.example.godtudy.domain.member.entity.Member;
