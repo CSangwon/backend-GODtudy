@@ -6,14 +6,13 @@ import com.example.godtudy.domain.member.repository.MemberRepository;
 import com.example.godtudy.domain.post.dto.request.PostSaveRequestDto;
 import com.example.godtudy.domain.post.dto.request.PostUpdateRequestDto;
 import com.example.godtudy.domain.post.entity.AdminPost;
+import com.example.godtudy.domain.post.entity.AdminPostEnum;
 import com.example.godtudy.domain.post.repository.AdminPostRepository;
 import com.example.godtudy.global.file.File;
 import com.example.godtudy.global.file.FileRepository;
 import com.example.godtudy.global.file.service.FileService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.Response;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -40,15 +39,7 @@ public class AdminPostService {
     /**
      * 게시물 등록
      */
-    private AdminPost createAdminPostBefore(Member member, String post, PostSaveRequestDto postSaveRequestDto) {
-        checkIfAdmin(member); //관리자인지 확인
-        AdminPost adminPost = postSaveRequestDto.toNoticeEntity();
-        adminPost.setAuthor(member); // 현재 맴버 매핑
-        adminPost.setAdminPostEnum(post); // 현재 게시판 작성
-        member.addAdminPost(adminPost);
 
-        return adminPost;
-    }
     // 게시물 저장 - 파일 없음
     public ResponseEntity<?> createAdminPost(Member member, String post, PostSaveRequestDto postSaveRequestDto) {
         AdminPost adminPost = createAdminPostBefore(member, post, postSaveRequestDto);
@@ -71,32 +62,40 @@ public class AdminPostService {
     /**
      * 게시물 수정
      */
-
-    private AdminPost updateAdminPostBefore(Member member, Long id) {
-        AdminPost adminPost = adminPostRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 게시물이 존재하지 않습니다."));
-        checkIfAdmin(member);
-        checkAuthor(member, adminPost);
-
-        return adminPost;
-    }
     // 게시물 수정 - 파일 없음
-    public ResponseEntity<?> updateAdminPost(Member member, Long id, PostUpdateRequestDto postUpdateRequestDto) throws IOException {
-        AdminPost adminPost = updateAdminPostBefore(member, id);
+    public ResponseEntity<?> updateAdminPost(Member member, String post, Long id, PostUpdateRequestDto postUpdateRequestDto) throws IOException {
+        AdminPost adminPost = updateAdminPostBefore(member, id, post);
         adminPost.updateAdminPost(postUpdateRequestDto);
+
+        if (!adminPost.getFiles().isEmpty()) {
+            for (File filePath : adminPost.getFiles()) {
+                fileService.delete(filePath.getFilePath());
+                fileRepository.delete(filePath);
+            }
+            adminPost.initFiles();
+        }
+
+        adminPostRepository.save(adminPost);
 
         return new ResponseEntity<>("Notice Update", HttpStatus.OK);
 
     }
     // 게시물 수정 - 파일 있음
-    public ResponseEntity<?> updateAdminPost(Member member, List<MultipartFile> files,
+    public ResponseEntity<?> updateAdminPost(Member member, String post, List<MultipartFile> files,
                                              Long id, PostUpdateRequestDto postUpdateRequestDto) throws IOException {
-        AdminPost adminPost = updateAdminPostBefore(member, id);
+        AdminPost adminPost = updateAdminPostBefore(member, id, post);
         adminPost.updateAdminPost(postUpdateRequestDto);
 
-        //file 저장
-        saveFile(adminPost, files);
+        if (!adminPost.getFiles().isEmpty()) {
+            for (File filePath : adminPost.getFiles()) {
+                fileService.delete(filePath.getFilePath());
+                fileRepository.delete(filePath);
+            }
+            adminPost.initFiles();
+        }
 
+        saveFile(adminPost, files);
+        adminPostRepository.save(adminPost);
         return new ResponseEntity<>("Notice Update", HttpStatus.OK);
     }
 
@@ -109,14 +108,12 @@ public class AdminPostService {
         checkIfAdmin(member);
         checkAuthor(member, adminPost);
 
-//        if (!adminPost.getFiles().isEmpty()) {
-//            for (String file : adminPost.getFiles()) {
-//                fileService.delete(file);
-//            }
-//        }
-//        if (adminPost.getFile() != null) {
-//            fileService.delete(adminPost.getFile());
-//        }
+        if (!adminPost.getFiles().isEmpty()) {
+            for (File filePath : adminPost.getFiles()) {
+                fileService.delete(filePath.getFilePath());
+                fileRepository.delete(filePath);
+            }
+        }
 
         adminPostRepository.delete(adminPost);
 
@@ -160,6 +157,32 @@ public class AdminPostService {
         }
     }
 
+    private void checkCategory(AdminPost adminPost, String post) {
+        if (!adminPost.getNoticeOrEvent().equals(AdminPostEnum.valueOf(post.toUpperCase()))) {
+            throw new AccessDeniedException("잘못된 카테고리 입니다.");
+        }
+    }
+
+    private AdminPost createAdminPostBefore(Member member, String post, PostSaveRequestDto postSaveRequestDto) {
+        checkIfAdmin(member); //관리자인지 확인
+        AdminPost adminPost = postSaveRequestDto.toNoticeEntity();
+        adminPost.setAuthor(member); // 현재 맴버 매핑
+        adminPost.setAdminPostEnum(post); // 현재 게시판 작성
+        member.addAdminPost(adminPost);
+
+        return adminPost;
+    }
+
+    private AdminPost updateAdminPostBefore(Member member, Long id, String post) {
+        AdminPost adminPost = adminPostRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 게시물이 존재하지 않습니다."));
+        checkIfAdmin(member); //관리자 인지 확인
+        checkAuthor(member, adminPost); // 작성자 인지 확인
+        checkCategory(adminPost, post); // 공지사항 <-> 이벤트 가 바뀌지 않았는지 확인
+
+        return adminPost;
+    }
+
     private void saveFile(AdminPost adminPost, List<MultipartFile> files) throws IOException {
         List<String> saveFilesPath = fileService.save(files);
         for (String filePath : saveFilesPath) {
@@ -171,4 +194,8 @@ public class AdminPostService {
             fileRepository.save(file);
         }
     }
+
+
+
+
 }

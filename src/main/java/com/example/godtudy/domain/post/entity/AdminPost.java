@@ -71,7 +71,6 @@ public class AdminPost extends BaseEntity {
         }
     }
 
-
     public void setAdminPostEnum(String post){
         this.noticeOrEvent = AdminPostEnum.valueOf(post.toUpperCase());
     }
@@ -80,4 +79,10 @@ public class AdminPost extends BaseEntity {
         this.title = postUpdateRequestDto.getTitle();
         this.content = postUpdateRequestDto.getContent();
     }
+
+    //파일 초기화
+    public void initFiles() {
+        this.files = new ArrayList<>();
+    }
+
 }

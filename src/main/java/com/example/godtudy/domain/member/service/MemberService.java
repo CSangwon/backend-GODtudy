@@ -68,6 +68,8 @@ public class MemberService {
         redisService.setDataWithExpiration(RedisKey.REFRESH.getKey() + memberLoginRequestDto.getUsername(),
                 refreshToken, JwtTokenProvider.REFRESH_TOKEN_VALID_TIME);
 
+        // TODO 시간 만료 설정에 오류가있음 확인해야함
+
         final MemberDetails memberDetails = (MemberDetails) memberDetailsService.loadUserByUsername(memberLoginRequestDto.getUsername());
 
         return ResponseEntity.ok(new MemberLoginResponseDto(memberDetails.getId(), memberLoginRequestDto.getUsername(), accessToken, refreshToken));

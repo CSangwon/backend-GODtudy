@@ -19,9 +19,11 @@ public class FileService {
     @Value("${spring.servlet.multipart.location}")
     private String fileDir;
 
-    private List<String> filePaths = new ArrayList<>();
+    List<String> filePaths = new ArrayList<>();
+
 
     public List<String> save(MultipartFile multipartFile) throws IOException {
+        filePaths = new ArrayList<>();
         String filePath = fileDir + UUID.randomUUID() + multipartFile.getOriginalFilename();
         multipartFile.transferTo(new File(filePath));
         filePaths.add(filePath);
@@ -30,7 +32,7 @@ public class FileService {
     }
 
     public List<String> save(List<MultipartFile> multipartFiles) throws IOException {
-
+        filePaths = new ArrayList<>();
         for (MultipartFile file : multipartFiles) {
             String filePath = fileDir + "/" +  UUID.randomUUID() + file.getOriginalFilename();
             file.transferTo(new File(filePath));

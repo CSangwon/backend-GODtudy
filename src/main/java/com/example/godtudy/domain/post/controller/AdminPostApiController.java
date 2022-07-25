@@ -46,9 +46,9 @@ public class AdminPostApiController {
                                                @RequestBody PostUpdateRequestDto postUpdateRequestDto,
                                                @RequestPart List<MultipartFile> files) throws IOException {
         if (files.isEmpty()) {
-            return adminPostService.updateAdminPost(member, id , postUpdateRequestDto);
+            return adminPostService.updateAdminPost(member, post, id , postUpdateRequestDto);
         }
-        return adminPostService.updateAdminPost(member,files, id , postUpdateRequestDto);
+        return adminPostService.updateAdminPost(member, post,files, id , postUpdateRequestDto);
 
     }
 
