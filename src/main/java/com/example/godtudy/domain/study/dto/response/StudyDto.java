@@ -39,6 +39,7 @@ public class StudyDto {
         this.shortDescription = study.getShortDescription();
     }
 
+    @Data
     class Student {
         private Long id;
         private String name;
@@ -51,6 +52,7 @@ public class StudyDto {
         }
     }
 
+    @Data
     class Teacher {
         private Long id;
         private String name;
