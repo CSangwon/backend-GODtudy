@@ -1,7 +1,6 @@
 package com.example.godtudy.domain.study.dto.response;
 
 import com.example.godtudy.domain.member.entity.Member;
-import com.example.godtudy.domain.study.dto.request.CreateStudyRequestDto;
 import com.example.godtudy.domain.study.entity.Study;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,13 +29,6 @@ public class StudyDto {
     private Student student;
 
     private String shortDescription;
-
-    public StudyDto(CreateStudyRequestDto request) {
-        this.name = request.getName();
-        this.url = request.getUrl();
-        this.subject = request.getSubject();
-        this.shortDescription = request.getShortDescription();
-    }
 
     public StudyDto(Study study) {
         this.name = study.getName();

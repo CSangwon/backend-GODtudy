@@ -39,8 +39,9 @@ public class StudyApiController {
      * 공부방 조회
      */
     @GetMapping("/{url}")
-    public ResponseEntity<StudyDto> getStudy(@PathVariable("url") String url) {
-         StudyDto response = studyService.getStudy(url);
+    public ResponseEntity<StudyDto> getStudy(@PathVariable("url") String url,
+                                             @CurrentMember Member member) {
+         StudyDto response = studyService.getStudy(member, url);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -49,8 +50,9 @@ public class StudyApiController {
      */
     @PutMapping("{/{url}")
     public ResponseEntity<StudyDto> updateStudy(@PathVariable("url") String url,
+                                              @CurrentMember Member member,
                                               @RequestBody UpdateStudyRequestDto request) {
-        StudyDto studyDto = studyService.updateStudy(url, request);
+        StudyDto studyDto = studyService.updateStudy(member, url, request);
         return new ResponseEntity<>(studyDto, HttpStatus.OK);
     }
 
@@ -58,8 +60,9 @@ public class StudyApiController {
      * 공부방 삭제
      */
     @DeleteMapping("/{url}")
-    public ResponseEntity<String> deleteStudy(@PathVariable("url") String url) {
-        String deleteUrl = studyService.deleteStudy(url);
+    public ResponseEntity<String> deleteStudy(@PathVariable("url") String url,
+                                              @CurrentMember Member member) {
+        String deleteUrl = studyService.deleteStudy(member, url);
         return new ResponseEntity<>(deleteUrl, HttpStatus.OK);
     }
 
@@ -67,7 +70,7 @@ public class StudyApiController {
      * 공부방 생성 (by.admin)
      */
     @PostMapping("/admin/")
-    public ResponseEntity<StudyDto> createStudyByAdmn(@RequestBody CreateStudyRequestDto request) {
+    public ResponseEntity<StudyDto> createStudyByAdmin(@RequestBody CreateStudyRequestDto request) {
 
         StudyDto response = null;
 
