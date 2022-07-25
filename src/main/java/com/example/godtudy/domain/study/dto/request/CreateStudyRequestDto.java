@@ -1,10 +1,12 @@
 package com.example.godtudy.domain.study.dto.request;
 
+import lombok.Builder;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotEmpty;
 
+@Builder
 @Data
 public class CreateStudyRequestDto {
 
