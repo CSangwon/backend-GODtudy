@@ -21,7 +21,7 @@ public class StudyApiController {
     /**
      * 공부방 생성 (by. teacher)
      */
-    @PostMapping("/")
+    @PostMapping("")
     public ResponseEntity<StudyDto> createStudy(@CurrentMember Member member,
                                                 @RequestBody CreateStudyRequestDto request) {
 
@@ -48,7 +48,7 @@ public class StudyApiController {
     /**
      * 공부방 수정
      */
-    @PutMapping("{/{url}")
+    @PutMapping("/{url}")
     public ResponseEntity<StudyDto> updateStudy(@PathVariable("url") String url,
                                               @CurrentMember Member member,
                                               @RequestBody UpdateStudyRequestDto request) {
@@ -69,13 +69,14 @@ public class StudyApiController {
     /**
      * 공부방 생성 (by.admin)
      */
-    @PostMapping("/admin/")
-    public ResponseEntity<StudyDto> createStudyByAdmin(@RequestBody CreateStudyRequestDto request) {
+    @PostMapping("/admin")
+    public ResponseEntity<StudyDto> createStudyByAdmin(@CurrentMember Member admin,
+                                                       @RequestBody CreateStudyRequestDto request) {
 
         StudyDto response = null;
 
         try {
-            response = studyService.createStudyByAdmin(request);
+            response = studyService.createStudyByAdmin(admin, request);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
