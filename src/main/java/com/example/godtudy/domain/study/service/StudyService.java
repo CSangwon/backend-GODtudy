@@ -41,6 +41,7 @@ public class StudyService {
      */
     private void checkStudyMember(Member member, Study study) {
         Long memberId = member.getId();
+
         if (study.getStudent().getId()!=memberId && study.getTeacher().getId()!=memberId && member.getRole()!=Role.ADMIN) {
             throw new AccessDeniedException("해당 기능을 사용할 수 없습니다.");
         }
@@ -50,12 +51,17 @@ public class StudyService {
      * 공부방 생성 (by. Admin)
      */
     @Transactional
-    public StudyDto createStudyByAdmin(CreateStudyRequestDto request) {
-        Member teacher = memberRepository.findById(request.getTeacherId())
-                .orElseThrow(() -> new NoSuchElementException("해당하는 선생님 정보가 없습니다."));
+    public StudyDto createStudyByAdmin(Member admin, CreateStudyRequestDto request) {
+        StudyDto studyDto = null;
 
-        StudyDto studyDto = createStudyByTeacher(teacher, request);
+        if (admin.getRole()==Role.ADMIN) {
+            Member teacher = memberRepository.findById(request.getTeacherId())
+                    .orElseThrow(() -> new NoSuchElementException("해당하는 선생님 정보가 없습니다."));
 
+            studyDto = createStudyByTeacher(teacher, request);
+        } else {
+            throw new AccessDeniedException("권한이 없습니다.");
+        }
         return studyDto;
     }
 
@@ -67,10 +73,10 @@ public class StudyService {
 
         StudyDto studyDto = null;
 
-        if (teacher.getRole() == Role.TEACHER && !isUrlDuplicate(request.getUrl())) {
-            Member student = memberRepository.findById(request.getStudentId())
-                    .orElseThrow(() -> new NoSuchElementException("해당하는 학생 정보가 없습니다."));
+        Member student = memberRepository.findById(request.getStudentId())
+                .orElseThrow(() -> new NoSuchElementException("해당하는 학생 정보가 없습니다."));
 
+        if (teacher.getRole() == Role.TEACHER && student.getRole() == Role.STUDENT && !isUrlDuplicate(request.getUrl())) {
             Study study = Study.builder()
                     .name(request.getName())
                     .url(request.getUrl())
