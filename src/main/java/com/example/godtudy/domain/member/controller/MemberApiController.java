@@ -1,6 +1,9 @@
 package com.example.godtudy.domain.member.controller;
 
 import com.example.godtudy.domain.member.dto.request.*;
+import com.example.godtudy.domain.member.dto.request.profile.FindPasswordRequestDto;
+import com.example.godtudy.domain.member.dto.request.profile.FindUsernameRequestDto;
+import com.example.godtudy.domain.member.dto.response.profile.FindUsernameResponseDto;
 import com.example.godtudy.domain.member.service.MemberService;
 import com.example.godtudy.domain.member.entity.Member;
 import com.example.godtudy.domain.member.validator.MemberJoinFormValidator;
@@ -57,8 +60,9 @@ public class MemberApiController {
         if (errors.hasErrors()) {
             return new ResponseEntity<>(errors.getAllErrors(), HttpStatus.BAD_REQUEST);
         }
-        Member member = memberService.initJoinMember(memberJoinForm, role);
-        memberService.addSubject(member, memberJoinForm);
+        Member member = memberService.initJoinMember(memberJoinForm, role.toUpperCase());
+
+        memberService.sendJoinConfirmEmail(member);
 
         return new ResponseEntity<>("Join Success", HttpStatus.OK);
     }
@@ -99,18 +103,15 @@ public class MemberApiController {
         return new ResponseEntity<>("Check Username", HttpStatus.OK);
     }
 
-//    {
-//        "username": "test1",
-//            "password": "tkddnjs8528##",
-//            "name" : "test1",
-//            "email" : "test1@nvaer.com",
-//            "nickname": "test1",
-//            "year": "1997",
-//            "month": "02",
-//            "day": "12",
-//            "subject": [
-//        "ENGLISH", "BIOLOGY"
-//    ]
-//    }
+    @PostMapping("/find/username")
+    public ResponseEntity<?> findUsernameByEmail(@RequestBody FindUsernameRequestDto findUsernameRequestDto) {
+        FindUsernameResponseDto username = memberService.findUsername(findUsernameRequestDto);
 
+        return new ResponseEntity<>(username, HttpStatus.OK);
+    }
+
+    @PostMapping("/find/password")
+    public ResponseEntity<?> findPasswordByEmail(@RequestBody FindPasswordRequestDto findPasswordRequestDto) {
+        return memberService.findPassword(findPasswordRequestDto);
+    }
 }

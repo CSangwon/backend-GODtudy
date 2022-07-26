@@ -15,7 +15,10 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -71,13 +74,13 @@ public class MemberJoinForm {
     private Role role;
 
     @NotBlank(message = "필수 입력사항 입니다.", groups = ValidationGroups.NotEmptyGroup.class)
+//    private Set<SubjectEnum> subject;
     private List<SubjectEnum> subject;
-
-
 
     public Member toEntity(){
         String birthday = year + "-" + month + "-" + day;
         LocalDate date = LocalDate.parse(birthday, DateTimeFormatter.ISO_DATE);
+
         return Member.builder()
                 .username(username)
                 .password(password)
@@ -86,6 +89,8 @@ public class MemberJoinForm {
                 .nickname(nickname)
                 .birthday(date)
                 .role(role)
+                .subject(new ArrayList<>())
+                .adminPosts(new ArrayList<>())
                 .emailVerified(false)
                 .build();
     }

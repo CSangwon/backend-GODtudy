@@ -29,17 +29,21 @@ public class MemberDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Member member = memberRepository.findByUsername(username)
                 .orElseThrow(MemberNotFoundException::new);
+        log.info(member.getRole().toString());
 
-        List<GrantedAuthority> roles = new ArrayList<>();
-        roles.add(new SimpleGrantedAuthority(member.getRole().toString()));
-        log.info("----------------------------------");
-        log.info(roles.toString());
+//        List<GrantedAuthority> roles = new ArrayList<>();
+//        roles.add(new SimpleGrantedAuthority(member.getRole().toString()));
+//        log.info("----------------------------------");
+//        log.info(roles.toString());
 
-        return MemberDetails.builder()
-                .username(member.getUsername())
-                .password(member.getPassword())
-                .authorities(roles)
-                .build();
+//        return MemberDetails.builder()
+//                .username(member.getUsername())
+//                .password(member.getPassword())
+//                .authorities(roles)
+//                .build();
+
+
+        return new MemberDetails(member);
     }
 
 
