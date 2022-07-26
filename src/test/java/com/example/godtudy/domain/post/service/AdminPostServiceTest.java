@@ -1,8 +1,10 @@
 package com.example.godtudy.domain.post.service;
 
 import com.example.godtudy.WithMember;
+import com.example.godtudy.domain.member.dto.request.MemberJoinForm;
 import com.example.godtudy.domain.member.entity.Member;
 import com.example.godtudy.domain.member.entity.Role;
+import com.example.godtudy.domain.member.entity.SubjectEnum;
 import com.example.godtudy.domain.member.repository.MemberRepository;
 import com.example.godtudy.domain.member.service.MemberService;
 import com.example.godtudy.domain.post.dto.request.PostSaveRequestDto;
@@ -18,7 +20,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.ResponseEntity;
+
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.transaction.annotation.Transactional;
@@ -282,6 +284,159 @@ class AdminPostServiceTest {
         deleteFile(file.getFilePath());
     }
 
+    @Test
+    @DisplayName("게시글 수정 실패 공지사항 - 권한 없음")
+    @WithMember("swchoi1997")
+    public void postUpdateFailByNotAccess() throws IOException{
+        //given
+        Member member = memberRepository.findByUsername("swchoi1997").orElseThrow();
+        String post = "notice";
+        PostSaveRequestDto postSaveRequestDto = PostSaveRequestDto.builder().title("test1").content("test1").build();
+        adminPostService.createAdminPost(member, post, postSaveRequestDto);
+        AdminPost adminPost = adminPostRepository.findByTitle("test1").orElseThrow();
+
+        //when
+        PostUpdateRequestDto postUpdateRequestDto = PostUpdateRequestDto.builder().title("test2").content("test2").build();
+        member.setRole(Role.STUDENT);
+
+        //then
+        Assertions.assertThrows(AccessDeniedException.class, () ->
+                adminPostService.updateAdminPost(member, post, adminPost.getId(), postUpdateRequestDto));
+    }
+
+    @Test
+    @DisplayName("게시글 수정 실패 공지사항 - 작성자 아님")
+    @WithMember("swchoi1997")
+    public void postUpdateFailByNotAuthor() throws IOException{
+        //given
+        Member member = memberRepository.findByUsername("swchoi1997").orElseThrow();
+        String post = "notice";
+        PostSaveRequestDto postSaveRequestDto = PostSaveRequestDto.builder().title("test1").content("test1").build();
+        adminPostService.createAdminPost(member, post, postSaveRequestDto);
+        AdminPost adminPost = adminPostRepository.findByTitle("test1").orElseThrow();
+
+        //when
+        PostUpdateRequestDto postUpdateRequestDto = PostUpdateRequestDto.builder().title("test2").content("test2").build();
+
+        Member testMember = tmp_member();
+
+        //then
+        Assertions.assertThrows(AccessDeniedException.class, () ->
+                adminPostService.updateAdminPost(testMember, post, adminPost.getId(), postUpdateRequestDto));
+    }
+
+    private Member tmp_member() {
+        List<SubjectEnum> subjectEnums = new ArrayList<>();
+        subjectEnums.add(SubjectEnum.BIOLOGY);
+        subjectEnums.add(SubjectEnum.CHEMISTRY);
+        MemberJoinForm memberJoinForm = MemberJoinForm.builder()
+                .username("test123")
+                .password("tkddnjs4371@")
+                .name("유하연")
+                .email("test123@naver.com")
+                .nickname("test123")
+                .year("1997").month("02").day("12")
+                .subject(subjectEnums)
+                .build();
+        return memberService.initJoinMember(memberJoinForm, "admin");
+    }
+
+    @Test
+    @DisplayName("게시글 수정 실패 공지사항 - 원래 게시물 아님")
+    @WithMember("swchoi1997")
+    public void postUpdateFailByNotCurrCategory() throws IOException{
+        //given
+        Member member = memberRepository.findByUsername("swchoi1997").orElseThrow();
+        String post = "notice";
+        PostSaveRequestDto postSaveRequestDto = PostSaveRequestDto.builder().title("test1").content("test1").build();
+        adminPostService.createAdminPost(member, post, postSaveRequestDto);
+        AdminPost adminPost = adminPostRepository.findByTitle("test1").orElseThrow();
+
+        //when
+        PostUpdateRequestDto postUpdateRequestDto = PostUpdateRequestDto.builder().title("test2").content("test2").build();
+        String newPost = "event";
+
+        //then
+        Assertions.assertThrows(AccessDeniedException.class, () ->
+                adminPostService.updateAdminPost(member, newPost, adminPost.getId(), postUpdateRequestDto));
+    }
+
+    @Test
+    @DisplayName("게시물 삭제 - 성공, 파일 없었음")
+    @WithMember("swchoi1997")
+    public void postDeleteSuccess() throws Exception{
+        //given
+        Member member = memberRepository.findByUsername("swchoi1997").orElseThrow();
+        String post = "notice";
+        PostSaveRequestDto postSaveRequestDto = PostSaveRequestDto.builder().title("test1").content("test1").build();
+        adminPostService.createAdminPost(member, post, postSaveRequestDto);
+
+        //when
+        AdminPost adminPost = adminPostRepository.findByTitle("test1").orElseThrow();
+        adminPostService.deleteAdminPost(member, adminPost.getId());
+
+        //then
+        assertThat(adminPostRepository.findByTitle("test1").isEmpty()).isTrue();
+    }
+
+    @Test
+    @DisplayName("게시물 삭제 - 성공, 파일 있었음")
+    @WithMember("swchoi1997")
+    public void postDeleteSuccessExistedFile() throws Exception{
+        //given
+        Member member = memberRepository.findByUsername("swchoi1997").orElseThrow();
+        String post = "notice";
+        PostSaveRequestDto postSaveRequestDto = PostSaveRequestDto.builder().title("test1").content("test1").build();
+        List<MultipartFile> multipartFiles = new ArrayList<>();
+        multipartFiles.add(getMockUploadFile());
+        adminPostService.createAdminPost(member,multipartFiles, post, postSaveRequestDto);
+
+        //when
+        AdminPost adminPost = adminPostRepository.findByTitle("test1").orElseThrow();
+        adminPostService.deleteAdminPost(member, adminPost.getId());
+
+        //then
+        assertThat(adminPostRepository.findByTitle("test1").isEmpty()).isTrue();
+        assertThat(fileRepository.findAll().size()).isEqualTo(0);
+    }
+
+    @Test
+    @DisplayName("게시물 삭제 - 실패, 권한없음")
+    @WithMember("swchoi1997")
+    public void postDeleteFailNotAdmin() throws Exception{
+        //given
+        Member member = memberRepository.findByUsername("swchoi1997").orElseThrow();
+        String post = "notice";
+        PostSaveRequestDto postSaveRequestDto = PostSaveRequestDto.builder().title("test1").content("test1").build();
+        adminPostService.createAdminPost(member, post, postSaveRequestDto);
+
+        //when
+        AdminPost adminPost = adminPostRepository.findByTitle("test1").orElseThrow();
+        member.setRole(Role.STUDENT);
+
+        //then
+        Assertions.assertThrows(AccessDeniedException.class, () ->
+                adminPostService.deleteAdminPost(member, adminPost.getId()));
+    }
+
+    @Test
+    @DisplayName("게시물 삭제 - 실패, 작성자 아님")
+    @WithMember("swchoi1997")
+    public void postDeleteFailNotAuthor() throws Exception{
+        //given
+        Member member = memberRepository.findByUsername("swchoi1997").orElseThrow();
+        String post = "notice";
+        PostSaveRequestDto postSaveRequestDto = PostSaveRequestDto.builder().title("test1").content("test1").build();
+        adminPostService.createAdminPost(member, post, postSaveRequestDto);
+
+        //when
+        AdminPost adminPost = adminPostRepository.findByTitle("test1").orElseThrow();
+        Member tmpMember = tmp_member();
+
+        //then
+        Assertions.assertThrows(AccessDeniedException.class, () ->
+                adminPostService.deleteAdminPost(tmpMember, adminPost.getId()));
+    }
 
 
 

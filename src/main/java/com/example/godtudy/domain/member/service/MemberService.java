@@ -105,8 +105,9 @@ public class MemberService {
     /*  회원가입  */
     public Member initJoinMember(MemberJoinForm memberJoinForm, String role) {
         String tmpRole = "";
-        if (!role.equals("ADMIN")){ tmpRole = "TMP_" + role.toUpperCase();}
-        else{ tmpRole = role.toUpperCase(); }
+        String role1 = role.toUpperCase();
+        if (!role1.equals("ADMIN")){ tmpRole = "TMP_" + role1;}
+        else{ tmpRole = role1; }
 
 
         //TODO 회원가입하고 이메일인증을 하지 않았을 때 같은 이메일로 회원가입이 들어오면 어떻게 해야할가를 생각

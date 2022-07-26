@@ -114,7 +114,6 @@ public class AdminPostService {
                 fileRepository.delete(filePath);
             }
         }
-
         adminPostRepository.delete(adminPost);
 
         return new ResponseEntity<>("Notice Delete", HttpStatus.OK);
