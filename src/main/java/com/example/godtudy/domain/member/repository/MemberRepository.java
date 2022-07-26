@@ -1,12 +1,10 @@
 package com.example.godtudy.domain.member.repository;
 
 import com.example.godtudy.domain.member.entity.Member;
-import com.example.godtudy.domain.teacher.dto.request.TeacherSearchRequestDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 @Transactional(readOnly = true)
