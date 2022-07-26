@@ -1,8 +1,8 @@
 package com.example.godtudy.domain.member.entity;
 
 import com.example.godtudy.domain.BaseEntity;
-import com.example.godtudy.domain.member.dto.request.ProfileRequestDto;
-import com.example.godtudy.domain.study.entity.Study;
+import com.example.godtudy.domain.member.dto.request.profile.ProfileRequestDto;
+import com.example.godtudy.domain.post.entity.AdminPost;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
@@ -57,15 +57,28 @@ public class Member extends BaseEntity {
 //    private Set<Subject> subject = new HashSet<>();
     private List<Subject> subject = new ArrayList<>();
 
-    @OneToMany(mappedBy = "teacher")
-    private List<Study> teacherStudyList = new ArrayList<>();
-
-    @OneToMany(mappedBy = "student")
-    private List<Study> studentStudyList = new ArrayList<>();
+    @OneToMany(mappedBy = "member")
+    private List<AdminPost> adminPosts = new ArrayList<>(); // NullpointerException 7.5 커밋내용 보기
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
+
+
+    // == 연관관계 편의 메서드 ==//
+    public void addSubject(Subject subject) {
+        this.subject.add(subject);
+        if (subject.getMember() != this) {
+            subject.setMember(this);
+        }
+    }
+
+    public void addAdminPost(AdminPost adminPost) {
+        this.adminPosts.add(adminPost);
+        if (adminPost.getMember() != this) {
+            adminPost.setAuthor(this);
+        }
+    }
 
     public void setRole(Role role) {
         this.role = role;
@@ -73,8 +86,7 @@ public class Member extends BaseEntity {
 
     // 이메일 체크 토근 랜덤한 값 생성
     public void generateEmailCheckToken() {
-        this.emailCheckToken = UUID.
-                randomUUID().toString();
+        this.emailCheckToken = UUID.randomUUID().toString();
         this.emailCheckTokenGeneratedAt = LocalDateTime.now();
     }
 
@@ -83,6 +95,7 @@ public class Member extends BaseEntity {
         this.emailVerified = verified;
         this.createdDate = regDate;
     }
+
     //이메일 인증을 얼마나 자주 할 수 있을
     public boolean canSendConfirmEmail() {
 //        return this.emailCheckTokenGeneratedAt.isBefore(LocalDateTime.now().minusHours(1));
@@ -93,18 +106,15 @@ public class Member extends BaseEntity {
         return this.emailCheckToken.equals(token);
     }
 
+    //프로필 업데이트
     public void updateProfile(ProfileRequestDto profileRequestDto) {
         this.nickname = profileRequestDto.getNickname();
         this.bio = profileRequestDto.getBio();
         this.profileImageUrl = profileRequestDto.getProfileImageUrl();
-
-    }
-    public void addSubject(Subject subject) {
-        this.subject.add(subject);
-        if (subject.getMember() != this) {
-            subject.setMember(this);
-        }
     }
 
-
+    //비밀번호 업데이트
+    public void updatePassword(String newPassword) {
+        this.password = newPassword;
+    }
 }

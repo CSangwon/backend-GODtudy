@@ -1,5 +1,4 @@
-package com.example.godtudy.domain.member.dto.request;
-
+package com.example.godtudy.domain.member.dto.response.profile;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +8,9 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class MemberLogoutRequestDto {
+@Builder
+public class FindUsernameResponseDto {
 
     private String username;
+
 }
