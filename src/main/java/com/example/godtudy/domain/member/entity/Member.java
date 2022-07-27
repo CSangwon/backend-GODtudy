@@ -1,6 +1,7 @@
 package com.example.godtudy.domain.member.entity;
 
 import com.example.godtudy.domain.BaseEntity;
+import com.example.godtudy.domain.comment.entity.Comment;
 import com.example.godtudy.domain.member.dto.request.profile.ProfileRequestDto;
 import com.example.godtudy.domain.post.entity.AdminPost;
 import lombok.*;
@@ -60,6 +61,9 @@ public class Member extends BaseEntity {
     @OneToMany(mappedBy = "member")
     private List<AdminPost> adminPosts = new ArrayList<>(); // NullpointerException 7.5 커밋내용 보기
 
+    @OneToMany(mappedBy = "member")
+    private List<Comment> commentList = new ArrayList<>();
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
@@ -77,6 +81,13 @@ public class Member extends BaseEntity {
         this.adminPosts.add(adminPost);
         if (adminPost.getMember() != this) {
             adminPost.setAuthor(this);
+        }
+    }
+
+    public void addComment(Comment comment) {
+        this.commentList.add(comment);
+        if (comment.getWriter() != this) {
+            comment.setWriter(this);
         }
     }
 

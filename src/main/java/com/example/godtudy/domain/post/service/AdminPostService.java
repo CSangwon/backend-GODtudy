@@ -63,7 +63,7 @@ public class AdminPostService {
      * 게시물 수정
      */
     // 게시물 수정 - 파일 없음
-    public ResponseEntity<?> updateAdminPost(Member member, String post, Long id, PostUpdateRequestDto postUpdateRequestDto) throws IOException {
+    public ResponseEntity<?> updateAdminPost(Member member, String post, Long id, PostUpdateRequestDto postUpdateRequestDto){
         AdminPost adminPost = updateAdminPostBefore(member, id, post);
         adminPost.updateAdminPost(postUpdateRequestDto);
 

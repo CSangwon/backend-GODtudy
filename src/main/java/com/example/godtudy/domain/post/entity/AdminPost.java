@@ -47,9 +47,9 @@ public class AdminPost extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
-//    @OneToMany(mappedBy = "adminPost", cascade = ALL, orphanRemoval = true)
-//    private List<Comment> commentList = new ArrayList<>();
-    //orphanRemoval 는 연관관계가 끊어진 자식 엔티티를 자동으로 삭제해주는 기능이다.
+    @OneToMany(mappedBy = "adminPost", cascade = ALL, orphanRemoval = true)
+    private List<Comment> commentList = new ArrayList<>();
+//    orphanRemoval 는 연관관계가 끊어진 자식 엔티티를 자동으로 삭제해주는 기능이다.
 
     // == 연관관계 편의 메서드 == //
     public void setAuthor(Member member) {
@@ -60,10 +60,6 @@ public class AdminPost extends BaseEntity {
         member.getAdminPosts().add(this);
     }
 
-//    public void addComment(Comment comment) {
-//        commentList.add(comment);
-//    }
-
     public void addFiles(File file) {
         this.files.add(file);
         if (file.getAdminPost()!= this) {
@@ -71,10 +67,12 @@ public class AdminPost extends BaseEntity {
         }
     }
 
+    //게시글 카테고리 확인
     public void setAdminPostEnum(String post){
         this.noticeOrEvent = AdminPostEnum.valueOf(post.toUpperCase());
     }
 
+    //게시글 업데이트
     public void updateAdminPost(PostUpdateRequestDto postUpdateRequestDto) {
         this.title = postUpdateRequestDto.getTitle();
         this.content = postUpdateRequestDto.getContent();

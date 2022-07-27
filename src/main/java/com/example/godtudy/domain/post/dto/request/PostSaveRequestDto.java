@@ -32,7 +32,7 @@ public class PostSaveRequestDto {
                 .title(title)
                 .content(content)
                 .files(new ArrayList<>())
+                .commentList(new ArrayList<>())
                 .build();
     }
-
 }
