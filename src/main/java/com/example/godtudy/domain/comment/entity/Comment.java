@@ -34,7 +34,7 @@ public class Comment extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private Comment parentComment;
 
-    @OneToMany(mappedBy = "comment")
+    @OneToMany(mappedBy = "parentComment")
     private List<Comment> childComment = new ArrayList<>();
 
 

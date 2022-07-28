@@ -15,7 +15,6 @@ import java.util.*;
 @Slf4j
 @Entity
 @Getter
-@EqualsAndHashCode(of = "id")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -61,7 +60,7 @@ public class Member extends BaseEntity {
     @OneToMany(mappedBy = "member")
     private List<AdminPost> adminPosts = new ArrayList<>(); // NullpointerException 7.5 커밋내용 보기
 
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "writer")
     private List<Comment> commentList = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)

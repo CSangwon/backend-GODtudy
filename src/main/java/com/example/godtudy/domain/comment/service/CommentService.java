@@ -12,7 +12,7 @@ public interface CommentService {
 
     void update(Long id,  Member member, CommentUpdateDto commentUpdateDto);
 
-    void delete(Long id,  Member member,);
+    void delete(Long id,  Member member);
 
 
 }
