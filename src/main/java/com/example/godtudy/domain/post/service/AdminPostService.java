@@ -29,7 +29,7 @@ import java.util.List;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class AdminPostService {
+public class AdminPostService implements PostService{
 
     private final AdminPostRepository adminPostRepository;
     private final MemberRepository memberRepository;
@@ -41,6 +41,7 @@ public class AdminPostService {
      */
 
     // 게시물 저장 - 파일 없음
+    @Override
     public ResponseEntity<?> createAdminPost(Member member, String post, PostSaveRequestDto postSaveRequestDto) {
         AdminPost adminPost = createAdminPostBefore(member, post, postSaveRequestDto);
         adminPostRepository.save(adminPost);
@@ -48,6 +49,7 @@ public class AdminPostService {
         return new ResponseEntity<>("Notice Create", HttpStatus.OK);
     }
     // 게시물 저장 - 파일 있음
+    @Override
     public ResponseEntity<?> createAdminPost(Member member, List<MultipartFile> files,
                                              String post, PostSaveRequestDto postSaveRequestDto) throws IOException {
         AdminPost adminPost = createAdminPostBefore(member, post, postSaveRequestDto);
@@ -63,6 +65,7 @@ public class AdminPostService {
      * 게시물 수정
      */
     // 게시물 수정 - 파일 없음
+    @Override
     public ResponseEntity<?> updateAdminPost(Member member, String post, Long id, PostUpdateRequestDto postUpdateRequestDto){
         AdminPost adminPost = updateAdminPostBefore(member, id, post);
         adminPost.updateAdminPost(postUpdateRequestDto);
@@ -81,6 +84,7 @@ public class AdminPostService {
 
     }
     // 게시물 수정 - 파일 있음
+    @Override
     public ResponseEntity<?> updateAdminPost(Member member, String post, List<MultipartFile> files,
                                              Long id, PostUpdateRequestDto postUpdateRequestDto) throws IOException {
         AdminPost adminPost = updateAdminPostBefore(member, id, post);
@@ -102,6 +106,7 @@ public class AdminPostService {
     /**
      * 게시물 삭제
      */
+    @Override
     public ResponseEntity<?> deleteAdminPost(Member member, Long id) {
         AdminPost adminPost = adminPostRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시물이 존재하지 않습니다."));
@@ -122,7 +127,7 @@ public class AdminPostService {
     /**
      * 게시물 1개 조회
      */
-
+    @Override
     public ResponseEntity<?> getAdminPostInfo(Long id) {
         return null;
     }

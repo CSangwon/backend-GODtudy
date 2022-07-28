@@ -45,7 +45,7 @@ class AdminPostServiceTest {
     MemberService memberService;
 
     @Autowired
-    AdminPostService adminPostService;
+    PostService postService;
 
     @Autowired
     MemberRepository memberRepository;
@@ -70,14 +70,14 @@ class AdminPostServiceTest {
     @Test
     @DisplayName("게시글 생성 성공 공지사항 - 파일 없음")
     @WithMember("swchoi1997")
-    public void postCreateSuccessNotFile() throws Exception{
+    public void postCreateSuccessNotFile(){
         //given
         Member member = memberRepository.findByUsername("swchoi1997").orElseThrow();
         String post = "notice";
         PostSaveRequestDto postSaveRequestDto = PostSaveRequestDto.builder().title("test1").content("test1").build();
 
         //when
-        adminPostService.createAdminPost(member, post, postSaveRequestDto);
+        postService.createAdminPost(member, post, postSaveRequestDto);
 
         //then
         AdminPost test1 = adminPostRepository.findByTitle("test1").orElseThrow();
@@ -104,7 +104,7 @@ class AdminPostServiceTest {
         multipartFiles.add(getMockUploadFile());
 
         //when
-        adminPostService.createAdminPost(member, multipartFiles, post, postSaveRequestDto);
+        postService.createAdminPost(member, multipartFiles, post, postSaveRequestDto);
 
         //then
         AdminPost test1 = adminPostRepository.findByTitle("test1").orElseThrow();
@@ -128,7 +128,7 @@ class AdminPostServiceTest {
     @Test
     @DisplayName("게시글 생성 실패 공지사항 - 권한 없음")
     @WithMember("swchoi1997")
-    public void postCreateFailByNotAccess() throws IOException{
+    public void postCreateFailByNotAccess(){
         //given
         Member member = memberRepository.findByUsername("swchoi1997").orElseThrow();
         member.setRole(Role.STUDENT);
@@ -138,13 +138,13 @@ class AdminPostServiceTest {
 
         //when //then
         Assertions.assertThrows(AccessDeniedException.class, () ->
-                adminPostService.createAdminPost(member, post, postSaveRequestDto));
+                postService.createAdminPost(member, post, postSaveRequestDto));
     }
 
     @Test
     @DisplayName("게시글 생성 실패 - 이름, 내용 없음")
     @WithMember("swchoi1997")
-    public void postCreateFailNotExistPostNameOrContent() throws IOException{
+    public void postCreateFailNotExistPostNameOrContent(){
         //given
         Member member = memberRepository.findByUsername("swchoi1997").orElseThrow();
         String post = "notice";
@@ -153,26 +153,26 @@ class AdminPostServiceTest {
 
         //when //then
         Assertions.assertThrows(Exception.class, () ->
-                adminPostService.createAdminPost(member, post, dtoNotContainTitle));
+                postService.createAdminPost(member, post, dtoNotContainTitle));
         Assertions.assertThrows(Exception.class, () ->
-                adminPostService.createAdminPost(member, post, dtoNotContainContent));
+                postService.createAdminPost(member, post, dtoNotContainContent));
     }
 
     @Test
     @DisplayName("게시글 수정 성공 - 파일 없음 -> 없음")
     @WithMember("swchoi1997")
-    public void postUpdateSuccessNotExistFile() throws Exception{
+    public void postUpdateSuccessNotExistFile(){
         //given
         Member member = memberRepository.findByUsername("swchoi1997").orElseThrow();
         String post = "notice";
         PostSaveRequestDto postSaveRequestDto = PostSaveRequestDto.builder().title("test1").content("test1").build();
-        adminPostService.createAdminPost(member, post, postSaveRequestDto);
+        postService.createAdminPost(member, post, postSaveRequestDto);
 
         //일단 게시물이 하나밖에 없다고 가정하고 title로 가져올 것 => id를 어떻게 가져와야할지 모르겠음 EntityManager사용해야하나...?
         //when
         PostUpdateRequestDto postUpdateRequestDto = PostUpdateRequestDto.builder().title("test2").content("test2").build();
         AdminPost adminPost = adminPostRepository.findByTitle("test1").orElseThrow();
-        adminPostService.updateAdminPost(member, post, adminPost.getId(), postUpdateRequestDto);
+        postService.updateAdminPost(member, post, adminPost.getId(), postUpdateRequestDto);
 
         //then
         AdminPost updateAdminPost = adminPostRepository.findByTitle("test2").orElseThrow();
@@ -191,7 +191,7 @@ class AdminPostServiceTest {
         Member member = memberRepository.findByUsername("swchoi1997").orElseThrow();
         String post = "notice";
         PostSaveRequestDto postSaveRequestDto = PostSaveRequestDto.builder().title("test1").content("test1").build();
-        adminPostService.createAdminPost(member, post, postSaveRequestDto);
+        postService.createAdminPost(member, post, postSaveRequestDto);
 
         //when
         PostUpdateRequestDto postUpdateRequestDto = PostUpdateRequestDto.builder().title("test1").content("test2").build();
@@ -199,7 +199,7 @@ class AdminPostServiceTest {
         multipartFiles.add(getMockUploadFile());
 
         AdminPost adminPost = adminPostRepository.findByTitle("test1").orElseThrow();
-        adminPostService.updateAdminPost(member, post, multipartFiles, adminPost.getId(), postUpdateRequestDto);
+        postService.updateAdminPost(member, post, multipartFiles, adminPost.getId(), postUpdateRequestDto);
 
         //then
         AdminPost updateAdminPost = adminPostRepository.findByTitle("test1").orElseThrow();
@@ -227,14 +227,14 @@ class AdminPostServiceTest {
         List<MultipartFile> multipartFiles = new ArrayList<>();
         multipartFiles.add(getMockUploadFile());
 
-        adminPostService.createAdminPost(member, multipartFiles, post, postSaveRequestDto);
+        postService.createAdminPost(member, multipartFiles, post, postSaveRequestDto);
 
         //when
         PostUpdateRequestDto postUpdateRequestDto = PostUpdateRequestDto.builder().title("test2").content("test2").build();
 
 
         AdminPost adminPost = adminPostRepository.findByTitle("test1").orElseThrow();
-        adminPostService.updateAdminPost(member, post, adminPost.getId(), postUpdateRequestDto);
+        postService.updateAdminPost(member, post, adminPost.getId(), postUpdateRequestDto);
 
         //then
         AdminPost updateAdminPost = adminPostRepository.findByTitle("test2").orElseThrow();
@@ -256,7 +256,7 @@ class AdminPostServiceTest {
         List<MultipartFile> multipartFiles = new ArrayList<>();
         multipartFiles.add(getMockUploadFile());
 
-        adminPostService.createAdminPost(member,multipartFiles, post, postSaveRequestDto);
+        postService.createAdminPost(member,multipartFiles, post, postSaveRequestDto);
         AdminPost adminPost = adminPostRepository.findByTitle("test1").orElseThrow();
 
         String initFilePath = adminPost.getFiles().get(0).getFilePath();
@@ -266,7 +266,7 @@ class AdminPostServiceTest {
         List<MultipartFile> multipartFiles2 = new ArrayList<>();
         multipartFiles2.add(getMockUploadFile());
 
-        adminPostService.updateAdminPost(member, post, multipartFiles2, adminPost.getId(), postUpdateRequestDto);
+        postService.updateAdminPost(member, post, multipartFiles2, adminPost.getId(), postUpdateRequestDto);
 
         //then
         AdminPost updateAdminPost = adminPostRepository.findByTitle("test2").orElseThrow();
@@ -287,12 +287,12 @@ class AdminPostServiceTest {
     @Test
     @DisplayName("게시글 수정 실패 공지사항 - 권한 없음")
     @WithMember("swchoi1997")
-    public void postUpdateFailByNotAccess() throws IOException{
+    public void postUpdateFailByNotAccess(){
         //given
         Member member = memberRepository.findByUsername("swchoi1997").orElseThrow();
         String post = "notice";
         PostSaveRequestDto postSaveRequestDto = PostSaveRequestDto.builder().title("test1").content("test1").build();
-        adminPostService.createAdminPost(member, post, postSaveRequestDto);
+        postService.createAdminPost(member, post, postSaveRequestDto);
         AdminPost adminPost = adminPostRepository.findByTitle("test1").orElseThrow();
 
         //when
@@ -301,18 +301,18 @@ class AdminPostServiceTest {
 
         //then
         Assertions.assertThrows(AccessDeniedException.class, () ->
-                adminPostService.updateAdminPost(member, post, adminPost.getId(), postUpdateRequestDto));
+                postService.updateAdminPost(member, post, adminPost.getId(), postUpdateRequestDto));
     }
 
     @Test
     @DisplayName("게시글 수정 실패 공지사항 - 작성자 아님")
     @WithMember("swchoi1997")
-    public void postUpdateFailByNotAuthor() throws IOException{
+    public void postUpdateFailByNotAuthor(){
         //given
         Member member = memberRepository.findByUsername("swchoi1997").orElseThrow();
         String post = "notice";
         PostSaveRequestDto postSaveRequestDto = PostSaveRequestDto.builder().title("test1").content("test1").build();
-        adminPostService.createAdminPost(member, post, postSaveRequestDto);
+        postService.createAdminPost(member, post, postSaveRequestDto);
         AdminPost adminPost = adminPostRepository.findByTitle("test1").orElseThrow();
 
         //when
@@ -322,7 +322,7 @@ class AdminPostServiceTest {
 
         //then
         Assertions.assertThrows(AccessDeniedException.class, () ->
-                adminPostService.updateAdminPost(testMember, post, adminPost.getId(), postUpdateRequestDto));
+                postService.updateAdminPost(testMember, post, adminPost.getId(), postUpdateRequestDto));
     }
 
     private Member tmp_member() {
@@ -344,12 +344,12 @@ class AdminPostServiceTest {
     @Test
     @DisplayName("게시글 수정 실패 공지사항 - 원래 게시물 아님")
     @WithMember("swchoi1997")
-    public void postUpdateFailByNotCurrCategory() throws IOException{
+    public void postUpdateFailByNotCurrCategory(){
         //given
         Member member = memberRepository.findByUsername("swchoi1997").orElseThrow();
         String post = "notice";
         PostSaveRequestDto postSaveRequestDto = PostSaveRequestDto.builder().title("test1").content("test1").build();
-        adminPostService.createAdminPost(member, post, postSaveRequestDto);
+        postService.createAdminPost(member, post, postSaveRequestDto);
         AdminPost adminPost = adminPostRepository.findByTitle("test1").orElseThrow();
 
         //when
@@ -358,22 +358,22 @@ class AdminPostServiceTest {
 
         //then
         Assertions.assertThrows(AccessDeniedException.class, () ->
-                adminPostService.updateAdminPost(member, newPost, adminPost.getId(), postUpdateRequestDto));
+                postService.updateAdminPost(member, newPost, adminPost.getId(), postUpdateRequestDto));
     }
 
     @Test
     @DisplayName("게시물 삭제 - 성공, 파일 없었음")
     @WithMember("swchoi1997")
-    public void postDeleteSuccess() throws Exception{
+    public void postDeleteSuccess(){
         //given
         Member member = memberRepository.findByUsername("swchoi1997").orElseThrow();
         String post = "notice";
         PostSaveRequestDto postSaveRequestDto = PostSaveRequestDto.builder().title("test1").content("test1").build();
-        adminPostService.createAdminPost(member, post, postSaveRequestDto);
+        postService.createAdminPost(member, post, postSaveRequestDto);
 
         //when
         AdminPost adminPost = adminPostRepository.findByTitle("test1").orElseThrow();
-        adminPostService.deleteAdminPost(member, adminPost.getId());
+        postService.deleteAdminPost(member, adminPost.getId());
 
         //then
         assertThat(adminPostRepository.findByTitle("test1").isEmpty()).isTrue();
@@ -389,11 +389,11 @@ class AdminPostServiceTest {
         PostSaveRequestDto postSaveRequestDto = PostSaveRequestDto.builder().title("test1").content("test1").build();
         List<MultipartFile> multipartFiles = new ArrayList<>();
         multipartFiles.add(getMockUploadFile());
-        adminPostService.createAdminPost(member,multipartFiles, post, postSaveRequestDto);
+        postService.createAdminPost(member,multipartFiles, post, postSaveRequestDto);
 
         //when
         AdminPost adminPost = adminPostRepository.findByTitle("test1").orElseThrow();
-        adminPostService.deleteAdminPost(member, adminPost.getId());
+        postService.deleteAdminPost(member, adminPost.getId());
 
         //then
         assertThat(adminPostRepository.findByTitle("test1").isEmpty()).isTrue();
@@ -403,12 +403,12 @@ class AdminPostServiceTest {
     @Test
     @DisplayName("게시물 삭제 - 실패, 권한없음")
     @WithMember("swchoi1997")
-    public void postDeleteFailNotAdmin() throws Exception{
+    public void postDeleteFailNotAdmin(){
         //given
         Member member = memberRepository.findByUsername("swchoi1997").orElseThrow();
         String post = "notice";
         PostSaveRequestDto postSaveRequestDto = PostSaveRequestDto.builder().title("test1").content("test1").build();
-        adminPostService.createAdminPost(member, post, postSaveRequestDto);
+        postService.createAdminPost(member, post, postSaveRequestDto);
 
         //when
         AdminPost adminPost = adminPostRepository.findByTitle("test1").orElseThrow();
@@ -416,18 +416,18 @@ class AdminPostServiceTest {
 
         //then
         Assertions.assertThrows(AccessDeniedException.class, () ->
-                adminPostService.deleteAdminPost(member, adminPost.getId()));
+                postService.deleteAdminPost(member, adminPost.getId()));
     }
 
     @Test
     @DisplayName("게시물 삭제 - 실패, 작성자 아님")
     @WithMember("swchoi1997")
-    public void postDeleteFailNotAuthor() throws Exception{
+    public void postDeleteFailNotAuthor(){
         //given
         Member member = memberRepository.findByUsername("swchoi1997").orElseThrow();
         String post = "notice";
         PostSaveRequestDto postSaveRequestDto = PostSaveRequestDto.builder().title("test1").content("test1").build();
-        adminPostService.createAdminPost(member, post, postSaveRequestDto);
+        postService.createAdminPost(member, post, postSaveRequestDto);
 
         //when
         AdminPost adminPost = adminPostRepository.findByTitle("test1").orElseThrow();
@@ -435,7 +435,7 @@ class AdminPostServiceTest {
 
         //then
         Assertions.assertThrows(AccessDeniedException.class, () ->
-                adminPostService.deleteAdminPost(tmpMember, adminPost.getId()));
+                postService.deleteAdminPost(tmpMember, adminPost.getId()));
     }
 
 
