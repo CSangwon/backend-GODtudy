@@ -1,8 +1,9 @@
-package com.example.godtudy.domain.member.dto.request;
+package com.example.godtudy.domain.member.dto.request.profile;
 
 import com.example.godtudy.domain.member.entity.Subject;
 import com.example.godtudy.global.validation.ValidationGroups;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
@@ -18,6 +19,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class ProfileRequestDto {
 
     @NotBlank(message = "닉네임을 입력해주세요", groups = ValidationGroups.NotEmptyGroup.class)

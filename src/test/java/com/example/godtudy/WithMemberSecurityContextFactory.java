@@ -1,6 +1,7 @@
 package com.example.godtudy;
 
 import com.example.godtudy.domain.member.dto.request.MemberJoinForm;
+import com.example.godtudy.domain.member.entity.Member;
 import com.example.godtudy.domain.member.entity.Role;
 import com.example.godtudy.domain.member.entity.SubjectEnum;
 import com.example.godtudy.domain.member.service.MemberService;
@@ -46,13 +47,20 @@ public class WithMemberSecurityContextFactory implements WithSecurityContextFact
                 .year("1997")
                 .month("02")
                 .day("12")
-                .role(Role.STUDENT)
+                .role(Role.ADMIN)
                 .subject(subject)
                 .build();
 
-        memberService.initJoinMember(memberJoinForm, memberJoinForm.getRole().toString());
+        Member member = memberService.initJoinMember(memberJoinForm, memberJoinForm.getRole().toString());
+        if (!memberJoinForm.getRole().equals(Role.ADMIN)) {
+            String emailCheckToken = member.getEmailCheckToken();
+            String email = nickname + "@naver.com";
+            memberService.checkEmailToken(emailCheckToken, email);
+        }
+
 
         UserDetails userDetails = memberDetailsService.loadUserByUsername(nickname);
+
         Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, userDetails.getPassword(), userDetails.getAuthorities());
         SecurityContext context = SecurityContextHolder.createEmptyContext();
         context.setAuthentication(authentication);

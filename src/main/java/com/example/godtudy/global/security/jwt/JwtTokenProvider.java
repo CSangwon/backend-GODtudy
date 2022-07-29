@@ -22,6 +22,7 @@ public class JwtTokenProvider {
     private String secretKey;
 
     public static final long TOKEN_VALID_TIME = 3 * 60 * 60 * 1000L; // 30분
+//    public static final long TOKEN_VALID_TIME = 3 * 60 * 1000L;
     public static final long REFRESH_TOKEN_VALID_TIME = 1000L * 60 * 60 * 24 * 7; // 7일
 
     private final UserDetailsService userDetailsService;
@@ -81,13 +82,15 @@ public class JwtTokenProvider {
 
         return Jwts.builder().setClaims(claims)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setSubject(username).signWith(SignatureAlgorithm.HS512, secretKey)
+                .setSubject(username)
+                .signWith(SignatureAlgorithm.HS512, secretKey)
                 .setExpiration(new Date(System.currentTimeMillis() + TOKEN_VALID_TIME)).compact();
     }
 
     //refresh token 발급
-    public String createRefreshToken() {
-        return Jwts.builder()
+    public String createRefreshToken(String username) {
+        Claims claims = Jwts.claims().setSubject(username);
+        return Jwts.builder().setClaims(claims)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .signWith(SignatureAlgorithm.HS512, secretKey)
                 .setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_VALID_TIME)).compact();

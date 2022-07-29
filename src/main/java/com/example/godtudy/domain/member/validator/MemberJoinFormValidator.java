@@ -26,7 +26,7 @@ public class MemberJoinFormValidator implements Validator {
             errors.rejectValue("username", "invalid username", new Object[]{memberJoinForm.getUsername()}, "이미 사용중인 아이디 입니다.");
         }
         if (memberRepository.existsByEmail(memberJoinForm.getEmail())) {
-            errors.rejectValue("email", "invalid email", new Object[]{memberJoinForm.getEmail()}, "이미 인증된 이메일 입니다.");
+            errors.rejectValue("email", "invalid email", new Object[]{memberJoinForm.getEmail()}, "이미 등록된 이메일 입니다.");
         }
         if (memberRepository.existsByNickname(memberJoinForm.getNickname())) {
             errors.rejectValue("nickname", "invalid nickname", new Object[]{memberJoinForm.getNickname()}, "이미 사용중인 닉네임 입니다.");

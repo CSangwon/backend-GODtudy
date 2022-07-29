@@ -37,7 +37,7 @@ public class Subject {
             this.member.getSubject().remove(this);
         }
         this.member = member;
-        member.getSubject().add(this); // v여기서 Null이 나옴
+        member.getSubject().add(this);
     }
 
     public static Subject createMemberSubject(Member member, SubjectEnum title) {

@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Random;
 import java.util.stream.IntStream;
 
@@ -40,6 +41,19 @@ public class InitDb {
 
         public void insertMember() {
             IntStream.rangeClosed(1,COUNT).forEach(i -> {
+//                Member swchoi2997 = Member.builder()
+//                        .name("최상원")
+//                        .username("swchoi2997")
+//                        .password(passwordEncoder.encode("swchoi2997"))
+//                        .email("swchoi2997")
+//                        .nickname("숲속의1냉면")
+//                        .birthday(LocalDate.of(1997, 02, 12))
+//                        .role(Role.ADMIN)
+//                        .emailVerified(true)
+//                        .emailCheckTokenGeneratedAt(LocalDateTime.now())
+//                        .build();
+//                memberRepository.save(swchoi2997);
+
                 Member member = Member.builder()
                         .name("name" + i)
                         .username("test" + i)

@@ -1,6 +1,7 @@
 package com.example.godtudy.domain.member.controller;
 
-import com.example.godtudy.domain.member.dto.request.ProfileRequestDto;
+import com.example.godtudy.domain.member.dto.request.profile.PasswordUpdateRequestDto;
+import com.example.godtudy.domain.member.dto.request.profile.ProfileRequestDto;
 import com.example.godtudy.domain.member.dto.response.ProfileResponseDto;
 import com.example.godtudy.domain.member.entity.CurrentMember;
 import com.example.godtudy.domain.member.entity.Member;
@@ -27,10 +28,20 @@ public class ProfileApiController {
         return new ResponseEntity<>(profile, HttpStatus.OK);
     }
 
-    @PostMapping("/update")
+    //프로필 업데이트
+    @PostMapping("/update/")
     public ResponseEntity<?> updateProfile(@CurrentMember Member member, @Valid ProfileRequestDto profileRequestDto) {
         profileService.updateProfile(member, profileRequestDto);
         return new ResponseEntity<>("update Ok", HttpStatus.OK);
     }
+
+    //비밀번호 업데이트
+    @PostMapping("/update/password")
+    public ResponseEntity<?> updatePassword(@CurrentMember Member member, @Valid PasswordUpdateRequestDto passwordUpdateRequestDto) {
+        profileService.updatePassword(member, passwordUpdateRequestDto);
+        return new ResponseEntity<>("Password Update", HttpStatus.OK);
+    }
+
+
 
 }
