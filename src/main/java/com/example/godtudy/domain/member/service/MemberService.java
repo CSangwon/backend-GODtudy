@@ -24,7 +24,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -60,7 +59,7 @@ public class MemberService {
         if(memberRepository.findByUsername(memberLoginRequestDto.getUsername()).isEmpty()){
             return new ResponseEntity<>("해당하는 맴버가 없습니다.", HttpStatus.BAD_REQUEST);
         }
-        Authentication authentication = authenticationManager.authenticate(
+        authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(memberLoginRequestDto.getUsername(), memberLoginRequestDto.getPassword()));
 
         String accessToken = jwtTokenProvider.createAccessToken(memberLoginRequestDto.getUsername());

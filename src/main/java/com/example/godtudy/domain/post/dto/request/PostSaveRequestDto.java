@@ -6,14 +6,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
-import java.time.LocalDateTime;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 @Data
 @NoArgsConstructor
@@ -27,7 +23,7 @@ public class PostSaveRequestDto {
     @NotBlank(message = "내용을 입력해주세요..", groups = ValidationGroups.NotEmptyGroup.class)
     private String content;
 
-    public AdminPost toNoticeEntity(){
+    public AdminPost toEntity(){
         return AdminPost.builder()
                 .title(title)
                 .content(content)

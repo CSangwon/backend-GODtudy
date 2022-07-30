@@ -24,22 +24,15 @@ public class AdminPostApiController {
 
     private final PostService postService;
 
-//    @PostMapping("{post}/new")
-//    public ResponseEntity<?> createNoticeEvent(@PathVariable String post ,@CurrentMember Member member,
-//                                               @RequestBody PostSaveRequestDto postSaveRequestDto) {
-//
-//        return adminPostService.createAdminPost(member, post, postSaveRequestDto);
-//    }
-
     @SneakyThrows
     @PostMapping("{post}/new")
     public ResponseEntity<?> createNoticeEvent(@PathVariable String post ,@CurrentMember Member member,
                                                @RequestBody PostSaveRequestDto postSaveRequestDto,
                                                @RequestPart List<MultipartFile> files) {
         if (files.isEmpty()) {
-            return postService.createAdminPost(member, post, postSaveRequestDto);
+            return postService.createPost(member, post, postSaveRequestDto);
         }
-        return postService.createAdminPost(member,files, post, postSaveRequestDto);
+        return postService.createPost(member,files, post, postSaveRequestDto);
     }
 
     @PostMapping("/{post}/{id}")
@@ -47,14 +40,14 @@ public class AdminPostApiController {
                                                @RequestBody PostUpdateRequestDto postUpdateRequestDto,
                                                @RequestPart List<MultipartFile> files) throws IOException {
         if (files.isEmpty()) {
-            return postService.updateAdminPost(member, post, id , postUpdateRequestDto);
+            return postService.updatePost(member, post, id , postUpdateRequestDto);
         }
-        return postService.updateAdminPost(member, post,files, id , postUpdateRequestDto);
+        return postService.updatePost(member, post,files, id , postUpdateRequestDto);
 
     }
 
     @DeleteMapping("/{post}/{id}")
     public ResponseEntity<?> deleteNoticeEvent(@PathVariable String post, @PathVariable Long id, @CurrentMember Member member) {
-        return postService.deleteAdminPost(member, id);
+        return postService.deletePost(member, id);
     }
 }

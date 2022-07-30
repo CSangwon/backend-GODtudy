@@ -27,5 +27,5 @@ public interface MemberRepository extends JpaRepository<Member, Long>, JpaSpecif
 
     Optional<Member> findByNickname(String email);
 
-    List<Member> findByUsernameContainsAndRole(@Param("username") String username, Role role);
+    List<Member> findByUsernameContainsAndRole(@Param("username") String username, @Param("role") Role role);
 }

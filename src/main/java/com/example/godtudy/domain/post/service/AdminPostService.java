@@ -42,7 +42,7 @@ public class AdminPostService implements PostService{
 
     // 게시물 저장 - 파일 없음
     @Override
-    public ResponseEntity<?> createAdminPost(Member member, String post, PostSaveRequestDto postSaveRequestDto) {
+    public ResponseEntity<?> createPost(Member member, String post, PostSaveRequestDto postSaveRequestDto) {
         AdminPost adminPost = createAdminPostBefore(member, post, postSaveRequestDto);
         adminPostRepository.save(adminPost);
 
@@ -50,7 +50,7 @@ public class AdminPostService implements PostService{
     }
     // 게시물 저장 - 파일 있음
     @Override
-    public ResponseEntity<?> createAdminPost(Member member, List<MultipartFile> files,
+    public ResponseEntity<?> createPost(Member member, List<MultipartFile> files,
                                              String post, PostSaveRequestDto postSaveRequestDto) throws IOException {
         AdminPost adminPost = createAdminPostBefore(member, post, postSaveRequestDto);
         //file 저장
@@ -66,7 +66,7 @@ public class AdminPostService implements PostService{
      */
     // 게시물 수정 - 파일 없음
     @Override
-    public ResponseEntity<?> updateAdminPost(Member member, String post, Long id, PostUpdateRequestDto postUpdateRequestDto){
+    public ResponseEntity<?> updatePost(Member member, String post, Long id, PostUpdateRequestDto postUpdateRequestDto){
         AdminPost adminPost = updateAdminPostBefore(member, id, post);
         adminPost.updateAdminPost(postUpdateRequestDto);
 
@@ -85,7 +85,7 @@ public class AdminPostService implements PostService{
     }
     // 게시물 수정 - 파일 있음
     @Override
-    public ResponseEntity<?> updateAdminPost(Member member, String post, List<MultipartFile> files,
+    public ResponseEntity<?> updatePost(Member member, String post, List<MultipartFile> files,
                                              Long id, PostUpdateRequestDto postUpdateRequestDto) throws IOException {
         AdminPost adminPost = updateAdminPostBefore(member, id, post);
         adminPost.updateAdminPost(postUpdateRequestDto);
@@ -107,7 +107,7 @@ public class AdminPostService implements PostService{
      * 게시물 삭제
      */
     @Override
-    public ResponseEntity<?> deleteAdminPost(Member member, Long id) {
+    public ResponseEntity<?> deletePost(Member member, Long id) {
         AdminPost adminPost = adminPostRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시물이 존재하지 않습니다."));
         checkIfAdmin(member);
@@ -128,7 +128,7 @@ public class AdminPostService implements PostService{
      * 게시물 1개 조회
      */
     @Override
-    public ResponseEntity<?> getAdminPostInfo(Long id) {
+    public ResponseEntity<?> getPostInfo(Long id) {
         return null;
     }
 
@@ -169,7 +169,7 @@ public class AdminPostService implements PostService{
 
     private AdminPost createAdminPostBefore(Member member, String post, PostSaveRequestDto postSaveRequestDto) {
         checkIfAdmin(member); //관리자인지 확인
-        AdminPost adminPost = postSaveRequestDto.toNoticeEntity();
+        AdminPost adminPost = postSaveRequestDto.toEntity();
         adminPost.setAuthor(member); // 현재 맴버 매핑
         adminPost.setAdminPostEnum(post); // 현재 게시판 작성
         member.addAdminPost(adminPost);

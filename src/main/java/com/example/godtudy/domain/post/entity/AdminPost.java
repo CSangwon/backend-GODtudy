@@ -48,6 +48,7 @@ public class AdminPost extends BaseEntity {
     private Member member;
 
     @OneToMany(mappedBy = "adminPost", cascade = ALL, orphanRemoval = true)
+    @OrderBy("id asc")
     private List<Comment> commentList = new ArrayList<>();
 //    orphanRemoval 는 연관관계가 끊어진 자식 엔티티를 자동으로 삭제해주는 기능이다.
 
