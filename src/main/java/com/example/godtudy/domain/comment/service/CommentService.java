@@ -11,9 +11,9 @@ public interface CommentService {
 
     ResponseEntity<?> saveReComment(Long postId, Member member, Long firstCommentId, CommentSaveDto commentSaveDto);
 
-    ResponseEntity<?> update(Long id,  Member member, CommentUpdateDto commentUpdateDto);
+    ResponseEntity<?> updateComment(Long id,  Member member, CommentUpdateDto commentUpdateDto);
 
-    void delete(Long id,  Member member);
+    void deleteComment(Long id,  Member member);
 
 
 }

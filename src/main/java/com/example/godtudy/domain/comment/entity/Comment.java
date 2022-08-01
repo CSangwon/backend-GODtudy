@@ -78,12 +78,8 @@ public class Comment extends BaseEntity {
 
 
     public void removeParentCommentExistChildComment() {
-        this.content = null;
+        this.content = "";
         this.writer = null;
-    }
-
-    public void removeCommentAll() {
-
     }
 
 }
