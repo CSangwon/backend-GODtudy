@@ -55,7 +55,7 @@ public class Member extends BaseEntity {
 
     private String bio;
 
-    @OneToMany(mappedBy = "member", orphanRemoval = true, cascade = ALL)
+    @OneToMany(mappedBy = "member", orphanRemoval = true, cascade = ALL) //TODO 옵션 없앴을때 deleteById로 삭제해보기!!
     private List<Subject> subject = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", orphanRemoval = true, cascade = ALL)
