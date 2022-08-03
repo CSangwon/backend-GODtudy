@@ -19,8 +19,6 @@ import java.util.List;
 
 import static javax.persistence.CascadeType.ALL;
 
-
-@Slf4j
 @Entity
 @Getter
 @NoArgsConstructor

@@ -3,6 +3,7 @@ package com.example.godtudy.domain.post.service;
 import com.example.godtudy.domain.member.entity.Member;
 import com.example.godtudy.domain.post.dto.request.PostSaveRequestDto;
 import com.example.godtudy.domain.post.dto.request.PostUpdateRequestDto;
+import com.example.godtudy.domain.post.dto.response.PostInfoResponseDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,7 +43,7 @@ public class StudyPostService implements PostService{
     }
 
     @Override
-    public ResponseEntity<?> getPostInfo(Long id) {
+    public PostInfoResponseDto getPostInfo(Long id) {
         return null;
     }
 }

@@ -55,12 +55,15 @@ public class Member extends BaseEntity {
 
     private String bio;
 
+    @Builder.Default
     @OneToMany(mappedBy = "member", orphanRemoval = true, cascade = ALL) //TODO 옵션 없앴을때 deleteById로 삭제해보기!!
     private List<Subject> subject = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "member", orphanRemoval = true, cascade = ALL)
     private List<AdminPost> adminPosts = new ArrayList<>(); // NullpointerException 7.5 커밋내용 보기
 
+    @Builder.Default
     @OneToMany(mappedBy = "writer", orphanRemoval = true, cascade = ALL)
     private List<Comment> commentList = new ArrayList<>();
 
