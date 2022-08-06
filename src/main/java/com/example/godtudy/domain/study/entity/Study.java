@@ -2,12 +2,15 @@ package com.example.godtudy.domain.study.entity;
 
 import com.example.godtudy.domain.member.entity.Member;
 import com.example.godtudy.domain.study.dto.request.UpdateStudyRequestDto;
+import com.example.godtudy.domain.todo.entity.Todo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -27,6 +30,9 @@ public class Study {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "student_id")
     private Member student;
+
+    @OneToMany(mappedBy = "study")
+    private List<Todo> todoList = new ArrayList<>();
 
     private String name;
 
