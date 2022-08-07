@@ -1,11 +1,14 @@
 package com.example.godtudy.domain.todo.entity;
 
 import com.example.godtudy.domain.study.entity.Study;
-import lombok.Getter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
 @Getter
 @Entity
 public class Todo {
