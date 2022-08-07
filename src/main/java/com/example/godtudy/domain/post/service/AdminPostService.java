@@ -11,6 +11,8 @@ import com.example.godtudy.domain.post.repository.AdminPostRepository;
 import com.example.godtudy.global.file.File;
 import com.example.godtudy.global.file.FileRepository;
 import com.example.godtudy.global.file.service.FileService;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -119,7 +121,9 @@ public class AdminPostService implements PostService{
                 fileRepository.delete(filePath);
             }
         }
-        adminPostRepository.delete(adminPost);
+        member.getAdminPosts().remove(adminPost);
+        adminPostRepository.deleteById(adminPost.getId());
+
 
         return new ResponseEntity<>("Notice Delete", HttpStatus.OK);
     }
@@ -172,7 +176,6 @@ public class AdminPostService implements PostService{
         AdminPost adminPost = postSaveRequestDto.toEntity();
         adminPost.setAuthor(member); // 현재 맴버 매핑
         adminPost.setAdminPostEnum(post); // 현재 게시판 작성
-        member.addAdminPost(adminPost);
 
         return adminPost;
     }

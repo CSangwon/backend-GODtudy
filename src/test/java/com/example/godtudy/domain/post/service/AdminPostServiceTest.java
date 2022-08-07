@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import org.springframework.mock.web.MockMultipartFile;
@@ -44,6 +45,7 @@ class AdminPostServiceTest {
     @Autowired
     MemberService memberService;
 
+    @Qualifier("adminPostService")
     @Autowired
     PostService postService;
 
@@ -55,6 +57,9 @@ class AdminPostServiceTest {
 
     @Autowired
     FileRepository fileRepository;
+
+
+
 
     private MockMultipartFile getMockUploadFile() throws IOException {
         return new MockMultipartFile("file", "file.png", "image/png",
@@ -376,7 +381,8 @@ class AdminPostServiceTest {
         postService.deletePost(member, adminPost.getId());
 
         //then
-        assertThat(adminPostRepository.findByTitle("test1").isEmpty()).isTrue();
+        assertThat(adminPostRepository.findAll().size()).isSameAs(0);
+        assertThat(member.getAdminPosts().size()).isSameAs(0);
     }
 
     @Test
@@ -396,8 +402,8 @@ class AdminPostServiceTest {
         postService.deletePost(member, adminPost.getId());
 
         //then
-        assertThat(adminPostRepository.findByTitle("test1").isEmpty()).isTrue();
-        assertThat(fileRepository.findAll().size()).isEqualTo(0);
+        assertThat(adminPostRepository.findAll().size()).isSameAs(0);
+        assertThat(fileRepository.findAll().size()).isSameAs(0);
     }
 
     @Test
