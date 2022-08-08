@@ -409,7 +409,7 @@ class AdminPostServiceTest {
 
         //then
         assertThat(adminPostRepository.findAll().size()).isSameAs(10);
-//        assertThat(member.getAdminPosts().size()).isSameAs(0);
+        assertThat(member.getAdminPosts().size()).isSameAs(0);
     }
 
     @Test
@@ -432,6 +432,7 @@ class AdminPostServiceTest {
         //then
         assertThat(adminPostRepository.findAll().size()).isSameAs(10);
         assertThat(fileRepository.findAll().size()).isSameAs(0);
+        assertThat(member.getAdminPosts().size()).isSameAs(0);
     }
 
     @Test
@@ -480,28 +481,34 @@ class AdminPostServiceTest {
     2. postService에서 post삭제 시 댓글 삭제 해줘야함
     3. 게시글 조회 시 댓글까지 조회되는지 확인 : 댓글의 대댓글까지 조화가 되야함!!
      */
+
     @Test
     @DisplayName("삭제시 댓글도 같이 삭제")
     @WithMember("swchoi1997")
     public void deletePostCheckMemberAndComment() throws Exception{
         //given
-        Member member2 = memberRepository.findByUsername("swchoi1997").orElseThrow();
-        member2.setRole(Role.ADMIN);
+        Member member2 = memberRepository.findByUsername("swchoi1997").orElseThrow(); // 맴버 찾아옴
+        member2.setRole(Role.ADMIN); // 역할변경
 
+        //게시글작성 10 + 1
         PostSaveRequestDto postSaveRequestDto2 = PostSaveRequestDto.builder().title("test2").content("content2").build();
         postService.createPost(member2, "event", postSaveRequestDto2);
         AdminPost adminPost2 = adminPostRepository.findByTitle("test2").orElseThrow();
 
+        //댓글적음
         CommentSaveDto commentSaveDto2 = CommentSaveDto.builder().content("comment2").build();
         commentService.saveComment(adminPost2.getId(), member2, commentSaveDto2);
         Comment comment2 = commentRepository.findByContent("comment2").orElseThrow();
 
+        //대댓글
         CommentSaveDto reCommentSaveDto2 = CommentSaveDto.builder().content("comment4").build();
         commentService.saveReComment(adminPost2.getId(), member2, comment2.getId(), reCommentSaveDto2);
 
+        //110 처음에 댓글1 대댓글1
         assertThat(commentRepository.findAll().size()).isSameAs(112);
+        assertThat(adminPostRepository.findAll().size()).isSameAs(11);
+
         //when
-//        adminPost2 = adminPostRepository.findByTitle("test2").orElseThrow();
         postService.deletePost(member2, adminPost2.getId());
 
         //then

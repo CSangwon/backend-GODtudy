@@ -61,7 +61,8 @@ public class Member extends BaseEntity {
     private List<Subject> subject = new ArrayList<>();
 
     @Builder.Default
-    @OneToMany(mappedBy = "member", orphanRemoval = true, cascade = REMOVE)
+//    @OneToMany(mappedBy = "member", orphanRemoval = true, cascade = REMOVE)
+    @OneToMany(mappedBy = "member")
     private List<AdminPost> adminPosts = new ArrayList<>(); // NullpointerException 7.5 커밋내용 보기
 
     @Enumerated(EnumType.STRING)

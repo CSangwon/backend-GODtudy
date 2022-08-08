@@ -45,7 +45,7 @@ public class ProfileService {
 
     public Page<ProfileResponseDto> searchMember(String username, Role role, Pageable pageable) {
         Page<Member> members = memberRepository.findByUsernameContainsAndRole(username, role, pageable);
-        Page<ProfileResponseDto> memberList = members.map(entity -> new ProfileResponseDto(entity));
+        Page<ProfileResponseDto> memberList = members.map(entity -> new ProfileResponseDto(entity)); // entity == member
 
         return memberList;
     }

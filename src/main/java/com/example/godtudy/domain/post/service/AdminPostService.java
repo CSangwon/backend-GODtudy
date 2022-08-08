@@ -111,10 +111,9 @@ public class AdminPostService implements PostService{
      */
     @Override
     public ResponseEntity<?> deletePost(Member member, Long id) {
-        AdminPost adminPost = adminPostRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 게시물이 존재하지 않습니다."));
-        checkIfAdmin(member);
+        AdminPost adminPost = adminPostRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 게시물이 존재하지 않습니다."));
         checkAuthor(member, adminPost);
+        checkIfAdmin(member);
 
         if (!adminPost.getFiles().isEmpty()) {
             for (File filePath : adminPost.getFiles()) {
@@ -123,6 +122,7 @@ public class AdminPostService implements PostService{
             }
         }
 
+        member.getAdminPosts().remove(adminPost);
         adminPostRepository.delete(adminPost);
 //        adminPostRepository.deleteById(adminPost.getId());
 
@@ -158,6 +158,9 @@ public class AdminPostService implements PostService{
      * 이 게시글의 작성자인지 확인
      */
     private void checkAuthor(Member member, AdminPost adminPost) {
+        memberRepository.findByUsername(member.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 회원입니다."));
+
         if (!adminPost.getMember().getUsername().equals(member.getUsername())) {
             throw new AccessDeniedException("해당 기능을 사용할 수 없습니다.");
         }
