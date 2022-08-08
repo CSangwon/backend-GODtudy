@@ -48,6 +48,15 @@ public class StudyService {
     }
 
     /**
+     * 공부방 생성
+     */
+    @Transactional
+    public StudyDto createStudyByTeacher(Member teacher, CreateStudyRequestDto request) {
+        StudyDto studyDto = createStudy(teacher, request);
+        return studyDto;
+    }
+
+    /**
      * 공부방 생성 (by. Admin)
      */
     @Transactional
@@ -58,7 +67,7 @@ public class StudyService {
             Member teacher = memberRepository.findById(request.getTeacherId())
                     .orElseThrow(() -> new NoSuchElementException("해당하는 선생님 정보가 없습니다."));
 
-            studyDto = createStudyByTeacher(teacher, request);
+            studyDto = createStudy(teacher, request);
         } else {
             throw new AccessDeniedException("권한이 없습니다.");
         }
@@ -68,8 +77,7 @@ public class StudyService {
     /**
      * 공부방 생성 (by. Teacher)
      */
-    @Transactional
-    public StudyDto createStudyByTeacher(Member teacher, CreateStudyRequestDto request) {
+    private StudyDto createStudy(Member teacher, CreateStudyRequestDto request) {
 
         StudyDto studyDto = null;
 
