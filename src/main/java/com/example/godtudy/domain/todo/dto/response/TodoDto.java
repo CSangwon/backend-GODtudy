@@ -8,6 +8,8 @@ import java.time.LocalDateTime;
 @Data
 public class TodoDto {
 
+    private Long id;
+
     private String title;
 
     private String content;
@@ -17,6 +19,7 @@ public class TodoDto {
     private String study_url;
 
     public TodoDto(Todo todo) {
+        this.id = todo.getId();
         this.title = todo.getTitle();
         this.content = todo.getContent();
         this.endDate = todo.getEndDate();

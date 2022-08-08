@@ -1,6 +1,7 @@
 package com.example.godtudy.domain.todo.entity;
 
 import com.example.godtudy.domain.study.entity.Study;
+import com.example.godtudy.domain.todo.dto.request.UpdateTodoRequestDto;
 import lombok.*;
 
 import javax.persistence.*;
@@ -23,7 +24,13 @@ public class Todo {
 
     private String title;
 
+    private String content;
+
     private LocalDateTime endDate;
 
-    private String content;
+    public void updateTodo(UpdateTodoRequestDto updateTodoRequestDto) {
+        this.title = updateTodoRequestDto.getTitle();
+        this.content = updateTodoRequestDto.getContent();
+        this.endDate = updateTodoRequestDto.getEndDate();
+    }
 }
