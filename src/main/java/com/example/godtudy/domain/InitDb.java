@@ -1,11 +1,16 @@
 package com.example.godtudy.domain;
 
+import com.example.godtudy.domain.comment.entity.Comment;
+import com.example.godtudy.domain.comment.repository.CommentRepository;
 import com.example.godtudy.domain.member.entity.Member;
 import com.example.godtudy.domain.member.entity.Role;
 import com.example.godtudy.domain.member.entity.Subject;
 import com.example.godtudy.domain.member.entity.SubjectEnum;
 import com.example.godtudy.domain.member.repository.MemberRepository;
 import com.example.godtudy.domain.member.repository.SubjectRepository;
+import com.example.godtudy.domain.post.entity.AdminPost;
+import com.example.godtudy.domain.post.entity.AdminPostEnum;
+import com.example.godtudy.domain.post.repository.AdminPostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -21,13 +26,18 @@ import java.util.stream.IntStream;
 @RequiredArgsConstructor
 public class InitDb {
 
-    private final MemberInitService memberInitService;
-    private static final int COUNT = 5;
+    private final MemberInitService initService;
+    private final static int COUNT = 6;
+    private final static int POST_COUNT = 10;
+    private final static int COMMENT_COUNT = 10;
+
 
     @PostConstruct
     public void init() {
-        memberInitService.insertMember();
-        memberInitService.insertSubject();
+        initService.insertMember();
+        initService.insertSubject();
+        initService.insertPost();
+        initService.insertComment();
     }
 
     @Component
@@ -36,12 +46,13 @@ public class InitDb {
     static class MemberInitService {
         private final MemberRepository memberRepository;
         private final SubjectRepository subjectRepository;
+        private final AdminPostRepository adminPostRepository;
+        private final CommentRepository commentRepository;
         private final PasswordEncoder passwordEncoder;
         Random random = new Random();
 
         public void insertMember() {
             IntStream.rangeClosed(1,COUNT).forEach(i -> {
-
                 Member member = Member.builder()
                         .name("name" + i)
                         .username("test" + i)
@@ -72,7 +83,48 @@ public class InitDb {
                 subjectRepository.save(subject);
             });
         }
+
+        public void insertPost(){
+            IntStream.rangeClosed(1, POST_COUNT).forEach(i -> {
+                AdminPost adminPost = AdminPost.builder()
+                        .title("title" + i)
+                        .content("content" + i)
+                        .noticeOrEvent(AdminPostEnum.NOTICE)
+                        .member(memberRepository.findById(Long.valueOf(random.nextInt(5) + 1)).orElse(null))
+                        .build();
+
+                adminPostRepository.save(adminPost);
+            });
+        }
+
+        public void insertComment() {
+            IntStream.rangeClosed(1, COMMENT_COUNT).forEach(i -> {
+                Comment comment = Comment.builder()
+                        .content("content" + i)
+                        .adminPost(adminPostRepository.findById(Long.valueOf(random.nextInt(10) + 1)).orElse(null))
+                        .writer(memberRepository.findById(Long.valueOf(random.nextInt(5) + 1)).orElse(null))
+                        .build();
+
+                commentRepository.save(comment);
+            });
+
+            commentRepository.findAll().stream().forEach(comment -> {
+                IntStream.rangeClosed(1, COMMENT_COUNT).forEach(i -> {
+                    Comment reComment = Comment.builder()
+                            .content("reContent" + i)
+                            .adminPost(comment.getAdminPost())
+                            .writer(memberRepository.findById(Long.valueOf(random.nextInt(5) + 1)).orElse(null))
+                            .parentComment(comment)
+                            .build();
+
+                    commentRepository.save(reComment);
+                });
+            });
+        }
+
     }
 
 
 }
+
+

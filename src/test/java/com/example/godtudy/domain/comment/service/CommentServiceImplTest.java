@@ -2,6 +2,7 @@ package com.example.godtudy.domain.comment.service;
 
 import com.example.godtudy.WithMember;
 import com.example.godtudy.domain.comment.dto.CommentSaveDto;
+import com.example.godtudy.domain.comment.dto.CommentUpdateDto;
 import com.example.godtudy.domain.comment.entity.Comment;
 import com.example.godtudy.domain.comment.repository.CommentRepository;
 import com.example.godtudy.domain.member.dto.request.MemberJoinForm;
@@ -10,19 +11,16 @@ import com.example.godtudy.domain.member.entity.Role;
 import com.example.godtudy.domain.member.entity.SubjectEnum;
 import com.example.godtudy.domain.member.repository.MemberRepository;
 import com.example.godtudy.domain.member.service.MemberService;
-import com.example.godtudy.domain.post.dto.request.PostSaveRequestDto;
 import com.example.godtudy.domain.post.entity.AdminPost;
 import com.example.godtudy.domain.post.entity.AdminPostEnum;
 import com.example.godtudy.domain.post.repository.AdminPostRepository;
 import com.example.godtudy.domain.post.service.AdminPostService;
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import com.example.godtudy.global.advice.exception.CommentNotFoundException;
+import com.example.godtudy.global.advice.exception.PostNotFoundException;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -75,20 +73,6 @@ class CommentServiceImplTest {
                 .files(new ArrayList<>()).commentList(new ArrayList<>())
                 .member(member).noticeOrEvent(AdminPostEnum.NOTICE).build();
         return adminPostRepository.save(adminPost).getId();
-    }
-
-    // 댓글달기
-    private Long saveComment(Member member, AdminPost adminPost) {
-        Comment comment = Comment.builder().content("test1").isFirstComment(true).writer(member).adminPost(adminPost).build();
-        return commentRepository.save(comment).getId();
-    }
-
-    // 대댓글 달기
-    private Long saveReComment(Member member,AdminPost adminPost, Long parentId) {
-        Comment parent = commentRepository.findById(parentId).orElseThrow();
-        Comment child = Comment.builder().content("child").writer(member).adminPost(adminPost).parentComment(parent).build();
-
-        return commentRepository.save(child).getId();
     }
 
     @Test
@@ -147,37 +131,189 @@ class CommentServiceImplTest {
         assertThat(reComment.getWriter()).isEqualTo(member);
         assertThat(reComment.getContent()).isEqualTo("test2");
         assertThat(reComment.getParentComment().getContent()).isEqualTo("test1");
+    }
 
+    @Test
+    @DisplayName("댓글 작성 실패 - 게시글이 없음")
+    @WithMember("swchoi1997")
+    public void saveCommentFailByNotExistPost() throws Exception{
+        //given
+        Member member = memberRepository.findByUsername("swchoi1997").orElseThrow();
+        Long postId = 120934871234987L;
+        CommentSaveDto commentSaveDto = CommentSaveDto.builder().content("test1").build();
+
+        //when//then
+        Assertions.assertThrows(PostNotFoundException.class, () ->
+                commentService.saveComment(postId, member, commentSaveDto));
+    }
+
+    @Test
+    @DisplayName("대댓글 작성 실패 - 부모 댓글이 없음")
+    @WithMember("swchoi1997")
+    public void saveReCommentFailByNotParentComment() throws Exception{
+        //given
+        Member member = memberRepository.findByUsername("swchoi1997").orElseThrow();
+        Long postId = savePostNotice(member);
+        CommentSaveDto reCommentSaveDto = CommentSaveDto.builder().content("test2").build();
+
+        //when//then
+        Assertions.assertThrows(CommentNotFoundException.class, () ->
+                commentService.saveReComment(postId, member,123L, reCommentSaveDto));
+    }
+
+    @Test
+    @DisplayName("대댓글 작성 실패 - 게시글이 없음")
+    @WithMember("swchoi1997")
+    public void saveReCommentFailByNotExistPost(){
+        //given
+        Member member = memberRepository.findByUsername("swchoi1997").orElseThrow();
+        Long postId = savePostNotice(member);
+        CommentSaveDto commentSaveDto = CommentSaveDto.builder().content("test1").build();
+        commentService.saveComment(postId, member, commentSaveDto);
+
+        CommentSaveDto reCommentSaveDto = CommentSaveDto.builder().content("test2").build();
+
+        //when//then
+        Long postId2 = 123L;
+        Assertions.assertThrows(PostNotFoundException.class, () ->
+                commentService.saveReComment(postId2, member,123L, reCommentSaveDto));
     }
 
 
+    @Test
+    @WithMember("swchoi1997")
+    @DisplayName("댓글 수정 성공")
+    public void updateCommentSuccess() throws Exception{
+        //given
+        Member member = memberRepository.findByUsername("swchoi1997").orElseThrow();
+        Long postId = savePostNotice(member);
+        CommentSaveDto commentSaveDto = CommentSaveDto.builder().content("test1").build();
+        commentService.saveComment(postId, member, commentSaveDto);
+        Long test1 = commentRepository.findByContent("test1").orElseThrow().getId();
 
-//    @Test
-//    @WithMember("swchoi1997")
-//    public void test() throws Exception{
-//        System.out.println("-------------------------------------------");
-//        Member member = memberRepository.findByUsername("swchoi123").orElseThrow();
-//        System.out.println("member = " + member.getUsername());
-//        Member member1 = memberRepository.findByUsername("swchoi1997").orElseThrow();
-//        System.out.println("member1.getUsername() = " + member1.getUsername());
-//
-//        System.out.println("-------------------------------------------");
-//        Long swchoi123Post = savePostNotice(member);
-//        AdminPost adminPost = adminPostRepository.findById(swchoi123Post).orElseThrow();
-//        System.out.println("adminPost.getTitle() = " + adminPost.getTitle() + " " + adminPost.getMember().getUsername());
-//        Long swchoi1997Post = savePostNotice(member1);
-//        AdminPost adminPost2 = adminPostRepository.findById(swchoi1997Post).orElseThrow();
-//        System.out.println("adminPost.getTitle() = " + adminPost2.getTitle() + " " + adminPost2.getMember().getUsername());
-//
-//        System.out.println("-------------------------------------------");
-//        Long comment1swchoi123 = saveComment(member, adminPost);
-//        Comment comment = commentRepository.findById(comment1swchoi123).orElseThrow();
-//        System.out.println("comment = " + comment.getContent() + " " + comment.getWriter().getUsername());
-//        Long reComment1swchoi123 = saveReComment(member, adminPost, comment1swchoi123);
-//        Comment comment1 = commentRepository.findById(reComment1swchoi123).orElseThrow();
-//        System.out.println("comment = " + comment1.getContent() + " " + comment1.getWriter().getUsername());
-//
+        //when
+        CommentUpdateDto commentUpdateDto = CommentUpdateDto.builder().content("test2").build();
+        commentService.updateComment(test1, member, commentUpdateDto);
 
-//    }
+        //then
+        Comment updateComment = commentRepository.findByContent("test2").orElseThrow();
+        assertThat(updateComment.getContent()).isEqualTo("test2");
+    }
+
+    @Test
+    @WithMember("swchoi1997")
+    @DisplayName("댓글 수정 실패 - 권한없음(본인아님)")
+    public void updateCommentFailByNotAuth() throws Exception{
+        //given
+        Member member = memberRepository.findByUsername("swchoi1997").orElseThrow();
+        Long postId = savePostNotice(member);
+        CommentSaveDto commentSaveDto = CommentSaveDto.builder().content("test1").build();
+        commentService.saveComment(postId, member, commentSaveDto);
+        Long test1 = commentRepository.findByContent("test1").orElseThrow().getId();
+
+        //when
+        CommentUpdateDto commentUpdateDto = CommentUpdateDto.builder().content("test2").build();
+        Member newMember = memberRepository.findByUsername("swchoi123").orElseThrow();
+
+        //then
+        assertThrows(AccessDeniedException.class, () ->
+                commentService.updateComment(test1, newMember, commentUpdateDto));
+    }
+
+    @Test
+    @WithMember("swchoi1997")
+    @DisplayName("댓글 삭제 성공 - 첫번째 댓글 - 자식없음")
+    public void deleteCommentSuccessFirstComment() throws Exception{
+        //given
+        Member member = memberRepository.findByUsername("swchoi1997").orElseThrow();
+        Long postId = savePostNotice(member);
+        CommentSaveDto commentSaveDto = CommentSaveDto.builder().content("test1").build();
+        commentService.saveComment(postId, member, commentSaveDto);
+
+        Comment comment = commentRepository.findByContent("test1").orElseThrow();
+
+
+        //when
+        Long commentId = comment.getId();
+        commentService.deleteComment(commentId, member);
+
+        //then
+        assertThat(commentRepository.findAll().size()).isSameAs(110);
+        assertThat(adminPostRepository.findById(postId).get().getCommentList().size()).isSameAs(0);
+    }
+
+
+    @Test
+    @WithMember("swchoi1997")
+    @DisplayName("댓글 삭제 성공 - 첫번째 댓글 - 자식있음")
+    public void deleteCommentSuccessFirstCommentExistChild() throws Exception{
+        //given
+        Member member = memberRepository.findByUsername("swchoi1997").orElseThrow();
+        Long postId = savePostNotice(member);
+
+        CommentSaveDto parent = CommentSaveDto.builder().content("test1").build();
+        commentService.saveComment(postId, member, parent);
+        Comment comment = commentRepository.findByContent("test1").orElseThrow();
+
+        CommentSaveDto child = CommentSaveDto.builder().content("test2").build();
+        commentService.saveReComment(postId, member, comment.getId(), child);
+        Comment comment1 = commentRepository.findByContent("test2").orElseThrow();
+
+
+        //when
+        Long commentId = comment.getId();
+        commentService.deleteComment(commentId, member);
+
+        //then
+        assertThat(comment.getWriter()).isNull();
+        assertThat(comment.getContent()).isEqualTo("");
+        assertThat(comment.getChildComment().size()).isSameAs(1);
+        assertThat(comment1.getParentComment()).isNotNull();
+        assertThat(comment1.getParentComment().getWriter()).isNull();
+        assertThat(comment1.getParentComment().getContent()).isEqualTo("");
+    }
+
+    @Test
+    @WithMember("swchoi1997")
+    @DisplayName("댓글 삭제 성공 - 첫번째 댓글 - 자식없음 - 관리자 삭제")
+    public void deleteCommentSuccessByAdministrator() throws Exception{
+        //given
+        Member member = memberRepository.findByUsername("swchoi1997").orElseThrow();
+        Long postId = savePostNotice(member);
+        CommentSaveDto commentSaveDto = CommentSaveDto.builder().content("test1").build();
+        commentService.saveComment(postId, member, commentSaveDto);
+
+        Comment comment = commentRepository.findByContent("test1").orElseThrow();
+
+
+        //when
+        Long commentId = comment.getId();
+        member.setRole(Role.ADMIN);
+        commentService.deleteComment(commentId, member);
+
+        //then
+        assertThat(commentRepository.findAll().size()).isSameAs(110);
+        assertThat(adminPostRepository.findById(postId).get().getCommentList().size()).isSameAs(0);
+    }
+
+    @Test
+    @WithMember("swchoi1997")
+    @DisplayName("댓글 삭제 실패 - 작성자가 아님")
+    public void deleteCommentFail() throws Exception{
+        //given
+        Member member = memberRepository.findByUsername("swchoi1997").orElseThrow();
+        Long postId = savePostNotice(member);
+
+        CommentSaveDto parent = CommentSaveDto.builder().content("test1").build();
+        commentService.saveComment(postId, member, parent);
+        Comment comment = commentRepository.findByContent("test1").orElseThrow();
+
+        Member member2 = memberRepository.findByUsername("swchoi123").orElseThrow();
+
+        //when //then
+        Long commentId = comment.getId();
+        assertThrows(AccessDeniedException.class, () ->
+                commentService.deleteComment(commentId, member2));
+    }
 
 }

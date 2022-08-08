@@ -12,6 +12,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
+import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.CascadeType.REMOVE;
+
 @Slf4j
 @Entity
 @Getter
@@ -53,42 +56,19 @@ public class Member extends BaseEntity {
 
     private String bio;
 
-    @OneToMany(mappedBy = "member")
-//    private Set<Subject> subject = new HashSet<>();
+    @Builder.Default
+    @OneToMany(mappedBy = "member", orphanRemoval = true, cascade = ALL)
     private List<Subject> subject = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member")
+    @Builder.Default
+    @OneToMany(mappedBy = "member", orphanRemoval = true, cascade = REMOVE)
     private List<AdminPost> adminPosts = new ArrayList<>(); // NullpointerException 7.5 커밋내용 보기
-
-    @OneToMany(mappedBy = "writer")
-    private List<Comment> commentList = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
 
 
-    // == 연관관계 편의 메서드 ==//
-    public void addSubject(Subject subject) {
-        this.subject.add(subject);
-        if (subject.getMember() != this) {
-            subject.setMember(this);
-        }
-    }
-
-    public void addAdminPost(AdminPost adminPost) {
-        this.adminPosts.add(adminPost);
-        if (adminPost.getMember() != this) {
-            adminPost.setAuthor(this);
-        }
-    }
-
-    public void addComment(Comment comment) {
-        this.commentList.add(comment);
-        if (comment.getWriter() != this) {
-            comment.setWriter(this);
-        }
-    }
 
     public void setRole(Role role) {
         this.role = role;

@@ -13,12 +13,14 @@ import com.example.godtudy.global.advice.exception.CommentNotFoundException;
 import com.example.godtudy.global.advice.exception.MemberNotFoundException;
 import com.example.godtudy.global.advice.exception.PostNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -58,13 +60,14 @@ public class CommentServiceImpl implements CommentService{
     }
 
     @Override
-    public ResponseEntity<?> update(Long id, Member member, CommentUpdateDto commentUpdateDto) {
+    public ResponseEntity<?> updateComment(Long id, Member member, CommentUpdateDto commentUpdateDto) {
         checkIfUserAndNotTmpUser(member);
 
         Comment comment = commentRepository.findById(id).orElseThrow(
                 () -> new CommentNotFoundException("해당 댓글을 찾을 수 없습니다."));
 
-        if(comment.getWriter().getUsername().equals(member.getUsername())){
+        if(!comment.getWriter().getUsername().equals(member.getUsername())){
+            log.info(comment.getWriter().getUsername() + " ///" + member.getUsername());
             throw new AccessDeniedException("해당기능을 사용할 수없습니다.");
         }
 
@@ -77,21 +80,36 @@ public class CommentServiceImpl implements CommentService{
     }
 
     @Override
-    public void delete(Long id, Member member) {
+    public void deleteComment(Long id, Member member) {
         checkIfUserAndNotTmpUser(member);
-
         Comment comment = commentRepository.findById(id).orElseThrow(
                 () -> new CommentNotFoundException("해당 댓글을 찾을 수 없습니다."));
-        if (member.getRole() != Role.ADMIN && comment.getWriter().getUsername().equals(member.getUsername())) { //관리자는 댓글 삭제 가능해야함
-                throw new AccessDeniedException("해당기능을 사용할 수없습니다.");
+
+        AdminPost adminPost = checkPostExist(comment.getAdminPost().getId());
+
+        if (!comment.getWriter().equals(member)) {
+            if (member.getRole() == Role.ADMIN) {
+                deleteCommentLogic(member, adminPost, comment);
+                return;
+            }
+            throw new AccessDeniedException("해당기능을 사용할 수없습니다.");
         }
 
         // 대댓글이 존재하면 내용, 작성자는 Null로 저장, 존재하지 않으면 바로 삭제
         if (!comment.getChildComment().isEmpty()) {
             comment.removeParentCommentExistChildComment();
-        } else {
-            commentRepository.delete(comment);
+            commentRepository.save(comment);
+            return;
         }
+        deleteCommentLogic(member, adminPost, comment);
+
+    }
+
+    private void deleteCommentLogic(Member member, AdminPost adminPost, Comment comment) {
+//        member.getCommentList().remove(comment);
+//        adminPost.getCommentList().remove(comment);
+//        comment.getChildComment().remove(comment);
+        commentRepository.delete(comment);
     }
 
 
@@ -105,6 +123,7 @@ public class CommentServiceImpl implements CommentService{
             throw new AccessDeniedException("이메일 인증을 완료하세요");
         }
     }
+    // 게시글이 존재하는지 확인
     private AdminPost checkPostExist(Long postId) {
         return adminPostRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException("해당 게시글이 존재하지않습니다."));

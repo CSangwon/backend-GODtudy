@@ -5,12 +5,15 @@ import com.example.godtudy.domain.member.entity.Role;
 import com.example.godtudy.domain.member.repository.MemberRepository;
 import com.example.godtudy.domain.post.dto.request.PostSaveRequestDto;
 import com.example.godtudy.domain.post.dto.request.PostUpdateRequestDto;
+import com.example.godtudy.domain.post.dto.response.PostInfoResponseDto;
 import com.example.godtudy.domain.post.entity.AdminPost;
 import com.example.godtudy.domain.post.entity.AdminPostEnum;
 import com.example.godtudy.domain.post.repository.AdminPostRepository;
 import com.example.godtudy.global.file.File;
 import com.example.godtudy.global.file.FileRepository;
 import com.example.godtudy.global.file.service.FileService;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -119,7 +122,10 @@ public class AdminPostService implements PostService{
                 fileRepository.delete(filePath);
             }
         }
+
         adminPostRepository.delete(adminPost);
+//        adminPostRepository.deleteById(adminPost.getId());
+
 
         return new ResponseEntity<>("Notice Delete", HttpStatus.OK);
     }
@@ -128,18 +134,14 @@ public class AdminPostService implements PostService{
      * 게시물 1개 조회
      */
     @Override
-    public ResponseEntity<?> getPostInfo(Long id) {
-        return null;
+    public PostInfoResponseDto getPostInfo(Long postId) {
+        AdminPost adminPost = adminPostRepository.findAuthorById(postId).orElseThrow();
+        return new PostInfoResponseDto(adminPost);
     }
 
-
-    /**
-     * 검색조건에 따른 게시글 리스트 조회 페이징!
-     */
-
-
-
     //TODO 페이징해서 게시글 가져오는거 구현해야하고 파일 업로드하는거랑 댓글 기능까지 작성해야함, 테스트코드도 작성해야함
+
+
 
     /**
      * 관리자인지 확인
@@ -172,7 +174,6 @@ public class AdminPostService implements PostService{
         AdminPost adminPost = postSaveRequestDto.toEntity();
         adminPost.setAuthor(member); // 현재 맴버 매핑
         adminPost.setAdminPostEnum(post); // 현재 게시판 작성
-        member.addAdminPost(adminPost);
 
         return adminPost;
     }

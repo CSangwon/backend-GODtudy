@@ -91,7 +91,6 @@ public class MemberJoinForm {
                 .role(role)
                 .subject(new ArrayList<>())
                 .adminPosts(new ArrayList<>())
-                .commentList(new ArrayList<>())
                 .emailVerified(false)
                 .build();
     }

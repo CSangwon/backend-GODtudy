@@ -3,6 +3,7 @@ package com.example.godtudy.domain.post.service;
 import com.example.godtudy.domain.member.entity.Member;
 import com.example.godtudy.domain.post.dto.request.PostSaveRequestDto;
 import com.example.godtudy.domain.post.dto.request.PostUpdateRequestDto;
+import com.example.godtudy.domain.post.dto.response.PostInfoResponseDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,6 +24,6 @@ public interface PostService {
 
     ResponseEntity<?> deletePost(Member member, Long id);
 
-    ResponseEntity<?> getPostInfo(Long id);
+    PostInfoResponseDto getPostInfo(Long postId);
 
 }

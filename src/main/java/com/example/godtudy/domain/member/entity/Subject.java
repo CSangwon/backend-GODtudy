@@ -44,7 +44,6 @@ public class Subject {
         Subject subject = new Subject();
         subject.setMember(member);
         subject.setTitle(title);
-        member.addSubject(subject);
         return subject;
     }
 }
