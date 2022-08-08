@@ -122,8 +122,9 @@ public class AdminPostService implements PostService{
                 fileRepository.delete(filePath);
             }
         }
-        member.getAdminPosts().remove(adminPost);
-        adminPostRepository.deleteById(adminPost.getId());
+
+        adminPostRepository.delete(adminPost);
+//        adminPostRepository.deleteById(adminPost.getId());
 
 
         return new ResponseEntity<>("Notice Delete", HttpStatus.OK);

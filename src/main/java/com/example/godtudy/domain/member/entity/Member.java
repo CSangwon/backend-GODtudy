@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.CascadeType.REMOVE;
 
 @Slf4j
 @Entity
@@ -56,16 +57,12 @@ public class Member extends BaseEntity {
     private String bio;
 
     @Builder.Default
-    @OneToMany(mappedBy = "member", orphanRemoval = true, cascade = ALL) //TODO 옵션 없앴을때 deleteById로 삭제해보기!!
+    @OneToMany(mappedBy = "member", orphanRemoval = true, cascade = ALL)
     private List<Subject> subject = new ArrayList<>();
 
     @Builder.Default
-    @OneToMany(mappedBy = "member", orphanRemoval = true, cascade = ALL)
+    @OneToMany(mappedBy = "member", orphanRemoval = true, cascade = REMOVE)
     private List<AdminPost> adminPosts = new ArrayList<>(); // NullpointerException 7.5 커밋내용 보기
-
-    @Builder.Default
-    @OneToMany(mappedBy = "writer", orphanRemoval = true, cascade = ALL)
-    private List<Comment> commentList = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

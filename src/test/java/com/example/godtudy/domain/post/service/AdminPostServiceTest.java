@@ -402,13 +402,14 @@ class AdminPostServiceTest {
         PostSaveRequestDto postSaveRequestDto = PostSaveRequestDto.builder().title("test1").content("test1").build();
         postService.createPost(member, post, postSaveRequestDto);
 
+        assertThat(adminPostRepository.findAll().size()).isSameAs(11);
         //when
         AdminPost adminPost = adminPostRepository.findByTitle("test1").orElseThrow();
         postService.deletePost(member, adminPost.getId());
 
         //then
-        assertThat(adminPostRepository.findAll().size()).isSameAs(0);
-        assertThat(member.getAdminPosts().size()).isSameAs(0);
+        assertThat(adminPostRepository.findAll().size()).isSameAs(10);
+//        assertThat(member.getAdminPosts().size()).isSameAs(0);
     }
 
     @Test
@@ -423,12 +424,13 @@ class AdminPostServiceTest {
         multipartFiles.add(getMockUploadFile());
         postService.createPost(member,multipartFiles, post, postSaveRequestDto);
 
+        assertThat(adminPostRepository.findAll().size()).isSameAs(11);
         //when
         AdminPost adminPost = adminPostRepository.findByTitle("test1").orElseThrow();
         postService.deletePost(member, adminPost.getId());
 
         //then
-        assertThat(adminPostRepository.findAll().size()).isSameAs(0);
+        assertThat(adminPostRepository.findAll().size()).isSameAs(10);
         assertThat(fileRepository.findAll().size()).isSameAs(0);
     }
 
@@ -478,12 +480,41 @@ class AdminPostServiceTest {
     2. postService에서 post삭제 시 댓글 삭제 해줘야함
     3. 게시글 조회 시 댓글까지 조회되는지 확인 : 댓글의 대댓글까지 조화가 되야함!!
      */
+    @Test
+    @DisplayName("삭제시 댓글도 같이 삭제")
+    @WithMember("swchoi1997")
+    public void deletePostCheckMemberAndComment() throws Exception{
+        //given
+        Member member2 = memberRepository.findByUsername("swchoi1997").orElseThrow();
+        member2.setRole(Role.ADMIN);
+
+        PostSaveRequestDto postSaveRequestDto2 = PostSaveRequestDto.builder().title("test2").content("content2").build();
+        postService.createPost(member2, "event", postSaveRequestDto2);
+        AdminPost adminPost2 = adminPostRepository.findByTitle("test2").orElseThrow();
+
+        CommentSaveDto commentSaveDto2 = CommentSaveDto.builder().content("comment2").build();
+        commentService.saveComment(adminPost2.getId(), member2, commentSaveDto2);
+        Comment comment2 = commentRepository.findByContent("comment2").orElseThrow();
+
+        CommentSaveDto reCommentSaveDto2 = CommentSaveDto.builder().content("comment4").build();
+        commentService.saveReComment(adminPost2.getId(), member2, comment2.getId(), reCommentSaveDto2);
+
+        assertThat(commentRepository.findAll().size()).isSameAs(112);
+        //when
+//        adminPost2 = adminPostRepository.findByTitle("test2").orElseThrow();
+        postService.deletePost(member2, adminPost2.getId());
+
+        //then
+        assertThat(commentRepository.findAll().size()).isSameAs(110);
+        assertThat(adminPostRepository.findAll().size()).isSameAs(10);
+        assertThat(member2.getAdminPosts().size()).isSameAs(0);
+    }
 
 
     @Test
     @DisplayName("게시물 조회 1개")
     @WithMember("swchoi1997")
-    void post(){
+    void postFindJustOne(){
         //given
         Member member1 = memberRepository.findByUsername("swchoi123").orElseThrow();
         Member member2 = memberRepository.findByUsername("swchoi1997").orElseThrow();

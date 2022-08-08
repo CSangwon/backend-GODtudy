@@ -29,7 +29,7 @@ public class InitDb {
     private final MemberInitService initService;
     private final static int COUNT = 6;
     private final static int POST_COUNT = 10;
-    private final static int COMMENT_COUNT = 50;
+    private final static int COMMENT_COUNT = 10;
 
 
     @PostConstruct

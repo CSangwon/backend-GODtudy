@@ -13,6 +13,8 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static javax.persistence.CascadeType.ALL;
+
 @Entity
 @Getter
 @NoArgsConstructor
@@ -36,7 +38,7 @@ public class Comment extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private Comment parentComment;
 
-    @OneToMany(mappedBy = "parentComment", orphanRemoval = true)
+    @OneToMany(mappedBy = "parentComment",cascade = ALL,orphanRemoval = true)
     private List<Comment> childComment = new ArrayList<>();
 
     private Boolean isFirstComment = false;
@@ -51,13 +53,6 @@ public class Comment extends BaseEntity {
         adminPost.getCommentList().add(this);
     }
 
-    public void setWriter(Member member) {
-        if (this.writer != null) {
-            this.writer.getCommentList().remove(this);
-        }
-        this.writer = member;
-        writer.getCommentList().add(this);
-    }
 
     public void setIsFirstComment(){
         this.isFirstComment = true;
@@ -82,4 +77,7 @@ public class Comment extends BaseEntity {
         this.writer = null;
     }
 
+    public void setWriter(Member member) {
+        this.writer = member;
+    }
 }

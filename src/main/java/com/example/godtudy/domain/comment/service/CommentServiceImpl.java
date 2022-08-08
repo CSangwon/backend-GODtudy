@@ -106,9 +106,9 @@ public class CommentServiceImpl implements CommentService{
     }
 
     private void deleteCommentLogic(Member member, AdminPost adminPost, Comment comment) {
-        member.getCommentList().remove(comment);
-        adminPost.getCommentList().remove(comment);
-        comment.getChildComment().remove(comment);
+//        member.getCommentList().remove(comment);
+//        adminPost.getCommentList().remove(comment);
+//        comment.getChildComment().remove(comment);
         commentRepository.delete(comment);
     }
 

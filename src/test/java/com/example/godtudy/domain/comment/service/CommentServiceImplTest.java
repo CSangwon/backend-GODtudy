@@ -238,8 +238,7 @@ class CommentServiceImplTest {
         commentService.deleteComment(commentId, member);
 
         //then
-        assertThat(commentRepository.findAll().size()).isSameAs(0);
-        assertThat(member.getCommentList().size()).isSameAs(0);
+        assertThat(commentRepository.findAll().size()).isSameAs(110);
         assertThat(adminPostRepository.findById(postId).get().getCommentList().size()).isSameAs(0);
     }
 
@@ -293,8 +292,7 @@ class CommentServiceImplTest {
         commentService.deleteComment(commentId, member);
 
         //then
-        assertThat(commentRepository.findAll().size()).isSameAs(0);
-        assertThat(member.getCommentList().size()).isSameAs(0);
+        assertThat(commentRepository.findAll().size()).isSameAs(110);
         assertThat(adminPostRepository.findById(postId).get().getCommentList().size()).isSameAs(0);
     }
 
