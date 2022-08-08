@@ -5,8 +5,11 @@ import com.example.godtudy.domain.member.dto.request.profile.PasswordUpdateReque
 import com.example.godtudy.domain.member.dto.request.profile.ProfileRequestDto;
 import com.example.godtudy.domain.member.dto.response.ProfileResponseDto;
 import com.example.godtudy.domain.member.entity.Member;
+import com.example.godtudy.domain.member.entity.Role;
 import com.example.godtudy.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,14 +24,7 @@ public class ProfileService {
     private final PasswordEncoder passwordEncoder;
 
     public ProfileResponseDto getProfile(Member member) {
-        return ProfileResponseDto.builder()
-                .username(member.getUsername())
-                .email(member.getEmail())
-                .nickname(member.getNickname())
-                .bio(member.getBio())
-                .profileImageUrl(member.getProfileImageUrl())
-                .subject(member.getSubject())
-                .build();
+        return new ProfileResponseDto(member);
     }
 
     public void updateProfile(Member member, ProfileRequestDto profileRequestDto) {
@@ -45,5 +41,12 @@ public class ProfileService {
         memberRepository.save(member);
         //업데이트 후 로그아웃
         memberService.logout(new MemberLogoutRequestDto(member.getUsername()));
+    }
+
+    public Page<ProfileResponseDto> searchMember(String username, Role role, Pageable pageable) {
+        Page<Member> members = memberRepository.findByUsernameContainsAndRole(username, role, pageable);
+        Page<ProfileResponseDto> memberList = members.map(entity -> new ProfileResponseDto(entity));
+
+        return memberList;
     }
 }

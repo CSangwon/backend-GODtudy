@@ -5,12 +5,15 @@ import com.example.godtudy.domain.member.entity.Role;
 import com.example.godtudy.domain.member.repository.MemberRepository;
 import com.example.godtudy.domain.post.dto.request.PostSaveRequestDto;
 import com.example.godtudy.domain.post.dto.request.PostUpdateRequestDto;
+import com.example.godtudy.domain.post.dto.response.PostInfoResponseDto;
 import com.example.godtudy.domain.post.entity.AdminPost;
 import com.example.godtudy.domain.post.entity.AdminPostEnum;
 import com.example.godtudy.domain.post.repository.AdminPostRepository;
 import com.example.godtudy.global.file.File;
 import com.example.godtudy.global.file.FileRepository;
 import com.example.godtudy.global.file.service.FileService;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -42,7 +45,7 @@ public class AdminPostService implements PostService{
 
     // 게시물 저장 - 파일 없음
     @Override
-    public ResponseEntity<?> createAdminPost(Member member, String post, PostSaveRequestDto postSaveRequestDto) {
+    public ResponseEntity<?> createPost(Member member, String post, PostSaveRequestDto postSaveRequestDto) {
         AdminPost adminPost = createAdminPostBefore(member, post, postSaveRequestDto);
         adminPostRepository.save(adminPost);
 
@@ -50,7 +53,7 @@ public class AdminPostService implements PostService{
     }
     // 게시물 저장 - 파일 있음
     @Override
-    public ResponseEntity<?> createAdminPost(Member member, List<MultipartFile> files,
+    public ResponseEntity<?> createPost(Member member, List<MultipartFile> files,
                                              String post, PostSaveRequestDto postSaveRequestDto) throws IOException {
         AdminPost adminPost = createAdminPostBefore(member, post, postSaveRequestDto);
         //file 저장
@@ -66,7 +69,7 @@ public class AdminPostService implements PostService{
      */
     // 게시물 수정 - 파일 없음
     @Override
-    public ResponseEntity<?> updateAdminPost(Member member, String post, Long id, PostUpdateRequestDto postUpdateRequestDto){
+    public ResponseEntity<?> updatePost(Member member, String post, Long id, PostUpdateRequestDto postUpdateRequestDto){
         AdminPost adminPost = updateAdminPostBefore(member, id, post);
         adminPost.updateAdminPost(postUpdateRequestDto);
 
@@ -85,7 +88,7 @@ public class AdminPostService implements PostService{
     }
     // 게시물 수정 - 파일 있음
     @Override
-    public ResponseEntity<?> updateAdminPost(Member member, String post, List<MultipartFile> files,
+    public ResponseEntity<?> updatePost(Member member, String post, List<MultipartFile> files,
                                              Long id, PostUpdateRequestDto postUpdateRequestDto) throws IOException {
         AdminPost adminPost = updateAdminPostBefore(member, id, post);
         adminPost.updateAdminPost(postUpdateRequestDto);
@@ -107,7 +110,7 @@ public class AdminPostService implements PostService{
      * 게시물 삭제
      */
     @Override
-    public ResponseEntity<?> deleteAdminPost(Member member, Long id) {
+    public ResponseEntity<?> deletePost(Member member, Long id) {
         AdminPost adminPost = adminPostRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시물이 존재하지 않습니다."));
         checkIfAdmin(member);
@@ -119,7 +122,10 @@ public class AdminPostService implements PostService{
                 fileRepository.delete(filePath);
             }
         }
+
         adminPostRepository.delete(adminPost);
+//        adminPostRepository.deleteById(adminPost.getId());
+
 
         return new ResponseEntity<>("Notice Delete", HttpStatus.OK);
     }
@@ -128,18 +134,14 @@ public class AdminPostService implements PostService{
      * 게시물 1개 조회
      */
     @Override
-    public ResponseEntity<?> getAdminPostInfo(Long id) {
-        return null;
+    public PostInfoResponseDto getPostInfo(Long postId) {
+        AdminPost adminPost = adminPostRepository.findAuthorById(postId).orElseThrow();
+        return new PostInfoResponseDto(adminPost);
     }
 
-
-    /**
-     * 검색조건에 따른 게시글 리스트 조회 페이징!
-     */
-
-
-
     //TODO 페이징해서 게시글 가져오는거 구현해야하고 파일 업로드하는거랑 댓글 기능까지 작성해야함, 테스트코드도 작성해야함
+
+
 
     /**
      * 관리자인지 확인
@@ -169,10 +171,9 @@ public class AdminPostService implements PostService{
 
     private AdminPost createAdminPostBefore(Member member, String post, PostSaveRequestDto postSaveRequestDto) {
         checkIfAdmin(member); //관리자인지 확인
-        AdminPost adminPost = postSaveRequestDto.toNoticeEntity();
+        AdminPost adminPost = postSaveRequestDto.toEntity();
         adminPost.setAuthor(member); // 현재 맴버 매핑
         adminPost.setAdminPostEnum(post); // 현재 게시판 작성
-        member.addAdminPost(adminPost);
 
         return adminPost;
     }

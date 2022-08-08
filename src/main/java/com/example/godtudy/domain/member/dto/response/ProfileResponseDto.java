@@ -1,15 +1,16 @@
 package com.example.godtudy.domain.member.dto.response;
 
+import com.example.godtudy.domain.member.entity.Member;
 import com.example.godtudy.domain.member.entity.Subject;
+import com.example.godtudy.domain.member.entity.SubjectEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
@@ -28,8 +29,16 @@ public class ProfileResponseDto {
     private String profileImageUrl;
 
     //    private Set<Subject> subject = new HashSet<>();
-    private List<Subject> subject = new ArrayList<>();
+    private List<SubjectEnum> subject = new ArrayList<>();
 
 
+    public ProfileResponseDto(Member member) {
+        this.username = member.getUsername();
+        this.email = member.getEmail();
+        this.nickname = member.getNickname();
+        this.bio = member.getBio();
+        this.profileImageUrl = member.getProfileImageUrl();
+        this.subject = member.getSubject().stream().map(Subject::getTitle).collect(Collectors.toList());
+    }
 
 }

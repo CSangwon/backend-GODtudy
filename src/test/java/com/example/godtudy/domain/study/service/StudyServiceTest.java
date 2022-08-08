@@ -3,6 +3,7 @@ package com.example.godtudy.domain.study.service;
 import com.example.godtudy.WithMember;
 import com.example.godtudy.domain.member.entity.Member;
 import com.example.godtudy.domain.member.entity.Role;
+import com.example.godtudy.domain.member.entity.SubjectEnum;
 import com.example.godtudy.domain.member.repository.MemberRepository;
 import com.example.godtudy.domain.study.dto.request.CreateStudyRequestDto;
 import com.example.godtudy.domain.study.dto.request.UpdateStudyRequestDto;
@@ -19,6 +20,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -45,14 +48,17 @@ class StudyServiceTest {
                 .orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
         teacher.setRole(Role.TEACHER);
 
+
+
         Member newStudent = Member.builder()
                 .name("user1")
                 .username("user1")
                 .password(passwordEncoder.encode("user1"))
                 .email("user1@gmail.com")
                 .nickname("nickname1")
-                .birthday(LocalDate.of(2010,2,12))
+                .birthday(LocalDate.of(2010, 2, 12))
                 .role(Role.STUDENT)
+                .subject(new ArrayList<>())
                 .build();
 
         Member student = memberRepository.save(newStudent);
@@ -86,6 +92,7 @@ class StudyServiceTest {
                 .nickname("nickname2")
                 .birthday(LocalDate.of(2010,2,12))
                 .role(Role.STUDENT)
+                .subject(new ArrayList<>())
                 .build();
 
         Member saveStudent = memberRepository.save(student);
@@ -143,6 +150,7 @@ class StudyServiceTest {
                 .nickname("nickname3")
                 .birthday(LocalDate.of(2010,3,20))
                 .role(Role.TEACHER)
+                .subject(new ArrayList<>())
                 .build();
 
         String url = "new_study";
