@@ -4,8 +4,10 @@ import com.example.godtudy.domain.member.entity.Member;
 import com.example.godtudy.domain.member.entity.Role;
 import com.example.godtudy.domain.member.repository.MemberRepository;
 import com.example.godtudy.domain.post.dto.request.PostSaveRequestDto;
+import com.example.godtudy.domain.post.dto.request.PostSearchCondition;
 import com.example.godtudy.domain.post.dto.request.PostUpdateRequestDto;
 import com.example.godtudy.domain.post.dto.response.PostInfoResponseDto;
+import com.example.godtudy.domain.post.dto.response.PostPagingDto;
 import com.example.godtudy.domain.post.entity.AdminPost;
 import com.example.godtudy.domain.post.entity.AdminPostEnum;
 import com.example.godtudy.domain.post.repository.AdminPostRepository;
@@ -16,6 +18,8 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -135,13 +139,22 @@ public class AdminPostService implements PostService{
      */
     @Override
     public PostInfoResponseDto getPostInfo(Long postId) {
+
         AdminPost adminPost = adminPostRepository.findAuthorById(postId).orElseThrow();
         return new PostInfoResponseDto(adminPost);
     }
 
-    //TODO 페이징해서 게시글 가져오는거 구현해야하고 파일 업로드하는거랑 댓글 기능까지 작성해야함, 테스트코드도 작성해야함
 
+    /**
+     * 게시물 페이징 처리
+     */
+    @Override
+    public PostPagingDto getPostList(Pageable pageable, PostSearchCondition postSearchCondition) {
 
+        Page<AdminPost> searchResultAdminPost = adminPostRepository.search(postSearchCondition, pageable);
+        return new PostPagingDto().postPagingDtoByAdminPost(searchResultAdminPost);
+
+    }
 
     /**
      * 관리자인지 확인
