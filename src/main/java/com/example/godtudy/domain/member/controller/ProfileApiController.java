@@ -48,7 +48,7 @@ public class ProfileApiController {
     }
 
     //프로필 목록 검색
-    @GetMapping("/member/search")
+    @GetMapping("/list")
     public ResponseEntity<?> getProfiles(
             @RequestParam(value = "username") String username,
             @RequestParam(value = "role") Role role,
