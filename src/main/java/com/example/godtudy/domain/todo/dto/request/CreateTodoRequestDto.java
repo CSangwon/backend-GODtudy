@@ -1,9 +1,15 @@
 package com.example.godtudy.domain.todo.dto.request;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Data
 public class CreateTodoRequestDto {
 
@@ -11,6 +17,6 @@ public class CreateTodoRequestDto {
 
     private String content;
 
-    private LocalDateTime endDate;
+    private String endDate;
 
 }

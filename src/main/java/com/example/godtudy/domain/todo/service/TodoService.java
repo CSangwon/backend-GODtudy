@@ -9,9 +9,12 @@ import com.example.godtudy.domain.todo.entity.Todo;
 import com.example.godtudy.domain.todo.repository.TodoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.NoSuchElementException;
 
 @Transactional(readOnly = true)
@@ -39,14 +42,18 @@ public class TodoService {
     public TodoDto createTodo(String studyUrl, CreateTodoRequestDto createTodoRequestDto) {
         Study study = findStudyByUrl(studyUrl);
 
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime endDate = LocalDateTime.parse(createTodoRequestDto.getEndDate(), formatter);
+
         Todo todo = Todo.builder()
                 .title(createTodoRequestDto.getTitle())
                 .content(createTodoRequestDto.getContent())
-                .endDate(createTodoRequestDto.getEndDate())
+                .endDate(endDate)
                 .study(study)
                 .build();
 
         Todo savedTodo = todoRepository.save(todo);
+        study.getTodoList().add(savedTodo);
         TodoDto todoDto = TodoEntityToDto(savedTodo);
         return todoDto;
     }
@@ -74,9 +81,9 @@ public class TodoService {
         return TodoEntityToDto(todo);
     }
 
-    public Page<TodoDto> getTodos(String studyUrl) {
+    public Page<TodoDto> getTodos(String studyUrl, Pageable pageable) {
         Study study = findStudyByUrl(studyUrl);
-        Page<Todo> todoPage = todoRepository.findTodoByStudy(study);
+        Page<Todo> todoPage = todoRepository.findTodoByStudy(study, pageable);
         Page<TodoDto> todoDtoPage = todoPage.map(entity -> new TodoDto(entity));
         return todoDtoPage;
     }
