@@ -31,6 +31,7 @@ public class Study {
     @JoinColumn(name = "student_id")
     private Member student;
 
+    @Builder.Default
     @OneToMany(mappedBy = "study")
     private List<Todo> todoList = new ArrayList<>();
 

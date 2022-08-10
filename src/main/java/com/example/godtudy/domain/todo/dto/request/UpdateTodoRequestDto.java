@@ -8,15 +8,16 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Data
-public class CreateTodoRequestDto {
+public class UpdateTodoRequestDto {
+
+    private Long id;
 
     private String title;
 
     private String content;
 
-    private String endDate;
-
+    private LocalDateTime endDate;
 }
