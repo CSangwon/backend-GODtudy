@@ -26,7 +26,7 @@ public interface PostService {
     ResponseEntity<?> updatePost(Member member, String post, List<MultipartFile> files,
                                       Long id, PostUpdateRequestDto postUpdateRequestDto) throws IOException;
 
-    ResponseEntity<?> deletePost(Member member, Long id);
+    ResponseEntity<?> deletePost(Member member, String post, Long id);
 
     PostInfoResponseDto getPostInfo(Long postId);
 

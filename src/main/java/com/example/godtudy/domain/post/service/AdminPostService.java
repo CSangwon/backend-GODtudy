@@ -14,8 +14,6 @@ import com.example.godtudy.domain.post.repository.AdminPostRepository;
 import com.example.godtudy.global.file.File;
 import com.example.godtudy.global.file.FileRepository;
 import com.example.godtudy.global.file.service.FileService;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -43,10 +41,6 @@ public class AdminPostService implements PostService{
     private final FileRepository fileRepository;
     private final FileService fileService;
 
-    /**
-     * 게시물 등록
-     */
-
     // 게시물 저장 - 파일 없음
     @Override
     public ResponseEntity<?> createPost(Member member, String post, PostSaveRequestDto postSaveRequestDto) {
@@ -62,7 +56,6 @@ public class AdminPostService implements PostService{
         AdminPost adminPost = createAdminPostBefore(member, post, postSaveRequestDto);
         //file 저장
         saveFile(adminPost, files);
-
         adminPostRepository.save(adminPost);
 
         return new ResponseEntity<>("Notice Create", HttpStatus.OK);
@@ -76,14 +69,7 @@ public class AdminPostService implements PostService{
     public ResponseEntity<?> updatePost(Member member, String post, Long id, PostUpdateRequestDto postUpdateRequestDto){
         AdminPost adminPost = updateAdminPostBefore(member, id, post);
         adminPost.updateAdminPost(postUpdateRequestDto);
-
-        if (!adminPost.getFiles().isEmpty()) {
-            for (File filePath : adminPost.getFiles()) {
-                fileService.delete(filePath.getFilePath());
-                fileRepository.delete(filePath);
-            }
-            adminPost.initFiles();
-        }
+        beforeAdminPostUpdateFileInit(adminPost);
 
         adminPostRepository.save(adminPost);
 
@@ -96,14 +82,7 @@ public class AdminPostService implements PostService{
                                              Long id, PostUpdateRequestDto postUpdateRequestDto) throws IOException {
         AdminPost adminPost = updateAdminPostBefore(member, id, post);
         adminPost.updateAdminPost(postUpdateRequestDto);
-
-        if (!adminPost.getFiles().isEmpty()) {
-            for (File filePath : adminPost.getFiles()) {
-                fileService.delete(filePath.getFilePath());
-                fileRepository.delete(filePath);
-            }
-            adminPost.initFiles();
-        }
+        beforeAdminPostUpdateFileInit(adminPost);
 
         saveFile(adminPost, files);
         adminPostRepository.save(adminPost);
@@ -114,22 +93,12 @@ public class AdminPostService implements PostService{
      * 게시물 삭제
      */
     @Override
-    public ResponseEntity<?> deletePost(Member member, Long id) {
-        AdminPost adminPost = adminPostRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 게시물이 존재하지 않습니다."));
-        checkAuthor(member, adminPost);
-        checkIfAdmin(member);
-
-        if (!adminPost.getFiles().isEmpty()) {
-            for (File filePath : adminPost.getFiles()) {
-                fileService.delete(filePath.getFilePath());
-                fileRepository.delete(filePath);
-            }
-        }
+    public ResponseEntity<?> deletePost(Member member, String post, Long id) {
+        AdminPost adminPost = deleteAdminPostBefore(member, post, id);
+        deleteFile(adminPost);
 
         member.getAdminPosts().remove(adminPost);
         adminPostRepository.delete(adminPost);
-//        adminPostRepository.deleteById(adminPost.getId());
-
 
         return new ResponseEntity<>("Notice Delete", HttpStatus.OK);
     }
@@ -144,25 +113,29 @@ public class AdminPostService implements PostService{
         return new PostInfoResponseDto(adminPost);
     }
 
-
     /**
      * 게시물 페이징 처리
      */
     @Override
     public PostPagingDto getPostList(Pageable pageable, PostSearchCondition postSearchCondition) {
-
         Page<AdminPost> searchResultAdminPost = adminPostRepository.search(postSearchCondition, pageable);
         return new PostPagingDto().postPagingDtoByAdminPost(searchResultAdminPost);
 
     }
 
     /**
+     * 존재하는 회원인지 확인
+     */
+    private void checkMemberExist(Member member) {
+        memberRepository.findByUsername(member.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 회원입니다."));
+    }
+
+    /**
      * 관리자인지 확인
      */
     private void checkIfAdmin(Member member) {
-        Member checkMember = memberRepository.findByUsername(member.getUsername())
-                .orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 회원입니다."));
-        if (!checkMember.getRole().equals(Role.ADMIN) ) {
+        if (!member.getRole().equals(Role.ADMIN) ) {
             throw new AccessDeniedException("해당 기능을 사용할 수 없습니다.");
         }
     }
@@ -171,9 +144,6 @@ public class AdminPostService implements PostService{
      * 이 게시글의 작성자인지 확인
      */
     private void checkAuthor(Member member, AdminPost adminPost) {
-        memberRepository.findByUsername(member.getUsername())
-                .orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 회원입니다."));
-
         if (!adminPost.getMember().getUsername().equals(member.getUsername())) {
             throw new AccessDeniedException("해당 기능을 사용할 수 없습니다.");
         }
@@ -185,8 +155,20 @@ public class AdminPostService implements PostService{
         }
     }
 
-    private AdminPost createAdminPostBefore(Member member, String post, PostSaveRequestDto postSaveRequestDto) {
+    /**
+     * adminpostService실행 전
+     * 존재하는 맴버인지, 관리자인지 확인
+     */
+    private void adminPostBefore(Member member) {
+        checkMemberExist(member); // 존재하는 맴버인지 확인
         checkIfAdmin(member); //관리자인지 확인
+    }
+
+    /**
+     * adminpost 생전 전 확인해야할 것들
+     */
+    private AdminPost createAdminPostBefore(Member member, String post, PostSaveRequestDto postSaveRequestDto) {
+        adminPostBefore(member);
         AdminPost adminPost = postSaveRequestDto.toEntity();
         adminPost.setAuthor(member); // 현재 맴버 매핑
         adminPost.setAdminPostEnum(post); // 현재 게시판 작성
@@ -194,16 +176,34 @@ public class AdminPostService implements PostService{
         return adminPost;
     }
 
+    /**
+     * adminpost 수정 전 확인해야할 것들
+     */
     private AdminPost updateAdminPostBefore(Member member, Long id, String post) {
+        adminPostBefore(member);
         AdminPost adminPost = adminPostRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시물이 존재하지 않습니다."));
-        checkIfAdmin(member); //관리자 인지 확인
         checkAuthor(member, adminPost); // 작성자 인지 확인
         checkCategory(adminPost, post); // 공지사항 <-> 이벤트 가 바뀌지 않았는지 확인
 
         return adminPost;
     }
 
+    /**
+     * adminpost 삭제 전 확인해야할 것들
+     */
+    private AdminPost deleteAdminPostBefore(Member member, String post, Long id) {
+        adminPostBefore(member);
+        AdminPost adminPost = adminPostRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 게시물이 존재하지 않습니다."));
+        checkAuthor(member, adminPost);
+
+        return adminPost;
+    }
+
+    /**
+     * file 저장
+     */
     private void saveFile(AdminPost adminPost, List<MultipartFile> files) throws IOException {
         List<String> saveFilesPath = fileService.save(files);
         for (String filePath : saveFilesPath) {
@@ -213,6 +213,26 @@ public class AdminPostService implements PostService{
             adminPost.addFiles(file);
 
             fileRepository.save(file);
+        }
+    }
+
+    /**
+     * 게시글 수정 전 파일이 있으면 초기화함
+     */
+    private void beforeAdminPostUpdateFileInit(AdminPost adminPost){
+        deleteFile(adminPost);
+        adminPost.initFiles();
+    }
+
+    /**
+     *  파일 삭제
+     */
+    private void deleteFile(AdminPost adminPost) {
+        if (!adminPost.getFiles().isEmpty()) {
+            for (File filePath : adminPost.getFiles()) {
+                fileService.delete(filePath.getFilePath());
+                fileRepository.delete(filePath);
+            }
         }
     }
 

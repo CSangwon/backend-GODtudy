@@ -41,7 +41,7 @@ public class StudyPostService implements PostService{
     }
 
     @Override
-    public ResponseEntity<?> deletePost(Member member, Long id) {
+    public ResponseEntity<?> deletePost(Member member, String post, Long id) {
         return null;
     }
 

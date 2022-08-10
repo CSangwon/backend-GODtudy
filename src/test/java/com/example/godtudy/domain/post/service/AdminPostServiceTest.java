@@ -410,7 +410,7 @@ class AdminPostServiceTest {
         assertThat(adminPostRepository.findAll().size()).isSameAs(11);
         //when
         AdminPost adminPost = adminPostRepository.findByTitle("test1").orElseThrow();
-        postService.deletePost(member, adminPost.getId());
+        postService.deletePost(member, post, adminPost.getId());
 
         //then
         assertThat(adminPostRepository.findAll().size()).isSameAs(10);
@@ -432,7 +432,7 @@ class AdminPostServiceTest {
         assertThat(adminPostRepository.findAll().size()).isSameAs(11);
         //when
         AdminPost adminPost = adminPostRepository.findByTitle("test1").orElseThrow();
-        postService.deletePost(member, adminPost.getId());
+        postService.deletePost(member, post, adminPost.getId());
 
         //then
         assertThat(adminPostRepository.findAll().size()).isSameAs(10);
@@ -456,7 +456,7 @@ class AdminPostServiceTest {
 
         //then
         Assertions.assertThrows(AccessDeniedException.class, () ->
-                postService.deletePost(member, adminPost.getId()));
+                postService.deletePost(member, post, adminPost.getId()));
     }
 
     @Test
@@ -475,7 +475,7 @@ class AdminPostServiceTest {
 
         //then
         Assertions.assertThrows(AccessDeniedException.class, () ->
-                postService.deletePost(tmpMember, adminPost.getId()));
+                postService.deletePost(tmpMember, post, adminPost.getId()));
     }
 
 
@@ -514,7 +514,7 @@ class AdminPostServiceTest {
         assertThat(adminPostRepository.findAll().size()).isSameAs(11);
 
         //when
-        postService.deletePost(member2, adminPost2.getId());
+        postService.deletePost(member2, "event", adminPost2.getId());
 
         //then
         assertThat(commentRepository.findAll().size()).isSameAs(110);
