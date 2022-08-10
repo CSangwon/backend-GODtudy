@@ -67,9 +67,8 @@ public class AdminPostService implements PostService{
     // 게시물 수정 - 파일 없음
     @Override
     public ResponseEntity<?> updatePost(Member member, String post, Long id, PostUpdateRequestDto postUpdateRequestDto){
-        AdminPost adminPost = updateAdminPostBefore(member, id, post);
+        AdminPost adminPost = updateAdminPostBefore(member, post, id);
         adminPost.updateAdminPost(postUpdateRequestDto);
-        beforeAdminPostUpdateFileInit(adminPost);
 
         adminPostRepository.save(adminPost);
 
@@ -80,12 +79,12 @@ public class AdminPostService implements PostService{
     @Override
     public ResponseEntity<?> updatePost(Member member, String post, List<MultipartFile> files,
                                              Long id, PostUpdateRequestDto postUpdateRequestDto) throws IOException {
-        AdminPost adminPost = updateAdminPostBefore(member, id, post);
+        AdminPost adminPost = updateAdminPostBefore(member, post, id);
         adminPost.updateAdminPost(postUpdateRequestDto);
-        beforeAdminPostUpdateFileInit(adminPost);
-
         saveFile(adminPost, files);
+
         adminPostRepository.save(adminPost);
+
         return new ResponseEntity<>("Notice Update", HttpStatus.OK);
     }
 
@@ -94,7 +93,7 @@ public class AdminPostService implements PostService{
      */
     @Override
     public ResponseEntity<?> deletePost(Member member, String post, Long id) {
-        AdminPost adminPost = deleteAdminPostBefore(member, post, id);
+        AdminPost adminPost = updateOrDeleteAdminPostBefore(member, post, id);
         deleteFile(adminPost);
 
         member.getAdminPosts().remove(adminPost);
@@ -108,7 +107,6 @@ public class AdminPostService implements PostService{
      */
     @Override
     public PostInfoResponseDto getPostInfo(Long postId) {
-
         AdminPost adminPost = adminPostRepository.findAuthorById(postId).orElseThrow();
         return new PostInfoResponseDto(adminPost);
     }
@@ -120,8 +118,9 @@ public class AdminPostService implements PostService{
     public PostPagingDto getPostList(Pageable pageable, PostSearchCondition postSearchCondition) {
         Page<AdminPost> searchResultAdminPost = adminPostRepository.search(postSearchCondition, pageable);
         return new PostPagingDto().postPagingDtoByAdminPost(searchResultAdminPost);
-
     }
+
+
 
     /**
      * 존재하는 회원인지 확인
@@ -179,7 +178,7 @@ public class AdminPostService implements PostService{
     /**
      * adminpost 수정 전 확인해야할 것들
      */
-    private AdminPost updateAdminPostBefore(Member member, Long id, String post) {
+    private AdminPost updateOrDeleteAdminPostBefore(Member member, String post , Long id) {
         adminPostBefore(member);
         AdminPost adminPost = adminPostRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시물이 존재하지 않습니다."));
@@ -192,11 +191,9 @@ public class AdminPostService implements PostService{
     /**
      * adminpost 삭제 전 확인해야할 것들
      */
-    private AdminPost deleteAdminPostBefore(Member member, String post, Long id) {
-        adminPostBefore(member);
-        AdminPost adminPost = adminPostRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 게시물이 존재하지 않습니다."));
-        checkAuthor(member, adminPost);
+    private AdminPost updateAdminPostBefore(Member member, String post, Long id) {
+        AdminPost adminPost = updateOrDeleteAdminPostBefore(member, post , id);
+        beforeAdminPostUpdateFileInit(adminPost);
 
         return adminPost;
     }
@@ -235,8 +232,5 @@ public class AdminPostService implements PostService{
             }
         }
     }
-
-
-
 
 }
