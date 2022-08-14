@@ -15,6 +15,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -157,6 +160,64 @@ class TodoServiceTest {
         assertEquals(0, todo.getStudy().getTodoList().size());
         assertEquals(0, study.getTodoList().size());
 
+    }
+
+    @WithMember("swchoi1997")
+    @Test
+    public void 할일_단건조회() throws Exception {
+        //given
+        String studyUrl = "new_study";
+        Study study = studyRepository.findByUrl(studyUrl);
+        Todo todo = Todo.builder()
+                .title("삭제할 과제입니당")
+                .content("p.10까지 수학과제 해야합니당")
+                .study(study)
+                .endDate(LocalDateTime.now())
+                .build();
+
+        Todo saveTodo = todoRepository.save(todo);
+        //when
+        TodoDto todoDto = todoService.getTodo(saveTodo.getId());
+
+        //then
+        assertEquals(todo.getId(), todoDto.getId());
+        assertEquals(todo.getTitle(), todoDto.getTitle());
+        assertEquals(todo.getContent(), todoDto.getContent());
+        assertEquals(todo.getEndDate(), todoDto.getEndDate());
+        assertEquals(todo.getStudy().getUrl(), todoDto.getStudyUrl());
+
+    }
+
+    @WithMember("swchoi1997")
+    @Test
+    public void 할일_페이징_조회() throws Exception {
+        //given
+        String studyUrl = "new_study";
+        Study study = studyRepository.findByUrl(studyUrl);
+        Todo todo1 = Todo.builder()
+                .title("new_todo1")
+                .content("new_todo1_content")
+                .study(study)
+                .endDate(LocalDateTime.now())
+                .build();
+
+        Todo todo2 = Todo.builder()
+                .title("new_todo2")
+                .content("new_todo2_content")
+                .study(study)
+                .endDate(LocalDateTime.now())
+                .build();
+
+        Todo saveTodo1 = todoRepository.save(todo1);
+        Todo saveTodo2 = todoRepository.save(todo2);
+
+        //when
+        Pageable pageable = PageRequest.of(1, 2);
+        Page<TodoDto> todos = todoService.getTodos(studyUrl, pageable);
+
+        //then
+        assertEquals(2, todos.getSize());
+        assertEquals(1, todos.getTotalPages());
     }
 
 
