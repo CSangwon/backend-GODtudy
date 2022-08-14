@@ -1,7 +1,7 @@
 package com.example.godtudy.domain.post.service;
 
 import com.example.godtudy.WithMember;
-import com.example.godtudy.domain.comment.dto.CommentSaveDto;
+import com.example.godtudy.domain.comment.dto.request.CommentSaveDto;
 import com.example.godtudy.domain.comment.entity.Comment;
 import com.example.godtudy.domain.comment.repository.CommentRepository;
 import com.example.godtudy.domain.comment.service.CommentService;
@@ -18,7 +18,7 @@ import com.example.godtudy.domain.post.dto.response.BriefPostInfoDto;
 import com.example.godtudy.domain.post.dto.response.PostInfoResponseDto;
 import com.example.godtudy.domain.post.dto.response.PostPagingDto;
 import com.example.godtudy.domain.post.entity.AdminPost;
-import com.example.godtudy.domain.post.entity.AdminPostEnum;
+import com.example.godtudy.domain.post.entity.PostEnum;
 import com.example.godtudy.domain.post.repository.AdminPostRepository;
 
 import com.example.godtudy.global.file.File;
@@ -34,7 +34,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.parameters.P;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -123,7 +122,7 @@ class AdminPostServiceTest {
         assertThat(test1.getContent()).isEqualTo("test1");
         assertThat(test1.getMember().getUsername()).isEqualTo("swchoi1997");
         assertThat(test1.getFiles().isEmpty()).isTrue();
-        assertThat(test1.getNoticeOrEvent()).isEqualTo(AdminPostEnum.valueOf(post.toUpperCase()));
+        assertThat(test1.getNoticeOrEvent()).isEqualTo(PostEnum.valueOf(post.toUpperCase()));
     }
 
 
@@ -151,7 +150,7 @@ class AdminPostServiceTest {
         assertThat(test1.getTitle()).isEqualTo("test1");
         assertThat(test1.getContent()).isEqualTo("test1");
         assertThat(test1.getMember().getUsername()).isEqualTo("swchoi1997");
-        assertThat(test1.getNoticeOrEvent()).isEqualTo(AdminPostEnum.valueOf(post.toUpperCase()));
+        assertThat(test1.getNoticeOrEvent()).isEqualTo(PostEnum.valueOf(post.toUpperCase()));
 
 
         File file = fileRepository.findById(test1.getFiles().get(0).getId()).orElseThrow();
@@ -502,12 +501,12 @@ class AdminPostServiceTest {
 
         //댓글적음
         CommentSaveDto commentSaveDto2 = CommentSaveDto.builder().content("comment2").build();
-        commentService.saveComment(adminPost2.getId(), member2, commentSaveDto2);
+        commentService.saveComment("event",adminPost2.getId(), member2, commentSaveDto2);
         Comment comment2 = commentRepository.findByContent("comment2").orElseThrow();
 
         //대댓글
         CommentSaveDto reCommentSaveDto2 = CommentSaveDto.builder().content("comment4").build();
-        commentService.saveReComment(adminPost2.getId(), member2, comment2.getId(), reCommentSaveDto2);
+        commentService.saveReComment("event",adminPost2.getId(), member2, comment2.getId(), reCommentSaveDto2);
 
         //110 처음에 댓글1 대댓글1
         assertThat(commentRepository.findAll().size()).isSameAs(112);
@@ -542,15 +541,15 @@ class AdminPostServiceTest {
 
         CommentSaveDto commentSaveDto = CommentSaveDto.builder().content("comment1").build();
         CommentSaveDto commentSaveDto2 = CommentSaveDto.builder().content("comment2").build();
-        commentService.saveComment(adminPost1.getId(), member1, commentSaveDto);
-        commentService.saveComment(adminPost2.getId(), member2, commentSaveDto2);
+        commentService.saveComment("notice",adminPost1.getId(), member1, commentSaveDto);
+        commentService.saveComment("event",adminPost2.getId(), member2, commentSaveDto2);
         Comment comment = commentRepository.findByContent("comment1").orElseThrow();
         Comment comment2 = commentRepository.findByContent("comment2").orElseThrow();
 
         CommentSaveDto reCommentSaveDto = CommentSaveDto.builder().content("comment3").build();
         CommentSaveDto reCommentSaveDto2 = CommentSaveDto.builder().content("comment4").build();
-        commentService.saveReComment(adminPost1.getId(), member2, comment.getId(), reCommentSaveDto);
-        commentService.saveReComment(adminPost2.getId(), member1, comment2.getId(), reCommentSaveDto2);
+        commentService.saveReComment("notice",adminPost1.getId(), member2, comment.getId(), reCommentSaveDto);
+        commentService.saveReComment("event",adminPost2.getId(), member1, comment2.getId(), reCommentSaveDto2);
 
         //when
         adminPost1 = adminPostRepository.findByTitle("test1").orElseThrow();

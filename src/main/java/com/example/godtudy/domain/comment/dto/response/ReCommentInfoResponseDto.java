@@ -1,4 +1,4 @@
-package com.example.godtudy.domain.comment.dto;
+package com.example.godtudy.domain.comment.dto.response;
 
 import com.example.godtudy.domain.comment.entity.Comment;
 import lombok.Data;

@@ -35,11 +35,12 @@ public class StudyPost {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private StudyPostEnum studyPostEnum;
+    private PostEnum studyPostEnum;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
+    @Builder.Default
     @OneToMany(mappedBy = "adminPost", orphanRemoval = true, cascade = ALL) //, orphanRemoval = true, cascade = ALL
     @OrderBy("id asc")
     private List<Comment> commentList = new ArrayList<>();

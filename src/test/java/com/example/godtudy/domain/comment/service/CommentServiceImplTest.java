@@ -1,8 +1,8 @@
 package com.example.godtudy.domain.comment.service;
 
 import com.example.godtudy.WithMember;
-import com.example.godtudy.domain.comment.dto.CommentSaveDto;
-import com.example.godtudy.domain.comment.dto.CommentUpdateDto;
+import com.example.godtudy.domain.comment.dto.request.CommentSaveDto;
+import com.example.godtudy.domain.comment.dto.request.CommentUpdateDto;
 import com.example.godtudy.domain.comment.entity.Comment;
 import com.example.godtudy.domain.comment.repository.CommentRepository;
 import com.example.godtudy.domain.member.dto.request.MemberJoinForm;
@@ -12,7 +12,7 @@ import com.example.godtudy.domain.member.entity.SubjectEnum;
 import com.example.godtudy.domain.member.repository.MemberRepository;
 import com.example.godtudy.domain.member.service.MemberService;
 import com.example.godtudy.domain.post.entity.AdminPost;
-import com.example.godtudy.domain.post.entity.AdminPostEnum;
+import com.example.godtudy.domain.post.entity.PostEnum;
 import com.example.godtudy.domain.post.repository.AdminPostRepository;
 import com.example.godtudy.domain.post.service.AdminPostService;
 import com.example.godtudy.global.advice.exception.CommentNotFoundException;
@@ -71,7 +71,7 @@ class CommentServiceImplTest {
     private Long savePostNotice(Member member) {
         AdminPost adminPost = AdminPost.builder().title("test").content("tes123")
                 .files(new ArrayList<>()).commentList(new ArrayList<>())
-                .member(member).noticeOrEvent(AdminPostEnum.NOTICE).build();
+                .member(member).noticeOrEvent(PostEnum.NOTICE).build();
         return adminPostRepository.save(adminPost).getId();
     }
 
@@ -87,8 +87,8 @@ class CommentServiceImplTest {
         CommentSaveDto commentSaveDto2 = CommentSaveDto.builder().content("test2").build();
 
         //when
-        commentService.saveComment(postId, member, commentSaveDto);
-        commentService.saveComment(postId, member2, commentSaveDto2);
+        commentService.saveComment("notice", postId, member, commentSaveDto);
+        commentService.saveComment("notice",postId, member2, commentSaveDto2);
         Comment comment = commentRepository.findByContent("test1").orElseThrow();
         Comment comment2 = commentRepository.findByContent("test2").orElseThrow();
 
@@ -99,12 +99,16 @@ class CommentServiceImplTest {
         assertThat(comment.getAdminPost()).isEqualTo(adminPostRepository.findById(postId).orElseThrow());
         assertThat(comment.getParentComment()).isNull();
         assertThat(comment.getChildComment()).isEmpty();
+        assertThat(comment.getAdminPost().getCommentList().size()).isSameAs(2);
+        assertThat(comment.getStudyPost()).isNull();
 
         assertThat(comment2.getContent()).isEqualTo("test2");
         assertThat(comment2.getWriter()).isEqualTo(member2);
         assertThat(comment2.getAdminPost()).isEqualTo(adminPostRepository.findById(postId).orElseThrow());
         assertThat(comment2.getParentComment()).isNull();
         assertThat(comment2.getChildComment()).isEmpty();
+        assertThat(comment2.getAdminPost().getCommentList().size()).isSameAs(2);
+        assertThat(comment2.getStudyPost()).isNull();
     }
 
     @Test
@@ -115,12 +119,12 @@ class CommentServiceImplTest {
         Member member = memberRepository.findByUsername("swchoi1997").orElseThrow();
         Long postId = savePostNotice(member);
         CommentSaveDto commentSaveDto = CommentSaveDto.builder().content("test1").build();
-        commentService.saveComment(postId, member, commentSaveDto);
+        commentService.saveComment("notice",postId, member, commentSaveDto);
         CommentSaveDto reCommentSaveDto = CommentSaveDto.builder().content("test2").build();
 
         //when
         Comment parentComment = commentRepository.findByContent("test1").orElseThrow();
-        commentService.saveReComment(postId, member, parentComment.getId(), reCommentSaveDto);
+        commentService.saveReComment("notice",postId, member, parentComment.getId(), reCommentSaveDto);
         Comment reComment = commentRepository.findByContent("test2").orElseThrow();
 
         //then
@@ -144,7 +148,7 @@ class CommentServiceImplTest {
 
         //when//then
         Assertions.assertThrows(PostNotFoundException.class, () ->
-                commentService.saveComment(postId, member, commentSaveDto));
+                commentService.saveComment("notice",postId, member, commentSaveDto));
     }
 
     @Test
@@ -158,7 +162,7 @@ class CommentServiceImplTest {
 
         //when//then
         Assertions.assertThrows(CommentNotFoundException.class, () ->
-                commentService.saveReComment(postId, member,123L, reCommentSaveDto));
+                commentService.saveReComment("notice",postId, member,123L, reCommentSaveDto));
     }
 
     @Test
@@ -169,14 +173,14 @@ class CommentServiceImplTest {
         Member member = memberRepository.findByUsername("swchoi1997").orElseThrow();
         Long postId = savePostNotice(member);
         CommentSaveDto commentSaveDto = CommentSaveDto.builder().content("test1").build();
-        commentService.saveComment(postId, member, commentSaveDto);
+        commentService.saveComment("notice",postId, member, commentSaveDto);
 
         CommentSaveDto reCommentSaveDto = CommentSaveDto.builder().content("test2").build();
 
         //when//then
         Long postId2 = 123L;
         Assertions.assertThrows(PostNotFoundException.class, () ->
-                commentService.saveReComment(postId2, member,123L, reCommentSaveDto));
+                commentService.saveReComment("notice",postId2, member,123L, reCommentSaveDto));
     }
 
 
@@ -188,12 +192,12 @@ class CommentServiceImplTest {
         Member member = memberRepository.findByUsername("swchoi1997").orElseThrow();
         Long postId = savePostNotice(member);
         CommentSaveDto commentSaveDto = CommentSaveDto.builder().content("test1").build();
-        commentService.saveComment(postId, member, commentSaveDto);
+        commentService.saveComment("notice",postId, member, commentSaveDto);
         Long test1 = commentRepository.findByContent("test1").orElseThrow().getId();
 
         //when
         CommentUpdateDto commentUpdateDto = CommentUpdateDto.builder().content("test2").build();
-        commentService.updateComment(test1, member, commentUpdateDto);
+        commentService.updateComment("notice", test1, member, commentUpdateDto);
 
         //then
         Comment updateComment = commentRepository.findByContent("test2").orElseThrow();
@@ -208,7 +212,7 @@ class CommentServiceImplTest {
         Member member = memberRepository.findByUsername("swchoi1997").orElseThrow();
         Long postId = savePostNotice(member);
         CommentSaveDto commentSaveDto = CommentSaveDto.builder().content("test1").build();
-        commentService.saveComment(postId, member, commentSaveDto);
+        commentService.saveComment("notice",postId, member, commentSaveDto);
         Long test1 = commentRepository.findByContent("test1").orElseThrow().getId();
 
         //when
@@ -217,7 +221,7 @@ class CommentServiceImplTest {
 
         //then
         assertThrows(AccessDeniedException.class, () ->
-                commentService.updateComment(test1, newMember, commentUpdateDto));
+                commentService.updateComment("notice", test1, newMember, commentUpdateDto));
     }
 
     @Test
@@ -228,14 +232,14 @@ class CommentServiceImplTest {
         Member member = memberRepository.findByUsername("swchoi1997").orElseThrow();
         Long postId = savePostNotice(member);
         CommentSaveDto commentSaveDto = CommentSaveDto.builder().content("test1").build();
-        commentService.saveComment(postId, member, commentSaveDto);
+        commentService.saveComment("notice",postId, member, commentSaveDto);
 
         Comment comment = commentRepository.findByContent("test1").orElseThrow();
 
 
         //when
         Long commentId = comment.getId();
-        commentService.deleteComment(commentId, member);
+        commentService.deleteComment("notice",commentId, member);
 
         //then
         assertThat(commentRepository.findAll().size()).isSameAs(110);
@@ -252,17 +256,17 @@ class CommentServiceImplTest {
         Long postId = savePostNotice(member);
 
         CommentSaveDto parent = CommentSaveDto.builder().content("test1").build();
-        commentService.saveComment(postId, member, parent);
+        commentService.saveComment("notice",postId, member, parent);
         Comment comment = commentRepository.findByContent("test1").orElseThrow();
 
         CommentSaveDto child = CommentSaveDto.builder().content("test2").build();
-        commentService.saveReComment(postId, member, comment.getId(), child);
+        commentService.saveReComment("notice",postId, member, comment.getId(), child);
         Comment comment1 = commentRepository.findByContent("test2").orElseThrow();
 
 
         //when
         Long commentId = comment.getId();
-        commentService.deleteComment(commentId, member);
+        commentService.deleteComment("notice",commentId, member);
 
         //then
         assertThat(comment.getWriter()).isNull();
@@ -281,7 +285,7 @@ class CommentServiceImplTest {
         Member member = memberRepository.findByUsername("swchoi1997").orElseThrow();
         Long postId = savePostNotice(member);
         CommentSaveDto commentSaveDto = CommentSaveDto.builder().content("test1").build();
-        commentService.saveComment(postId, member, commentSaveDto);
+        commentService.saveComment("notice",postId, member, commentSaveDto);
 
         Comment comment = commentRepository.findByContent("test1").orElseThrow();
 
@@ -289,7 +293,7 @@ class CommentServiceImplTest {
         //when
         Long commentId = comment.getId();
         member.setRole(Role.ADMIN);
-        commentService.deleteComment(commentId, member);
+        commentService.deleteComment("notice",commentId, member);
 
         //then
         assertThat(commentRepository.findAll().size()).isSameAs(110);
@@ -305,7 +309,7 @@ class CommentServiceImplTest {
         Long postId = savePostNotice(member);
 
         CommentSaveDto parent = CommentSaveDto.builder().content("test1").build();
-        commentService.saveComment(postId, member, parent);
+        commentService.saveComment("notice",postId, member, parent);
         Comment comment = commentRepository.findByContent("test1").orElseThrow();
 
         Member member2 = memberRepository.findByUsername("swchoi123").orElseThrow();
@@ -313,7 +317,7 @@ class CommentServiceImplTest {
         //when //then
         Long commentId = comment.getId();
         assertThrows(AccessDeniedException.class, () ->
-                commentService.deleteComment(commentId, member2));
+                commentService.deleteComment("notice",commentId, member2));
     }
 
 }

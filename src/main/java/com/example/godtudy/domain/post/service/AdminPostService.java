@@ -9,7 +9,7 @@ import com.example.godtudy.domain.post.dto.request.PostUpdateRequestDto;
 import com.example.godtudy.domain.post.dto.response.PostInfoResponseDto;
 import com.example.godtudy.domain.post.dto.response.PostPagingDto;
 import com.example.godtudy.domain.post.entity.AdminPost;
-import com.example.godtudy.domain.post.entity.AdminPostEnum;
+import com.example.godtudy.domain.post.entity.PostEnum;
 import com.example.godtudy.domain.post.repository.AdminPostRepository;
 import com.example.godtudy.global.file.File;
 import com.example.godtudy.global.file.FileRepository;
@@ -149,7 +149,7 @@ public class AdminPostService implements PostService{
     }
 
     private void checkCategory(AdminPost adminPost, String post) {
-        if (!adminPost.getNoticeOrEvent().equals(AdminPostEnum.valueOf(post.toUpperCase()))) {
+        if (adminPost.getNoticeOrEvent() != (PostEnum.valueOf(post.toUpperCase()))) {
             throw new AccessDeniedException("잘못된 카테고리 입니다.");
         }
     }
@@ -170,7 +170,7 @@ public class AdminPostService implements PostService{
         adminPostBefore(member);
         AdminPost adminPost = postSaveRequestDto.toEntity();
         adminPost.setAuthor(member); // 현재 맴버 매핑
-        adminPost.setAdminPostEnum(post); // 현재 게시판 작성
+        adminPost.setPostEnum(post); // 현재 게시판 작성
 
         return adminPost;
     }

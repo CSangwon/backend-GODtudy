@@ -3,15 +3,12 @@ package com.example.godtudy.domain.post.entity;
 import com.example.godtudy.domain.BaseEntity;
 import com.example.godtudy.domain.comment.entity.Comment;
 import com.example.godtudy.domain.member.entity.Member;
-import com.example.godtudy.domain.member.entity.Subject;
-import com.example.godtudy.domain.member.entity.SubjectEnum;
 import com.example.godtudy.domain.post.dto.request.PostUpdateRequestDto;
 import com.example.godtudy.global.file.File;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -40,11 +37,12 @@ public class AdminPost extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private AdminPostEnum noticeOrEvent;
+    private PostEnum noticeOrEvent;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
+    @Builder.Default
     @OneToMany(mappedBy = "adminPost", orphanRemoval = true, cascade = ALL) //, orphanRemoval = true, cascade = ALL
     @OrderBy("id asc")
     private List<Comment> commentList = new ArrayList<>();
@@ -67,8 +65,8 @@ public class AdminPost extends BaseEntity {
     }
 
     //게시글 카테고리 확인
-    public void setAdminPostEnum(String post){
-        this.noticeOrEvent = AdminPostEnum.valueOf(post.toUpperCase());
+    public void setPostEnum(String post){
+        this.noticeOrEvent = PostEnum.valueOf(post.toUpperCase());
     }
 
     //게시글 업데이트

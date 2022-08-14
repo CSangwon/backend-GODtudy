@@ -3,6 +3,7 @@ package com.example.godtudy.domain.comment.entity;
 import com.example.godtudy.domain.BaseEntity;
 import com.example.godtudy.domain.member.entity.Member;
 import com.example.godtudy.domain.post.entity.AdminPost;
+import com.example.godtudy.domain.post.entity.StudyPost;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -33,6 +34,9 @@ public class Comment extends BaseEntity {
     private AdminPost adminPost;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    private StudyPost studyPost;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     private Member writer;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -53,6 +57,21 @@ public class Comment extends BaseEntity {
         adminPost.getCommentList().add(this);
     }
 
+    public void setStudyPost(StudyPost studyPost) {
+        if (this.studyPost != null) {
+            this.studyPost.getCommentList().remove(this);
+        }
+        this.studyPost = studyPost;
+        studyPost.getCommentList().add(this);
+    }
+
+    public void checkAdminPostOrStudyPost(Object postKind) {
+        if (postKind instanceof AdminPost) {
+            setAdminPost((AdminPost) postKind);
+        } else{
+            setStudyPost((StudyPost) postKind);
+        }
+    }
 
     public void setIsFirstComment(){
         this.isFirstComment = true;
