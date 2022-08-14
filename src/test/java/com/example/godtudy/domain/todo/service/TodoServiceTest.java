@@ -86,7 +86,7 @@ class TodoServiceTest {
         //given
         String title = "국어 과제하기";
         String content = "p.201까지 꼼꼼하게 읽고 문제 풀어오기";
-        String endDate = "2022-08-10 00:00:00";
+        LocalDateTime endDate = LocalDateTime.parse("2022-08-10T00:00:00");
         String studyUrl = "new_study";
         Study study = studyRepository.findByUrl(studyUrl);
         CreateTodoRequestDto createTodoRequestDto = CreateTodoRequestDto.builder()
@@ -123,14 +123,13 @@ class TodoServiceTest {
         String content = "p.190까지 해오는걸로 수정할게요";
 
         UpdateTodoRequestDto updateTodoRequestDto = UpdateTodoRequestDto.builder()
-                .id(saveTodo.getId())
                 .title(saveTodo.getTitle())
                 .content(content)
                 .endDate(saveTodo.getEndDate())
                 .build();
 
         //when
-        Long updateTodoId = todoService.updateTodo(updateTodoRequestDto);
+        Long updateTodoId = todoService.updateTodo(saveTodo.getId(), updateTodoRequestDto);
         Todo updateTodo = todoRepository.findById(updateTodoId)
                 .orElseThrow(() -> new NoSuchElementException("해당하는 할  정보가 없습니다."));
 
