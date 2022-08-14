@@ -1,4 +1,4 @@
-package com.example.godtudy.domain.member;
+package com.example.godtudy.domain.member.service;
 
 import com.example.godtudy.WithMember;
 import com.example.godtudy.domain.member.dto.request.MemberJoinForm;
