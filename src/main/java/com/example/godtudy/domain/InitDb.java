@@ -9,7 +9,7 @@ import com.example.godtudy.domain.member.entity.SubjectEnum;
 import com.example.godtudy.domain.member.repository.MemberRepository;
 import com.example.godtudy.domain.member.repository.SubjectRepository;
 import com.example.godtudy.domain.post.entity.AdminPost;
-import com.example.godtudy.domain.post.entity.AdminPostEnum;
+import com.example.godtudy.domain.post.entity.PostEnum;
 import com.example.godtudy.domain.post.repository.AdminPostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -89,7 +89,7 @@ public class InitDb {
                 AdminPost adminPost = AdminPost.builder()
                         .title("title" + i)
                         .content("content" + i)
-                        .noticeOrEvent(AdminPostEnum.NOTICE)
+                        .noticeOrEvent(PostEnum.NOTICE)
                         .member(memberRepository.findById(Long.valueOf(random.nextInt(5) + 1)).orElse(null))
                         .build();
 

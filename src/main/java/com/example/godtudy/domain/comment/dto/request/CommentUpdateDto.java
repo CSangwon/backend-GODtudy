@@ -1,4 +1,4 @@
-package com.example.godtudy.domain.comment.dto;
+package com.example.godtudy.domain.comment.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

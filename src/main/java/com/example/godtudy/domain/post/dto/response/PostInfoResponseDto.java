@@ -1,6 +1,6 @@
 package com.example.godtudy.domain.post.dto.response;
 
-import com.example.godtudy.domain.comment.dto.CommentInfoResponseDto;
+import com.example.godtudy.domain.comment.dto.response.CommentInfoResponseDto;
 import com.example.godtudy.domain.comment.entity.Comment;
 import com.example.godtudy.domain.post.entity.AdminPost;
 import com.example.godtudy.global.file.File;

@@ -1,7 +1,6 @@
-package com.example.godtudy.domain.comment.dto;
+package com.example.godtudy.domain.comment.dto.response;
 
 import com.example.godtudy.domain.comment.entity.Comment;
-import com.example.godtudy.domain.member.entity.Member;
 import lombok.Data;
 
 import java.util.ArrayList;
