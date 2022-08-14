@@ -99,12 +99,16 @@ class CommentServiceImplTest {
         assertThat(comment.getAdminPost()).isEqualTo(adminPostRepository.findById(postId).orElseThrow());
         assertThat(comment.getParentComment()).isNull();
         assertThat(comment.getChildComment()).isEmpty();
+        assertThat(comment.getAdminPost().getCommentList().size()).isSameAs(2);
+        assertThat(comment.getStudyPost()).isNull();
 
         assertThat(comment2.getContent()).isEqualTo("test2");
         assertThat(comment2.getWriter()).isEqualTo(member2);
         assertThat(comment2.getAdminPost()).isEqualTo(adminPostRepository.findById(postId).orElseThrow());
         assertThat(comment2.getParentComment()).isNull();
         assertThat(comment2.getChildComment()).isEmpty();
+        assertThat(comment2.getAdminPost().getCommentList().size()).isSameAs(2);
+        assertThat(comment2.getStudyPost()).isNull();
     }
 
     @Test
@@ -193,7 +197,7 @@ class CommentServiceImplTest {
 
         //when
         CommentUpdateDto commentUpdateDto = CommentUpdateDto.builder().content("test2").build();
-        commentService.updateComment(test1, member, commentUpdateDto);
+        commentService.updateComment("notice", test1, member, commentUpdateDto);
 
         //then
         Comment updateComment = commentRepository.findByContent("test2").orElseThrow();
@@ -217,7 +221,7 @@ class CommentServiceImplTest {
 
         //then
         assertThrows(AccessDeniedException.class, () ->
-                commentService.updateComment(test1, newMember, commentUpdateDto));
+                commentService.updateComment("notice", test1, newMember, commentUpdateDto));
     }
 
     @Test

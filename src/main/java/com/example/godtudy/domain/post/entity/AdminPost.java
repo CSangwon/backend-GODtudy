@@ -42,6 +42,7 @@ public class AdminPost extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
+    @Builder.Default
     @OneToMany(mappedBy = "adminPost", orphanRemoval = true, cascade = ALL) //, orphanRemoval = true, cascade = ALL
     @OrderBy("id asc")
     private List<Comment> commentList = new ArrayList<>();
