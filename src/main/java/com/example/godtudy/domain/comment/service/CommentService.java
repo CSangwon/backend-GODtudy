@@ -12,7 +12,7 @@ public interface CommentService {
 
     CommentResponseDto saveReComment(String postType, Long postId, Member member, Long firstCommentId, CommentSaveDto commentSaveDto);
 
-    ResponseEntity<?> updateComment(Long id,  Member member, CommentUpdateDto commentUpdateDto);
+    CommentResponseDto updateComment(String postType, Long id,  Member member, CommentUpdateDto commentUpdateDto);
 
     void deleteComment(String postType, Long id,  Member member);
 

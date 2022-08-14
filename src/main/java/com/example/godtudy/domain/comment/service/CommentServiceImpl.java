@@ -18,8 +18,6 @@ import com.example.godtudy.global.advice.exception.MemberNotFoundException;
 import com.example.godtudy.global.advice.exception.PostNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -60,19 +58,22 @@ public class CommentServiceImpl implements CommentService{
     }
 
     @Override
-    public ResponseEntity<?> updateComment(Long id, Member member, CommentUpdateDto commentUpdateDto) {
+    public CommentResponseDto updateComment(String postType, Long commentId, Member member, CommentUpdateDto commentUpdateDto) {
         checkExistUserAndNotTmpUser(member);
-        Comment comment = updateAndDeleteBefore(id, member);
+        Comment comment = updateAndDeleteBefore(commentId, member);
 
         comment.updateComment(commentUpdateDto.getContent());
         commentRepository.save(comment);
-        return new ResponseEntity<>("Comment update", HttpStatus.OK);
+
+        return CommentResponseDto.builder().
+                content(comment.getContent()).username(member.getUsername()).postKind(postType).message("update Complete").
+                build();
     }
 
     @Override
-    public void deleteComment(String postType, Long id, Member member) {
+    public void deleteComment(String postType, Long commentId, Member member) {
         checkExistUserAndNotTmpUser(member);
-        Comment comment = updateAndDeleteBefore(id, member);
+        Comment comment = updateAndDeleteBefore(commentId, member);
 
         Object postKind = checkPostExist(postType, comment.getAdminPost().getId());
 
