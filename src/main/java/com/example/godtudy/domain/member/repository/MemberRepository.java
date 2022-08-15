@@ -28,6 +28,6 @@ public interface MemberRepository extends JpaRepository<Member, Long>, JpaSpecif
 
     Optional<Member> findByNickname(String email);
 
-    Page<Member> findByUsernameContainsAndRole(@Param("username") String username, @Param("role") Role role, Pageable pageable);
+    Page<Member> findByUsernameContainsAndNameContainsAndRole(@Param("username") String username, @Param("name") String name, @Param("role") Role role, Pageable pageable);
 
 }
