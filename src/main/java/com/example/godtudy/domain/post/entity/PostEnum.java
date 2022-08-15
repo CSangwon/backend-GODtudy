@@ -4,7 +4,7 @@ public enum PostEnum {
     NOTICE,
     EVENT,
     STUDY_NOTICE,
-    HOMEWORK,
-    QNA,
-    GRADE;
+    STUDY_HOMEWORK,
+    STUDY_QNA,
+    STUDY_GRADE;
 }

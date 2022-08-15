@@ -35,7 +35,7 @@ public class StudyPost {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private PostEnum studyPostEnum;
+    private PostEnum postEnum;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
