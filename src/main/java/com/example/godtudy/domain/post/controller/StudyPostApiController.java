@@ -22,7 +22,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class StudyPostApiController {
 
-    @Qualifier("studyPostService")
+//    @Qualifier("studyPostService")
     private final StudyPostService postService;
 
 }

@@ -1,5 +1,6 @@
 package com.example.godtudy.domain.post.entity;
 
+import com.example.godtudy.domain.BaseEntity;
 import com.example.godtudy.domain.comment.entity.Comment;
 import com.example.godtudy.domain.member.entity.Member;
 import com.example.godtudy.domain.post.dto.request.PostUpdateRequestDto;
@@ -20,7 +21,7 @@ import static javax.persistence.CascadeType.ALL;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class StudyPost {
+public class StudyPost extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -31,6 +32,7 @@ public class StudyPost {
     @Column(nullable = false)
     private String content;
 
+    @Builder.Default
     @OneToMany(mappedBy = "studyPost")
     private List<File> files = new ArrayList<>();
 

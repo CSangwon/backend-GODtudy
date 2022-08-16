@@ -3,6 +3,7 @@ package com.example.godtudy.domain.post.dto.response;
 import com.example.godtudy.domain.comment.dto.response.CommentInfoResponseDto;
 import com.example.godtudy.domain.comment.entity.Comment;
 import com.example.godtudy.domain.post.entity.AdminPost;
+import com.example.godtudy.domain.post.entity.StudyPost;
 import com.example.godtudy.global.file.File;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -35,6 +36,15 @@ public class PostInfoResponseDto {
         this.author = adminPost.getMember().getNickname();
         this.files = adminPost.getFiles();
         this.commentInfoResponseDtoList = parentChild(adminPost.getCommentList());
+    }
+
+    public PostInfoResponseDto(StudyPost studyPost) {
+        this.postId = studyPost.getId();
+        this.title = studyPost.getTitle();
+        this.content = studyPost.getContent();
+        this.author = studyPost.getMember().getNickname();
+        this.files = studyPost.getFiles();
+        this.commentInfoResponseDtoList = parentChild(studyPost.getCommentList());
     }
 
     public List<CommentInfoResponseDto> parentChild(List<Comment> commentList) {
