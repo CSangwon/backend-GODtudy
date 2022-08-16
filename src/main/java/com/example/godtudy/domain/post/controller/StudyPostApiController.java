@@ -4,7 +4,7 @@ import com.example.godtudy.domain.member.entity.CurrentMember;
 import com.example.godtudy.domain.member.entity.Member;
 import com.example.godtudy.domain.post.dto.request.PostSaveRequestDto;
 import com.example.godtudy.domain.post.dto.request.PostUpdateRequestDto;
-import com.example.godtudy.domain.post.service.PostService;
+import com.example.godtudy.domain.post.service.StudyPostService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +22,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class StudyPostApiController {
 
-    @Qualifier("studyPostService")
-    private final PostService postService;
+//    @Qualifier("studyPostService")
+    private final StudyPostService postService;
 
 }

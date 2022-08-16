@@ -50,12 +50,11 @@ import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
-class AdminPostServiceTest {
+class AdminPostServiceImplTest {
 
     @Autowired    MemberService memberService;
 
-    @Qualifier("adminPostService")
-    @Autowired    PostService postService;
+    @Autowired    AdminPostService postService;
 
     @Autowired    CommentService commentService;
 

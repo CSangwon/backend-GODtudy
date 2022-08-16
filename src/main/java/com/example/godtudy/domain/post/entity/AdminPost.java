@@ -32,6 +32,7 @@ public class AdminPost extends BaseEntity {
     @Column(nullable = false)
     private String content;
 
+    @Builder.Default
     @OneToMany(mappedBy = "adminPost")
     private List<File> files = new ArrayList<>();
 

@@ -1,7 +1,9 @@
 package com.example.godtudy.domain.post.entity;
 
+import com.example.godtudy.domain.BaseEntity;
 import com.example.godtudy.domain.comment.entity.Comment;
 import com.example.godtudy.domain.member.entity.Member;
+import com.example.godtudy.domain.post.dto.request.PostUpdateRequestDto;
 import com.example.godtudy.global.file.File;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,7 +21,7 @@ import static javax.persistence.CascadeType.ALL;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class StudyPost {
+public class StudyPost extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -30,6 +32,7 @@ public class StudyPost {
     @Column(nullable = false)
     private String content;
 
+    @Builder.Default
     @OneToMany(mappedBy = "studyPost")
     private List<File> files = new ArrayList<>();
 
@@ -61,4 +64,16 @@ public class StudyPost {
         }
     }
 
+    public void setPostEnum(String post) {
+        this.postEnum = PostEnum.valueOf(post.toUpperCase());
+    }
+
+    public void initFiles() {
+        this.files = new ArrayList<>();
+    }
+
+    public void updateStudyPost(PostUpdateRequestDto postUpdateRequestDto) {
+        this.title = postUpdateRequestDto.getTitle();
+        this.content = postUpdateRequestDto.getContent();
+    }
 }

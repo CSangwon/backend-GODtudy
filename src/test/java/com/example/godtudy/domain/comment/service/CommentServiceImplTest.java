@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class CommentServiceImplTest {
 
     @Autowired AdminPostRepository adminPostRepository;
-    @Autowired AdminPostService adminPostService;
+    @Autowired AdminPostService postService;
     @Autowired CommentRepository commentRepository;
     @Autowired CommentService commentService;
     @Autowired MemberRepository memberRepository;

@@ -37,7 +37,12 @@ public class PostPagingDto {
         return this;
     }
 
-    public void postPagingDtoByStudyPost(Page<StudyPost> searchResultStudyPost) {
-
+    public PostPagingDto postPagingDtoByStudyPost(Page<StudyPost> searchResultStudyPost) {
+        this.totalPageCount = searchResultStudyPost.getTotalPages();
+        this.currentPageNum = searchResultStudyPost.getNumber();
+        this.totalElementCount = searchResultStudyPost.getTotalElements();
+        this.currentPageElementCount = searchResultStudyPost.getNumberOfElements();
+        this.simplePostDtoList = searchResultStudyPost.getContent().stream().map(BriefPostInfoDto::new).collect(Collectors.toList());
+        return this;
     }
 }

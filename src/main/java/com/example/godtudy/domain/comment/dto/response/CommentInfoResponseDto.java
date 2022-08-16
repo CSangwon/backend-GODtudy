@@ -23,7 +23,12 @@ public class CommentInfoResponseDto {
     private List<ReCommentInfoResponseDto> reCommentInfoResponseDtoList;
 
     public CommentInfoResponseDto(Comment comment, List<Comment> commentList) {
-        this.postId = comment.getAdminPost().getId();
+        if (comment.getAdminPost() != null) {
+            this.postId = comment.getAdminPost().getId();
+        } else if (comment.getStudyPost() != null) {
+            this.postId = comment.getStudyPost().getId();
+        }
+
         this.commentId = comment.getId();
 
         if (comment.getWriter() == null && comment.getContent().equals("")) {
