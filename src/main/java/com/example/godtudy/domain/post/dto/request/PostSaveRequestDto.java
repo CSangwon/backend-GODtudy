@@ -1,6 +1,7 @@
 package com.example.godtudy.domain.post.dto.request;
 
 import com.example.godtudy.domain.post.entity.AdminPost;
+import com.example.godtudy.domain.post.entity.StudyPost;
 import com.example.godtudy.global.validation.ValidationGroups;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,8 +24,17 @@ public class PostSaveRequestDto {
     @NotBlank(message = "내용을 입력해주세요..", groups = ValidationGroups.NotEmptyGroup.class)
     private String content;
 
-    public AdminPost toEntity(){
+    public AdminPost adminPostToEntity(){
         return AdminPost.builder()
+                .title(title)
+                .content(content)
+                .files(new ArrayList<>())
+                .commentList(new ArrayList<>())
+                .build();
+    }
+
+    public StudyPost studyPostToEntity(){
+        return StudyPost.builder()
                 .title(title)
                 .content(content)
                 .files(new ArrayList<>())

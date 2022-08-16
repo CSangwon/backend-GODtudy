@@ -2,6 +2,7 @@ package com.example.godtudy.domain.post.entity;
 
 import com.example.godtudy.domain.comment.entity.Comment;
 import com.example.godtudy.domain.member.entity.Member;
+import com.example.godtudy.domain.post.dto.request.PostUpdateRequestDto;
 import com.example.godtudy.global.file.File;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -35,7 +36,7 @@ public class StudyPost {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private PostEnum studyPostEnum;
+    private PostEnum postEnum;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
@@ -61,4 +62,16 @@ public class StudyPost {
         }
     }
 
+    public void setPostEnum(String post) {
+        this.postEnum = PostEnum.valueOf(post.toUpperCase());
+    }
+
+    public void initFiles() {
+        this.files = new ArrayList<>();
+    }
+
+    public void updateStudyPost(PostUpdateRequestDto postUpdateRequestDto) {
+        this.title = postUpdateRequestDto.getTitle();
+        this.content = postUpdateRequestDto.getContent();
+    }
 }

@@ -6,12 +6,8 @@ import com.example.godtudy.domain.post.dto.request.PostSaveRequestDto;
 import com.example.godtudy.domain.post.dto.request.PostSearchCondition;
 import com.example.godtudy.domain.post.dto.request.PostUpdateRequestDto;
 import com.example.godtudy.domain.post.service.AdminPostService;
-import com.example.godtudy.domain.post.service.PostService;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.Response;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -29,8 +25,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AdminPostApiController {
 
-    @Qualifier("adminPostService")
-    private final PostService postService;
+//    @Qualifier("adminPostServiceImpl")
+    private final AdminPostService postService;
 
 
     @PostMapping("{post}/new")
