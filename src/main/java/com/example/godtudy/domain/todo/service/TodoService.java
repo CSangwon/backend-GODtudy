@@ -42,13 +42,11 @@ public class TodoService {
     public TodoDto createTodo(String studyUrl, CreateTodoRequestDto createTodoRequestDto) {
         Study study = findStudyByUrl(studyUrl);
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        LocalDateTime endDate = LocalDateTime.parse(createTodoRequestDto.getEndDate(), formatter);
 
         Todo todo = Todo.builder()
                 .title(createTodoRequestDto.getTitle())
                 .content(createTodoRequestDto.getContent())
-                .endDate(endDate)
+                .endDate(createTodoRequestDto.getEndDate())
                 .study(study)
                 .build();
 
@@ -59,8 +57,8 @@ public class TodoService {
     }
 
     @Transactional
-    public Long updateTodo(UpdateTodoRequestDto updateTodoRequestDto) {
-        Todo todo = findTodoById(updateTodoRequestDto.getId());
+    public Long updateTodo(Long todoId, UpdateTodoRequestDto updateTodoRequestDto) {
+        Todo todo = findTodoById(todoId);
 
         todo.updateTodo(updateTodoRequestDto);
         Todo updateTodo = todoRepository.save(todo);
