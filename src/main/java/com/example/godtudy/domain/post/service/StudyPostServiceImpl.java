@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.PostUpdate;
 import java.io.IOException;
 import java.util.List;
 
@@ -79,6 +80,7 @@ public class StudyPostServiceImpl implements StudyPostService{
     @Override
     public PostResponseDto updatePost(Member member, String post, String studyUrl, Long id, PostUpdateRequestDto postUpdateRequestDto) {
         studyPostBefore(member, studyUrl);
+        validPostUpdateRequestDto(postUpdateRequestDto);
         StudyPost studyPost = updatePostBefore(member, post, id);
         studyPost.updateStudyPost(postUpdateRequestDto);
 
@@ -96,6 +98,7 @@ public class StudyPostServiceImpl implements StudyPostService{
     @Override
     public PostResponseDto updatePost(Member member, String post, String studyUrl, List<MultipartFile> files, Long id, PostUpdateRequestDto postUpdateRequestDto) throws IOException {
         studyPostBefore(member, studyUrl);
+        validPostUpdateRequestDto(postUpdateRequestDto);
         StudyPost studyPost = updatePostBefore(member, post, id);
         studyPost.updateStudyPost(postUpdateRequestDto);
         saveFile(studyPost, files);
@@ -176,13 +179,26 @@ public class StudyPostServiceImpl implements StudyPostService{
         }
     }
 
+    private void validPostSaveRequestDto(PostSaveRequestDto postSaveRequestDto) {
+        if (postSaveRequestDto.getTitle().isEmpty() || postSaveRequestDto.getContent().isEmpty()) {
+            throw new IllegalArgumentException("제목 또는 내용을 작성해주세요");
+        }
+    }
+
 
     private StudyPost createPostBefore(Member member, String post, PostSaveRequestDto postSaveRequestDto) {
+        validPostSaveRequestDto(postSaveRequestDto);
         StudyPost studyPost = postSaveRequestDto.studyPostToEntity();
         studyPost.setAuthor(member);
         studyPost.setPostEnum(post);
 
         return studyPost;
+    }
+
+    private void validPostUpdateRequestDto(PostUpdateRequestDto postUpdateRequestDto) {
+        if (postUpdateRequestDto.getTitle().isEmpty() || postUpdateRequestDto.getContent().isEmpty()) {
+            throw new IllegalArgumentException("제목 또는 내용을 작성해주세요");
+        }
     }
 
     private StudyPost updatePostBefore(Member member, String post, Long id) {
