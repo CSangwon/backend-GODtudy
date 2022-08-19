@@ -32,7 +32,7 @@ public class Study {
     private Member student;
 
     @Builder.Default
-    @OneToMany(mappedBy = "study")
+    @OneToMany(mappedBy = "study", cascade = CascadeType.REMOVE)
     private List<Todo> todoList = new ArrayList<>();
 
     private String name;
