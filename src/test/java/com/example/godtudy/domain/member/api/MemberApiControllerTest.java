@@ -1,4 +1,4 @@
-package com.example.godtudy.domain.member;
+package com.example.godtudy.domain.member.api;
 
 import com.example.godtudy.domain.member.dto.request.MemberJoinForm;
 import com.example.godtudy.domain.member.entity.Role;

@@ -89,8 +89,6 @@ public class MemberJoinForm {
                 .nickname(nickname)
                 .birthday(date)
                 .role(role)
-                .subject(new ArrayList<>())
-                .adminPosts(new ArrayList<>())
                 .emailVerified(false)
                 .build();
     }

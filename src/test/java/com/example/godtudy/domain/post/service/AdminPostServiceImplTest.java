@@ -1,7 +1,7 @@
 package com.example.godtudy.domain.post.service;
 
 import com.example.godtudy.WithMember;
-import com.example.godtudy.domain.comment.dto.CommentSaveDto;
+import com.example.godtudy.domain.comment.dto.request.CommentSaveDto;
 import com.example.godtudy.domain.comment.entity.Comment;
 import com.example.godtudy.domain.comment.repository.CommentRepository;
 import com.example.godtudy.domain.comment.service.CommentService;
@@ -12,10 +12,13 @@ import com.example.godtudy.domain.member.entity.SubjectEnum;
 import com.example.godtudy.domain.member.repository.MemberRepository;
 import com.example.godtudy.domain.member.service.MemberService;
 import com.example.godtudy.domain.post.dto.request.PostSaveRequestDto;
+import com.example.godtudy.domain.post.dto.request.PostSearchCondition;
 import com.example.godtudy.domain.post.dto.request.PostUpdateRequestDto;
+import com.example.godtudy.domain.post.dto.response.BriefPostInfoDto;
 import com.example.godtudy.domain.post.dto.response.PostInfoResponseDto;
+import com.example.godtudy.domain.post.dto.response.PostPagingDto;
 import com.example.godtudy.domain.post.entity.AdminPost;
-import com.example.godtudy.domain.post.entity.AdminPostEnum;
+import com.example.godtudy.domain.post.entity.PostEnum;
 import com.example.godtudy.domain.post.repository.AdminPostRepository;
 
 import com.example.godtudy.global.file.File;
@@ -28,6 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,12 +50,11 @@ import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
-class AdminPostServiceTest {
+class AdminPostServiceImplTest {
 
     @Autowired    MemberService memberService;
 
-    @Qualifier("adminPostService")
-    @Autowired    PostService postService;
+    @Autowired    AdminPostService postService;
 
     @Autowired    CommentService commentService;
 
@@ -118,7 +121,7 @@ class AdminPostServiceTest {
         assertThat(test1.getContent()).isEqualTo("test1");
         assertThat(test1.getMember().getUsername()).isEqualTo("swchoi1997");
         assertThat(test1.getFiles().isEmpty()).isTrue();
-        assertThat(test1.getNoticeOrEvent()).isEqualTo(AdminPostEnum.valueOf(post.toUpperCase()));
+        assertThat(test1.getNoticeOrEvent()).isEqualTo(PostEnum.valueOf(post.toUpperCase()));
     }
 
 
@@ -146,7 +149,7 @@ class AdminPostServiceTest {
         assertThat(test1.getTitle()).isEqualTo("test1");
         assertThat(test1.getContent()).isEqualTo("test1");
         assertThat(test1.getMember().getUsername()).isEqualTo("swchoi1997");
-        assertThat(test1.getNoticeOrEvent()).isEqualTo(AdminPostEnum.valueOf(post.toUpperCase()));
+        assertThat(test1.getNoticeOrEvent()).isEqualTo(PostEnum.valueOf(post.toUpperCase()));
 
 
         File file = fileRepository.findById(test1.getFiles().get(0).getId()).orElseThrow();
@@ -405,11 +408,11 @@ class AdminPostServiceTest {
         assertThat(adminPostRepository.findAll().size()).isSameAs(11);
         //when
         AdminPost adminPost = adminPostRepository.findByTitle("test1").orElseThrow();
-        postService.deletePost(member, adminPost.getId());
+        postService.deletePost(member, post, adminPost.getId());
 
         //then
         assertThat(adminPostRepository.findAll().size()).isSameAs(10);
-//        assertThat(member.getAdminPosts().size()).isSameAs(0);
+        assertThat(member.getAdminPosts().size()).isSameAs(0);
     }
 
     @Test
@@ -427,11 +430,12 @@ class AdminPostServiceTest {
         assertThat(adminPostRepository.findAll().size()).isSameAs(11);
         //when
         AdminPost adminPost = adminPostRepository.findByTitle("test1").orElseThrow();
-        postService.deletePost(member, adminPost.getId());
+        postService.deletePost(member, post, adminPost.getId());
 
         //then
         assertThat(adminPostRepository.findAll().size()).isSameAs(10);
         assertThat(fileRepository.findAll().size()).isSameAs(0);
+        assertThat(member.getAdminPosts().size()).isSameAs(0);
     }
 
     @Test
@@ -450,7 +454,7 @@ class AdminPostServiceTest {
 
         //then
         Assertions.assertThrows(AccessDeniedException.class, () ->
-                postService.deletePost(member, adminPost.getId()));
+                postService.deletePost(member, post, adminPost.getId()));
     }
 
     @Test
@@ -469,7 +473,7 @@ class AdminPostServiceTest {
 
         //then
         Assertions.assertThrows(AccessDeniedException.class, () ->
-                postService.deletePost(tmpMember, adminPost.getId()));
+                postService.deletePost(tmpMember, post, adminPost.getId()));
     }
 
 
@@ -480,29 +484,35 @@ class AdminPostServiceTest {
     2. postService에서 post삭제 시 댓글 삭제 해줘야함
     3. 게시글 조회 시 댓글까지 조회되는지 확인 : 댓글의 대댓글까지 조화가 되야함!!
      */
+
     @Test
     @DisplayName("삭제시 댓글도 같이 삭제")
     @WithMember("swchoi1997")
     public void deletePostCheckMemberAndComment() throws Exception{
         //given
-        Member member2 = memberRepository.findByUsername("swchoi1997").orElseThrow();
-        member2.setRole(Role.ADMIN);
+        Member member2 = memberRepository.findByUsername("swchoi1997").orElseThrow(); // 맴버 찾아옴
+        member2.setRole(Role.ADMIN); // 역할변경
 
+        //게시글작성 10 + 1
         PostSaveRequestDto postSaveRequestDto2 = PostSaveRequestDto.builder().title("test2").content("content2").build();
         postService.createPost(member2, "event", postSaveRequestDto2);
         AdminPost adminPost2 = adminPostRepository.findByTitle("test2").orElseThrow();
 
+        //댓글적음
         CommentSaveDto commentSaveDto2 = CommentSaveDto.builder().content("comment2").build();
-        commentService.saveComment(adminPost2.getId(), member2, commentSaveDto2);
+        commentService.saveComment("event",adminPost2.getId(), member2, commentSaveDto2);
         Comment comment2 = commentRepository.findByContent("comment2").orElseThrow();
 
+        //대댓글
         CommentSaveDto reCommentSaveDto2 = CommentSaveDto.builder().content("comment4").build();
-        commentService.saveReComment(adminPost2.getId(), member2, comment2.getId(), reCommentSaveDto2);
+        commentService.saveReComment("event",adminPost2.getId(), member2, comment2.getId(), reCommentSaveDto2);
 
+        //110 처음에 댓글1 대댓글1
         assertThat(commentRepository.findAll().size()).isSameAs(112);
+        assertThat(adminPostRepository.findAll().size()).isSameAs(11);
+
         //when
-//        adminPost2 = adminPostRepository.findByTitle("test2").orElseThrow();
-        postService.deletePost(member2, adminPost2.getId());
+        postService.deletePost(member2, "event", adminPost2.getId());
 
         //then
         assertThat(commentRepository.findAll().size()).isSameAs(110);
@@ -530,15 +540,15 @@ class AdminPostServiceTest {
 
         CommentSaveDto commentSaveDto = CommentSaveDto.builder().content("comment1").build();
         CommentSaveDto commentSaveDto2 = CommentSaveDto.builder().content("comment2").build();
-        commentService.saveComment(adminPost1.getId(), member1, commentSaveDto);
-        commentService.saveComment(adminPost2.getId(), member2, commentSaveDto2);
+        commentService.saveComment("notice",adminPost1.getId(), member1, commentSaveDto);
+        commentService.saveComment("event",adminPost2.getId(), member2, commentSaveDto2);
         Comment comment = commentRepository.findByContent("comment1").orElseThrow();
         Comment comment2 = commentRepository.findByContent("comment2").orElseThrow();
 
         CommentSaveDto reCommentSaveDto = CommentSaveDto.builder().content("comment3").build();
         CommentSaveDto reCommentSaveDto2 = CommentSaveDto.builder().content("comment4").build();
-        commentService.saveReComment(adminPost1.getId(), member2, comment.getId(), reCommentSaveDto);
-        commentService.saveReComment(adminPost2.getId(), member1, comment2.getId(), reCommentSaveDto2);
+        commentService.saveReComment("notice",adminPost1.getId(), member2, comment.getId(), reCommentSaveDto);
+        commentService.saveReComment("event",adminPost2.getId(), member1, comment2.getId(), reCommentSaveDto2);
 
         //when
         adminPost1 = adminPostRepository.findByTitle("test1").orElseThrow();
@@ -562,6 +572,163 @@ class AdminPostServiceTest {
         assertThat(postInfo2.getCommentInfoResponseDtoList().get(0).getContent()).isEqualTo("comment2");
         assertThat(postInfo1.getCommentInfoResponseDtoList().get(0).getReCommentInfoResponseDtoList().get(0).getContent()).isEqualTo("comment3");
         assertThat(postInfo2.getCommentInfoResponseDtoList().get(0).getReCommentInfoResponseDtoList().get(0).getContent()).isEqualTo("comment4");
+    }
+
+    @Test
+    @DisplayName("게시글 검색 - 조건 없음")
+    @WithMember("swchoi1997")
+    public void getAdminPostNotCond() throws Exception{
+        //given
+        Member member = memberRepository.findByUsername("swchoi1997").orElseThrow();
+        member.setRole(Role.ADMIN);
+
+        //when
+        final int PAGE = 0;
+        final int SIZE = 5;
+        PageRequest pageRequest = PageRequest.of(PAGE, SIZE);
+        PostSearchCondition postSearchCondition = new PostSearchCondition();
+
+        PostPagingDto postList = postService.getPostList(pageRequest, postSearchCondition);
+        assertThat(postList.getTotalElementCount()).isEqualTo(10);
+
+        PostSaveRequestDto postSaveRequestDto = PostSaveRequestDto.builder().title("test1").content("test11").build();
+        postService.createPost(member, "notice", postSaveRequestDto);
+        List<AdminPost> allAdminPost = adminPostRepository.findAll();
+//        showAllPosts(allAdminPost);
+
+        postList = postService.getPostList(pageRequest, postSearchCondition);
+//        showPostsCond(postList);
+        //then
+        assertThat(postList.getTotalElementCount()).isEqualTo(allAdminPost.size());
+        assertThat(postList.getCurrentPageNum()).isEqualTo(PAGE);
+        assertThat(postList.getCurrentPageElementCount()).isEqualTo(SIZE);
+        assertThat(postList.getTotalPageCount()).isEqualTo((allAdminPost.size() % SIZE == 0) ?
+                allAdminPost.size() / SIZE : allAdminPost.size() / SIZE + 1);
+        assertThat(postList.getSimplePostDtoList().size()).isEqualTo(SIZE);
+
+    }
+
+    @Test
+    @DisplayName("게시글 검색 - 제목일치")
+    @WithMember("swchoi1997")
+    public void getAdminPostConditionTitle() throws Exception{
+        //given
+        Member member = memberRepository.findByUsername("swchoi1997").orElseThrow();
+        member.setRole(Role.ADMIN);
+
+        final int POST_COUNT = 20;
+        for (int i = 1; i <= POST_COUNT; i++) {
+            PostSaveRequestDto postSaveRequestDto = PostSaveRequestDto.builder().title("aaa" + i).content("aaa" + i).build();
+            postService.createPost(member, "notice", postSaveRequestDto);
+        }
+
+        //when
+        final int PAGE = 2;
+        final int SIZE = 5;
+        PageRequest pageRequest = PageRequest.of(PAGE, SIZE);
+        PostSearchCondition postSearchCondition = new PostSearchCondition();
+        postSearchCondition.setTitle("aaa");
+
+        PostPagingDto postList = postService.getPostList(pageRequest, postSearchCondition);
+        List<AdminPost> allAdminPost = adminPostRepository.findAll();
+
+        //then
+        assertThat(postList.getTotalElementCount()).isEqualTo(POST_COUNT);
+        assertThat(postList.getCurrentPageNum()).isEqualTo(PAGE);
+        assertThat(postList.getCurrentPageElementCount()).isEqualTo(SIZE);
+        assertThat(postList.getTotalPageCount()).isEqualTo((POST_COUNT % SIZE == 0) ? POST_COUNT / SIZE : POST_COUNT / SIZE + 1);
+        assertThat(postList.getSimplePostDtoList().size()).isEqualTo(SIZE);
+    }
+
+    @Test
+    @DisplayName("게시글 검색 - 내용일치")
+    @WithMember("swchoi1997")
+    public void getAdminPostConditionContent() throws Exception{
+        //given
+        Member member = memberRepository.findByUsername("swchoi1997").orElseThrow();
+        member.setRole(Role.ADMIN);
+
+        final int POST_COUNT = 19;
+        for (int i = 1; i <= POST_COUNT; i++) {
+            PostSaveRequestDto postSaveRequestDto = PostSaveRequestDto.builder().title("aaa" + i).content("testaaa" + i).build();
+            postService.createPost(member, "notice", postSaveRequestDto);
+        }
+
+        //when
+        final int PAGE = 2;
+        final int SIZE = 5;
+        PageRequest pageRequest = PageRequest.of(PAGE, SIZE);
+        PostSearchCondition postSearchCondition = new PostSearchCondition();
+        postSearchCondition.setContent("testaaa");
+
+        PostPagingDto postList = postService.getPostList(pageRequest, postSearchCondition);
+
+        //then
+        assertThat(postList.getTotalElementCount()).isEqualTo(POST_COUNT);
+        assertThat(postList.getCurrentPageNum()).isEqualTo(PAGE);
+        assertThat(postList.getCurrentPageElementCount()).isEqualTo(SIZE);
+        assertThat(postList.getTotalPageCount()).isEqualTo((POST_COUNT % SIZE == 0) ? POST_COUNT / SIZE : POST_COUNT / SIZE + 1);
+        assertThat(postList.getSimplePostDtoList().size()).isEqualTo(SIZE);
+    }
+
+    @Test
+    @DisplayName("게시글 검색 - 제목 내용일치")
+    @WithMember("swchoi1997")
+    public void getAdminPostConditionTitleContent() throws Exception{
+        //given
+        Member member = memberRepository.findByUsername("swchoi1997").orElseThrow();
+        member.setRole(Role.ADMIN);
+
+        final int POST_COUNT = 19;
+        for (int i = 1; i <= POST_COUNT; i++) {
+            if (i == 10) {
+                PostSaveRequestDto postSaveRequestDto = PostSaveRequestDto.builder().title("aaa" + i).content("aba" + i).build();
+                postService.createPost(member, "notice", postSaveRequestDto);
+                continue;
+            }
+            PostSaveRequestDto postSaveRequestDto = PostSaveRequestDto.builder().title("aaa" + i).content("bbb" + i).build();
+            postService.createPost(member, "notice", postSaveRequestDto);
+        }
+
+        //when
+        final int PAGE = 2;
+        final int SIZE = 5;
+        PageRequest pageRequest = PageRequest.of(PAGE, SIZE);
+        PostSearchCondition postSearchCondition = new PostSearchCondition();
+        postSearchCondition.setContent("aaa");
+        postSearchCondition.setContent("bbb");
+
+        PostPagingDto postList = postService.getPostList(pageRequest, postSearchCondition);
+
+        //then
+        assertThat(postList.getTotalElementCount()).isEqualTo(POST_COUNT - 1);
+        assertThat(postList.getCurrentPageNum()).isEqualTo(PAGE);
+        assertThat(postList.getCurrentPageElementCount()).isEqualTo(SIZE);
+        assertThat(postList.getTotalPageCount()).isEqualTo((POST_COUNT % SIZE == 0) ? POST_COUNT / SIZE : POST_COUNT / SIZE + 1);
+        assertThat(postList.getSimplePostDtoList().size()).isEqualTo(SIZE);
+    }
+
+
+
+    // 한번 찍어보기위한 함수
+    private void showAllPosts(List<AdminPost> allAdminPost){
+        System.out.println("showAllPosts");
+        for (AdminPost adminPost : allAdminPost) {
+            System.out.println(adminPost.getTitle() + " ");
+        }
+        System.out.println();
+    }
+
+    //검색조건에 따라 결과가 어떻게 나오는지 보기위한 함수
+    private void showPostsCond(PostPagingDto postPagingDto) {
+        System.out.println("showPostsCond");
+        System.out.println(postPagingDto.getTotalPageCount());
+        System.out.println(postPagingDto.getCurrentPageNum());
+        System.out.println(postPagingDto.getTotalElementCount());
+        System.out.println(postPagingDto.getCurrentPageElementCount());
+        for (BriefPostInfoDto briefPostInfoDto : postPagingDto.getSimplePostDtoList()) {
+            System.out.println(briefPostInfoDto.getTitle() + " / " + briefPostInfoDto.getContent() + " / " + briefPostInfoDto.getAuthor());
+        }
     }
 
 }

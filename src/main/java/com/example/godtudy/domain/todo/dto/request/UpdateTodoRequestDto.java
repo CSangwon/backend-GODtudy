@@ -9,10 +9,10 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDateTime;
 
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Data
-public class CreateTodoRequestDto {
+public class UpdateTodoRequestDto {
 
     private String title;
 
@@ -20,5 +20,4 @@ public class CreateTodoRequestDto {
 
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime endDate;
-
 }

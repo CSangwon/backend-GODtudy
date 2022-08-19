@@ -4,6 +4,7 @@ import com.example.godtudy.domain.member.entity.Member;
 import com.example.godtudy.domain.member.entity.Subject;
 import com.example.godtudy.domain.member.entity.SubjectEnum;
 import com.example.godtudy.domain.post.entity.AdminPost;
+import com.example.godtudy.domain.post.entity.StudyPost;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -28,12 +29,23 @@ public class File {
     @ManyToOne(fetch = FetchType.EAGER)
     private AdminPost adminPost;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    private StudyPost studyPost;
+
     public void setAdminPost(AdminPost adminPost) {
         if (this.adminPost != null) {
             this.adminPost.getFiles().remove(this);
         }
         this.adminPost = adminPost;
         adminPost.getFiles().add(this);
+    }
+
+    public void setStudyPost(StudyPost studyPost) {
+        if (this.studyPost != null) {
+            this.studyPost.getFiles().remove(this);
+        }
+        this.studyPost = studyPost;
+        studyPost.getFiles().add(this);
     }
 
     public void setTitle(String filePath) {

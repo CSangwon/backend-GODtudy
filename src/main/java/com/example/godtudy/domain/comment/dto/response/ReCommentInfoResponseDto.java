@@ -1,4 +1,4 @@
-package com.example.godtudy.domain.comment.dto;
+package com.example.godtudy.domain.comment.dto.response;
 
 import com.example.godtudy.domain.comment.entity.Comment;
 import lombok.Data;
@@ -18,7 +18,12 @@ public class ReCommentInfoResponseDto {
     private String author;
 
     public ReCommentInfoResponseDto(Comment reComment) {
-        this.postId = reComment.getAdminPost().getId();
+        if (reComment.getAdminPost() != null) {
+            this.postId = reComment.getAdminPost().getId();
+        } else if (reComment.getStudyPost() != null) {
+            this.postId = reComment.getStudyPost().getId();
+        }
+
         this.commentId = reComment.getId();
         if (reComment.getWriter() == null && reComment.getContent().equals("")) {
             this.content = DELETED_COMMENT_CONTENT;

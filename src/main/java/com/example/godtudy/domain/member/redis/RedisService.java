@@ -22,7 +22,7 @@ public class RedisService {
     public void setDataWithExpiration(String key, String value, Long time) {
         if (this.getData(key) != null)
             this.deleteData(key);
-        Duration expireDuration = Duration.ofSeconds(time);
+        Duration expireDuration = Duration.ofMillis(time);
         redisTemplate.opsForValue().set(key, value, expireDuration);
     }
 

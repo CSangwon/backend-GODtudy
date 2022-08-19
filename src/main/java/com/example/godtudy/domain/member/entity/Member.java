@@ -4,6 +4,7 @@ import com.example.godtudy.domain.BaseEntity;
 import com.example.godtudy.domain.comment.entity.Comment;
 import com.example.godtudy.domain.member.dto.request.profile.ProfileRequestDto;
 import com.example.godtudy.domain.post.entity.AdminPost;
+import com.example.godtudy.domain.post.entity.StudyPost;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
@@ -61,8 +62,13 @@ public class Member extends BaseEntity {
     private List<Subject> subject = new ArrayList<>();
 
     @Builder.Default
-    @OneToMany(mappedBy = "member", orphanRemoval = true, cascade = REMOVE)
+//    @OneToMany(mappedBy = "member", orphanRemoval = true, cascade = REMOVE)
+    @OneToMany(mappedBy = "member")
     private List<AdminPost> adminPosts = new ArrayList<>(); // NullpointerException 7.5 커밋내용 보기
+
+    @Builder.Default
+    @OneToMany(mappedBy = "member")
+    private List<StudyPost> studyPosts = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

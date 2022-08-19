@@ -1,6 +1,7 @@
 package com.example.godtudy.domain.post.dto.response;
 
 import com.example.godtudy.domain.post.entity.AdminPost;
+import com.example.godtudy.domain.post.entity.StudyPost;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -24,5 +25,8 @@ public class BriefPostInfoDto {
         this.content = adminPost.getContent();
         this.author = adminPost.getMember().getNickname();
         this.createdDate = adminPost.getCreatedDate().toString();
+    }
+
+    public BriefPostInfoDto(StudyPost studyPost) {
     }
 }

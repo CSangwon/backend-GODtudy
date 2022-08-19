@@ -21,7 +21,7 @@ import static javax.persistence.CascadeType.ALL;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AdminPost extends BaseEntity {
+public class StudyPost extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -33,12 +33,12 @@ public class AdminPost extends BaseEntity {
     private String content;
 
     @Builder.Default
-    @OneToMany(mappedBy = "adminPost")
+    @OneToMany(mappedBy = "studyPost")
     private List<File> files = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private PostEnum noticeOrEvent;
+    private PostEnum postEnum;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
@@ -47,38 +47,33 @@ public class AdminPost extends BaseEntity {
     @OneToMany(mappedBy = "adminPost", orphanRemoval = true, cascade = ALL) //, orphanRemoval = true, cascade = ALL
     @OrderBy("id asc")
     private List<Comment> commentList = new ArrayList<>();
-//    orphanRemoval 는 연관관계가 끊어진 자식 엔티티를 자동으로 삭제해주는 기능이다.
 
     // == 연관관계 편의 메서드 == //
     public void setAuthor(Member member) {
         if (this.member != null) {
-            this.member.getAdminPosts().remove(this);
+            this.member.getStudyPosts().remove(this);
         }
         this.member = member;
-        member.getAdminPosts().add(this);
+        member.getStudyPosts().add(this);
     }
 
     public void addFiles(File file) {
         this.files.add(file);
-        if (file.getAdminPost()!= this) {
-            file.setAdminPost(this);
+        if (file.getStudyPost()!= this) {
+            file.setStudyPost(this);
         }
     }
 
-    //게시글 카테고리 확인
-    public void setPostEnum(String post){
-        this.noticeOrEvent = PostEnum.valueOf(post.toUpperCase());
+    public void setPostEnum(String post) {
+        this.postEnum = PostEnum.valueOf(post.toUpperCase());
     }
 
-    //게시글 업데이트
-    public void updateAdminPost(PostUpdateRequestDto postUpdateRequestDto) {
-        this.title = postUpdateRequestDto.getTitle();
-        this.content = postUpdateRequestDto.getContent();
-    }
-
-    //파일 초기화
     public void initFiles() {
         this.files = new ArrayList<>();
     }
 
+    public void updateStudyPost(PostUpdateRequestDto postUpdateRequestDto) {
+        this.title = postUpdateRequestDto.getTitle();
+        this.content = postUpdateRequestDto.getContent();
+    }
 }

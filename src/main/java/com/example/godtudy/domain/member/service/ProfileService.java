@@ -43,9 +43,9 @@ public class ProfileService {
         memberService.logout(new MemberLogoutRequestDto(member.getUsername()));
     }
 
-    public Page<ProfileResponseDto> searchMember(String username, Role role, Pageable pageable) {
-        Page<Member> members = memberRepository.findByUsernameContainsAndRole(username, role, pageable);
-        Page<ProfileResponseDto> memberList = members.map(entity -> new ProfileResponseDto(entity));
+    public Page<ProfileResponseDto> searchMember(String username, String name, Role role, Pageable pageable) {
+        Page<Member> members = memberRepository.findByUsernameContainsAndNameContainsAndRole(username, name, role, pageable);
+        Page<ProfileResponseDto> memberList = members.map(entity -> new ProfileResponseDto(entity)); // entity == member
 
         return memberList;
     }

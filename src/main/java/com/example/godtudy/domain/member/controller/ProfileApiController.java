@@ -48,12 +48,13 @@ public class ProfileApiController {
     }
 
     //프로필 목록 검색
-    @GetMapping("/member/search")
+    @GetMapping("/list")
     public ResponseEntity<?> getProfiles(
             @RequestParam(value = "username") String username,
+            @RequestParam(value = "name") String name,
             @RequestParam(value = "role") Role role,
             @PageableDefault(size = 12, sort = "username", direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<ProfileResponseDto> profileResponseDtoPage = profileService.searchMember(username, role, pageable);
+        Page<ProfileResponseDto> profileResponseDtoPage = profileService.searchMember(username, name, role, pageable);
         return new ResponseEntity<>(profileResponseDtoPage, HttpStatus.OK);
     }
 }

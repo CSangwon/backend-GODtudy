@@ -1,4 +1,4 @@
-package com.example.godtudy.domain.service;
+package com.example.godtudy.domain.profile.service;
 
 import com.example.godtudy.WithMember;
 import com.example.godtudy.domain.member.dto.request.profile.PasswordUpdateRequestDto;
