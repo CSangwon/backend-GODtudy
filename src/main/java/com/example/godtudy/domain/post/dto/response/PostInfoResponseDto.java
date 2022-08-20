@@ -5,6 +5,7 @@ import com.example.godtudy.domain.comment.entity.Comment;
 import com.example.godtudy.domain.post.entity.AdminPost;
 import com.example.godtudy.domain.post.entity.StudyPost;
 import com.example.godtudy.global.file.File;
+import com.example.godtudy.global.file.dto.FileResponseDto;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -25,17 +26,22 @@ public class PostInfoResponseDto {
 
     private String author;
 
-    private List<File> files;
+//    private List<File> files;
 
-    private List<CommentInfoResponseDto> commentInfoResponseDtoList;
+    private List<FileResponseDto> files = new ArrayList<>();
+
+    private List<CommentInfoResponseDto> commentInfoResponseDtoList = new ArrayList<>();
 
     public PostInfoResponseDto(AdminPost adminPost) {
         this.postId = adminPost.getId();
         this.title = adminPost.getTitle();
         this.content = adminPost.getContent();
         this.author = adminPost.getMember().getNickname();
-        this.files = adminPost.getFiles();
         this.commentInfoResponseDtoList = parentChild(adminPost.getCommentList());
+        for (File file : adminPost.getFiles()) {
+            FileResponseDto fileResponseDto = FileResponseDto.builder().fileId(file.getId()).title(file.getFilePath()).build();
+            this.files.add(fileResponseDto);
+        }
     }
 
     public PostInfoResponseDto(StudyPost studyPost) {
@@ -43,8 +49,11 @@ public class PostInfoResponseDto {
         this.title = studyPost.getTitle();
         this.content = studyPost.getContent();
         this.author = studyPost.getMember().getNickname();
-        this.files = studyPost.getFiles();
         this.commentInfoResponseDtoList = parentChild(studyPost.getCommentList());
+        for (File file : studyPost.getFiles()) {
+            FileResponseDto fileResponseDto = FileResponseDto.builder().fileId(file.getId()).title(file.getFilePath()).build();
+            this.files.add(fileResponseDto);
+        }
     }
 
     public List<CommentInfoResponseDto> parentChild(List<Comment> commentList) {

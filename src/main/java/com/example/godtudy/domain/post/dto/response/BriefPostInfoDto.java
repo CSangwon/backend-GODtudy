@@ -28,5 +28,10 @@ public class BriefPostInfoDto {
     }
 
     public BriefPostInfoDto(StudyPost studyPost) {
+        this.postId = studyPost.getId();
+        this.title = studyPost.getTitle();
+        this.content = studyPost.getContent();
+        this.author = studyPost.getMember().getNickname();
+        this.createdDate = studyPost.getCreatedDate().toString();
     }
 }
