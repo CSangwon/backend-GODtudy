@@ -1,13 +1,17 @@
 package com.example.godtudy.domain.member.dto.request.profile;
 
 import com.example.godtudy.global.validation.ValidationGroups;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class PasswordUpdateRequestDto {
 

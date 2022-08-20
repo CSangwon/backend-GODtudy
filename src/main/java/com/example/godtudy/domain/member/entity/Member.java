@@ -107,6 +107,11 @@ public class Member extends BaseEntity {
         this.nickname = profileRequestDto.getNickname();
         this.bio = profileRequestDto.getBio();
         this.profileImageUrl = profileRequestDto.getProfileImageUrl();
+//TODO
+//        for (String sub : profileRequestDto.getSubject()) {
+//            this.subject = sub.toUpperCase()
+//        }
+
     }
 
     //비밀번호 업데이트

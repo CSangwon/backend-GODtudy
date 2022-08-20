@@ -32,7 +32,7 @@ public class ProfileService {
         memberRepository.save(member);
     }
 
-    public void updatePassword(Member member, PasswordUpdateRequestDto passwordUpdateRequestDto) {
+    public void updatePassword(Member member, PasswordUpdateRequestDto passwordUpdateRequestDto, String accessToken) {
         if (!passwordUpdateRequestDto.getNewPassword().equals(passwordUpdateRequestDto.getNewPasswordConfirm())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
@@ -40,7 +40,8 @@ public class ProfileService {
         member.updatePassword(passwordEncoder.encode(passwordUpdateRequestDto.getNewPassword()));
         memberRepository.save(member);
         //업데이트 후 로그아웃
-        memberService.logout(new MemberLogoutRequestDto(member.getUsername()));
+//        memberService.logout(new MemberLogoutRequestDto(member.getUsername()));
+        memberService.logout(member.getUsername(),accessToken);
     }
 
     public Page<ProfileResponseDto> searchMember(String username, String name, Role role, Pageable pageable) {

@@ -35,5 +35,5 @@ public class ProfileRequestDto {
     @Basic(fetch = FetchType.EAGER)
     private String profileImageUrl;
 
-    private List<Subject> subject = new ArrayList<>();
+    private List<String> subject = new ArrayList<>();
 }

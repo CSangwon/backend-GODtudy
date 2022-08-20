@@ -31,7 +31,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.UUID;
 
 
@@ -67,8 +69,6 @@ public class MemberService {
         redisService.setDataWithExpiration(RedisKey.REFRESH.getKey() + memberLoginRequestDto.getUsername(),
                 refreshToken, JwtTokenProvider.REFRESH_TOKEN_VALID_TIME);
 
-        // TODO 시간 만료 설정에 오류가있음 확인해야함
-
         final MemberDetails memberDetails = (MemberDetails) memberDetailsService.loadUserByUsername(memberLoginRequestDto.getUsername());
 
         return ResponseEntity.ok(new MemberLoginResponseDto(memberDetails.getId(), memberLoginRequestDto.getUsername(), accessToken, refreshToken));
@@ -96,9 +96,11 @@ public class MemberService {
         return ResponseEntity.ok(new JwtTokenResponseDto(accessToken, refreshTokenByRedis));
     }
 
-    // 로그아웃 토근제거
-    public void logout(MemberLogoutRequestDto memberLogoutRequestDto) {
-        redisService.deleteData(RedisKey.REFRESH.getKey() + memberLogoutRequestDto.getUsername());
+    // 로그아웃 ->  refresh토근제거, accesstoken blacklist생성
+    public void logout(String username, String accessToken) {
+        redisService.deleteData(RedisKey.REFRESH.getKey() + username);
+        redisService.setDataWithExpiration("logout" + accessToken.substring(7), accessToken.substring(7),
+                jwtTokenProvider.getExpirationDateFromToken(accessToken.substring(7)).getTime() / 1000000);
     }
 
     /*  회원가입  */
@@ -107,7 +109,6 @@ public class MemberService {
         String role1 = role.toUpperCase();
         if (!role1.equals("ADMIN")){ tmpRole = "TMP_" + role1;}
         else{ tmpRole = role1; }
-
 
         //TODO 회원가입하고 이메일인증을 하지 않았을 때 같은 이메일로 회원가입이 들어오면 어떻게 해야할가를 생각
         memberJoinForm.setPassword(passwordEncoder.encode(memberJoinForm.getPassword()));
