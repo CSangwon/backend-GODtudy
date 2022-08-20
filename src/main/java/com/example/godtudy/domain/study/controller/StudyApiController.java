@@ -59,8 +59,15 @@ public class StudyApiController {
     /**
      * 공부방 삭제
      */
-    @DeleteMapping("/{url}")
-    public ResponseEntity<String> deleteStudy(@PathVariable("url") String url,
+//    @DeleteMapping("/{url}")
+//    public ResponseEntity<String> deleteStudy(@PathVariable("url") String url,
+//                                              @CurrentMember Member member) {
+//        String deleteUrl = studyService.deleteStudy(member, url);
+//        return new ResponseEntity<>(deleteUrl, HttpStatus.OK);
+//    }
+//
+    @DeleteMapping()
+    public ResponseEntity<String> deleteStudy(@RequestHeader("Url") String url,
                                               @CurrentMember Member member) {
         String deleteUrl = studyService.deleteStudy(member, url);
         return new ResponseEntity<>(deleteUrl, HttpStatus.OK);

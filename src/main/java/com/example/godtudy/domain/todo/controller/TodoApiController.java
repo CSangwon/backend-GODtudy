@@ -50,10 +50,18 @@ public class TodoApiController {
         return new ResponseEntity<>(updateTodoId, HttpStatus.OK);
     }
 
+//    @DeleteMapping("{studyUrl}/todo/{id}")
+//    public ResponseEntity<?> deleteTodo(
+//            @PathVariable("studyUrl") String studyUrl,
+//            @PathVariable("id") Long todoId) {
+//        todoService.deleteTodo(studyUrl, todoId);
+//        return new ResponseEntity<>(HttpStatus.OK);
+//    }
+
     @DeleteMapping("{studyUrl}/todo/{id}")
     public ResponseEntity<?> deleteTodo(
             @PathVariable("studyUrl") String studyUrl,
-            @PathVariable("id") Long todoId) {
+            @RequestHeader("Todo-id") Long todoId) {
         todoService.deleteTodo(studyUrl, todoId);
         return new ResponseEntity<>(HttpStatus.OK);
     }

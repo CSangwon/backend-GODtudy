@@ -27,6 +27,7 @@ public class ProfileApiController {
 
     private final ProfileService profileService;
 
+    //본인 프로필 가져오기
     @GetMapping("/{profileId}")
     public ResponseEntity<ProfileResponseDto> profileInquiry(@CurrentMember Member member, @PathVariable String profileId) {
         ProfileResponseDto profile = profileService.getProfile(member);
@@ -34,16 +35,17 @@ public class ProfileApiController {
     }
 
     //프로필 업데이트
-    @PostMapping("/update/")
-    public ResponseEntity<?> updateProfile(@CurrentMember Member member, @Valid ProfileRequestDto profileRequestDto) {
+    @PutMapping("")
+    public ResponseEntity<?> updateProfile(@CurrentMember Member member, @Valid @RequestBody ProfileRequestDto profileRequestDto) {
         profileService.updateProfile(member, profileRequestDto);
         return new ResponseEntity<>("update Ok", HttpStatus.OK);
     }
 
     //비밀번호 업데이트
-    @PostMapping("/update/password")
-    public ResponseEntity<?> updatePassword(@CurrentMember Member member, @Valid PasswordUpdateRequestDto passwordUpdateRequestDto) {
-        profileService.updatePassword(member, passwordUpdateRequestDto);
+    @PostMapping("/password")
+    public ResponseEntity<?> updatePassword(@CurrentMember Member member, @RequestHeader("X-AUTH-TOKEN") String accessToken,
+                                            @Valid @RequestBody PasswordUpdateRequestDto passwordUpdateRequestDto) {
+        profileService.updatePassword(member, passwordUpdateRequestDto, accessToken);
         return new ResponseEntity<>("Password Update", HttpStatus.OK);
     }
 

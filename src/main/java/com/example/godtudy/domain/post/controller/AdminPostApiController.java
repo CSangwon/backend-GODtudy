@@ -25,15 +25,15 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AdminPostApiController {
 
-//    @Qualifier("adminPostServiceImpl")
     private final AdminPostService postService;
-
 
     @PostMapping("{post}/new")
     public ResponseEntity<?> createAdminPost(@PathVariable String post, @CurrentMember Member member,
-                                               @RequestBody PostSaveRequestDto postSaveRequestDto,
-                                               @RequestPart List<MultipartFile> files) throws IOException {
-        if (files.isEmpty()) {
+                                               @RequestPart PostSaveRequestDto postSaveRequestDto,
+                                               @RequestPart(required = false) List<MultipartFile> files) throws IOException {
+
+
+        if (files == null) {
             return postService.createPost(member, post, postSaveRequestDto);
         }
         return postService.createPost(member, files, post, postSaveRequestDto);
@@ -41,16 +41,17 @@ public class AdminPostApiController {
 
     @PostMapping("/{post}/{postId}") // 게시글 수정
     public ResponseEntity<?> updateAdminPost(@PathVariable String post, @PathVariable Long postId, @CurrentMember Member member,
-                                               @RequestBody PostUpdateRequestDto postUpdateRequestDto,
-                                               @RequestPart List<MultipartFile> files) throws IOException {
-        if (files.isEmpty()) {
+                                               @RequestPart PostUpdateRequestDto postUpdateRequestDto,
+                                               @RequestPart(required = false) List<MultipartFile> files) throws IOException {
+        if (files == null) {
             return postService.updatePost(member, post, postId, postUpdateRequestDto);
         }
         return postService.updatePost(member, post, files, postId, postUpdateRequestDto);
     }
 
-    @DeleteMapping("/{post}/{postId}") // 게시글 삭제
-    public ResponseEntity<?> deleteAdminPost(@PathVariable String post, @PathVariable Long postId, @CurrentMember Member member) {
+    @DeleteMapping()
+    public ResponseEntity<?> deleteAdminPost(@CurrentMember Member member,
+                                             @RequestHeader(value = "Post") String post, @RequestHeader(value = "Post-Id") Long postId) {
         return postService.deletePost(member, post, postId);
     }
 
@@ -61,8 +62,10 @@ public class AdminPostApiController {
 
     @GetMapping("{post}")
     public ResponseEntity<?> getAdminPostList(@PathVariable String post,
-                                              @RequestBody PostSearchCondition postSearchCondition,
+                                              @RequestParam("title") String title,
+                                              @RequestParam("content") String content,
                                               @PageableDefault(size = 12, sort = "createdDate", direction = Sort.Direction.DESC) Pageable pageable) {
+        PostSearchCondition postSearchCondition = new PostSearchCondition(title, content);
         return new ResponseEntity<>(postService.getPostList(pageable, postSearchCondition), HttpStatus.OK);
     }
 }

@@ -49,9 +49,11 @@ public class MemberApiController {
     }
 
     /*   로그아웃   */
-    @PostMapping("/logout")
-    public void logout(@RequestBody MemberLogoutRequestDto memberLogoutRequestDto) {
-        memberService.logout(memberLogoutRequestDto);
+    @DeleteMapping("/logout")
+    public void logout(@RequestHeader("Username") String username,
+                       @RequestHeader("X-AUTH-TOKEN") String accessToken){
+//        memberService.logout(username);
+        memberService.logout(username, accessToken);
     }
 
     /*     회원가입     */
@@ -68,9 +70,10 @@ public class MemberApiController {
     }
 
     /*   이메일 인증   */
-    @GetMapping("/checkEmailToken/{token}/{email}")
-    public ResponseEntity<?> checkEmailToken(@PathVariable String token, @PathVariable String email) {
+    @GetMapping("/check-email-token")
+    public ResponseEntity<?> checkEmailToken(@RequestParam String token, @RequestParam String email) {
         return memberService.checkEmailToken(token, email);
+
     }
 
     /*     아이디 중복 확인     */

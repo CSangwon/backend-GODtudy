@@ -31,14 +31,15 @@ public class StudyPostApiController {
 
     private final StudyPostService postService;
 
-    @PostMapping("{studyUrl}/post/{post}/")
+    @PostMapping("{studyUrl}/post/{post}")
     public ResponseEntity<ResultResponse<PostResponseDto>> createStudyPost(@CurrentMember Member member,
                                                                            @PathVariable String studyUrl, @PathVariable String post,
-                                                                           @RequestPart List<MultipartFile> files,
-                                                                           @RequestBody PostSaveRequestDto postSaveRequestDto) throws IOException {
+                                                                           @RequestPart(required = false) List<MultipartFile> files,
+                                                                           @RequestPart PostSaveRequestDto postSaveRequestDto) throws IOException {
         PostResponseDto createPost;
-        if (!files.isEmpty()) createPost = postService.createPost(member, post, studyUrl, files, postSaveRequestDto);
-        else createPost = postService.createPost(member, post, studyUrl, postSaveRequestDto);
+        if (files == null) createPost = postService.createPost(member, post, studyUrl, postSaveRequestDto);
+        else createPost = postService.createPost(member, post, studyUrl, files, postSaveRequestDto);
+
 
         ResultResponse<PostResponseDto> result = ResultResponse.<PostResponseDto>builder()
                 .response(createPost)
@@ -50,10 +51,10 @@ public class StudyPostApiController {
     @PostMapping("{studyUrl}/post/{post}/{postId}")
     public ResponseEntity<ResultResponse<PostResponseDto>> updateStudyPost(@CurrentMember Member member, @PathVariable String studyUrl,
                                                                            @PathVariable String post, @PathVariable Long postId,
-                                                                           @RequestPart List<MultipartFile> files,
-                                                                           @RequestBody PostUpdateRequestDto postUpdateRequestDto) throws IOException {
+                                                                           @RequestPart(required = false) List<MultipartFile> files,
+                                                                           @RequestPart PostUpdateRequestDto postUpdateRequestDto) throws IOException {
         PostResponseDto updatePost;
-        if (!files.isEmpty()) updatePost = postService.updatePost(member, post, studyUrl, postId, postUpdateRequestDto);
+        if (files == null) updatePost = postService.updatePost(member, post, studyUrl, postId, postUpdateRequestDto);
         else updatePost = postService.updatePost(member, post, studyUrl, files, postId, postUpdateRequestDto);
 
         ResultResponse<PostResponseDto> result = ResultResponse.<PostResponseDto>builder()
@@ -63,9 +64,9 @@ public class StudyPostApiController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @DeleteMapping("{studyUrl}/post/{post}/{postId}")
+    @DeleteMapping("{studyUrl}/post/{post}")
     public ResponseEntity<?> deleteStudyPost(@CurrentMember Member member, @PathVariable String studyUrl,
-                                                                           @PathVariable String post, @PathVariable Long postId) {
+                                             @PathVariable String post, @RequestHeader("Post-Id") Long postId) {
         return new ResponseEntity<>(postService.deletePost(member, post, studyUrl, postId), HttpStatus.OK);
     }
 

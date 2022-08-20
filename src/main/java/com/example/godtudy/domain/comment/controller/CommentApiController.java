@@ -60,9 +60,9 @@ public class CommentApiController {
 
     // 댓글 삭제
 
-    @DeleteMapping("{postType}/{postId}/{commentId}")
-    public ResponseEntity<?> deleteComment(@PathVariable String postType, @PathVariable Long postId,
-                                           @PathVariable Long commentId, @CurrentMember Member member){
+    @DeleteMapping("{postType}")
+    public ResponseEntity<?> deleteComment(@PathVariable String postType, @RequestHeader("Post-Id") Long postId,
+                                           @RequestHeader("Comment-Id") Long commentId, @CurrentMember Member member){
         commentService.deleteComment(postType, commentId, member);
         return new ResponseEntity<>("Delete Complete", HttpStatus.OK);
 
