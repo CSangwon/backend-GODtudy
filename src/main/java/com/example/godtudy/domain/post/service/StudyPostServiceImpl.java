@@ -17,6 +17,7 @@ import com.example.godtudy.global.advice.exception.PostNotFoundException;
 import com.example.godtudy.global.advice.exception.StudyNotFoundException;
 import com.example.godtudy.global.file.File;
 import com.example.godtudy.global.file.FileRepository;
+import com.example.godtudy.global.file.dto.FileResponseDto;
 import com.example.godtudy.global.file.service.FileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -30,6 +31,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.PostUpdate;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
