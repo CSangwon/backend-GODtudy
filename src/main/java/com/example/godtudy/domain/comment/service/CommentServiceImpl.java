@@ -41,7 +41,7 @@ public class CommentServiceImpl implements CommentService{
         commentRepository.save(comment);
 
         return CommentResponseDto.builder().
-                content(comment.getContent()).username(member.getUsername()).postKind(postType).message("Comment Save").
+                id(comment.getId()).content(comment.getContent()).username(member.getUsername()).postKind(postType).message("Comment Save").
                 build();
     }
 
@@ -53,7 +53,7 @@ public class CommentServiceImpl implements CommentService{
         commentRepository.save(reComment);
 
         return CommentResponseDto.builder().
-                content(reComment.getContent()).username(member.getUsername()).postKind(postType).message("ReComment Save").
+                id(reComment.getId()).content(reComment.getContent()).username(member.getUsername()).postKind(postType).message("ReComment Save").
                 build();
     }
 
@@ -66,7 +66,7 @@ public class CommentServiceImpl implements CommentService{
         commentRepository.save(comment);
 
         return CommentResponseDto.builder().
-                content(comment.getContent()).username(member.getUsername()).postKind(postType).message("update Complete").
+                id(comment.getId()).content(comment.getContent()).username(member.getUsername()).postKind(postType).message("update Complete").
                 build();
     }
 
