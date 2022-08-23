@@ -34,6 +34,7 @@ import org.thymeleaf.context.Context;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.Locale;
 import java.util.UUID;
 
 
@@ -127,7 +128,8 @@ public class MemberService {
         if (memberJoinForm.getSubject().isEmpty()) {
             throw new IllegalArgumentException("입력하지 않은 부분이 있습니다. 확인해 주세요.");
         }
-        for (SubjectEnum title: memberJoinForm.getSubject()) {
+        for (String sub : memberJoinForm.getSubject()) {
+            SubjectEnum title = SubjectEnum.valueOf(sub.toUpperCase(Locale.ROOT));
             Subject subject = Subject.createMemberSubject(newMember, title);
             subjectRepository.save(subject);
         }

@@ -74,8 +74,6 @@ public class Member extends BaseEntity {
     @Column(nullable = false)
     private Role role;
 
-
-
     public void setRole(Role role) {
         this.role = role;
     }
@@ -94,8 +92,7 @@ public class Member extends BaseEntity {
 
     //이메일 인증을 얼마나 자주 할 수 있을
     public boolean canSendConfirmEmail() {
-//        return this.emailCheckTokenGeneratedAt.isBefore(LocalDateTime.now().minusHours(1));
-        return this.emailCheckTokenGeneratedAt.isBefore(LocalDateTime.now().minusMinutes(1));
+        return this.emailCheckTokenGeneratedAt.isBefore(LocalDateTime.now().minusMinutes(30));
     }
 
     public boolean isValidToken(String token) {
@@ -107,11 +104,7 @@ public class Member extends BaseEntity {
         this.nickname = profileRequestDto.getNickname();
         this.bio = profileRequestDto.getBio();
         this.profileImageUrl = profileRequestDto.getProfileImageUrl();
-//TODO
-//        for (String sub : profileRequestDto.getSubject()) {
-//            this.subject = sub.toUpperCase()
-//        }
-
+        this.subject.clear();
     }
 
     //비밀번호 업데이트

@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.*;
+import java.util.List;
+import java.util.Locale;
 
 @Slf4j
 @Entity
@@ -46,4 +48,6 @@ public class Subject {
         subject.setTitle(title);
         return subject;
     }
+
+
 }

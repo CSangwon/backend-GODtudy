@@ -74,8 +74,7 @@ public class MemberJoinForm {
     private Role role;
 
     @NotBlank(message = "필수 입력사항 입니다.", groups = ValidationGroups.NotEmptyGroup.class)
-//    private Set<SubjectEnum> subject;
-    private List<SubjectEnum> subject;
+    private List<String> subject;
 
     public Member toEntity(){
         String birthday = year + "-" + month + "-" + day;
