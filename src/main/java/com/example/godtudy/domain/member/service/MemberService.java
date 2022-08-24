@@ -58,9 +58,10 @@ public class MemberService {
     private final MemberDetailsService memberDetailsService;
     private final PasswordEncoder passwordEncoder;
 
-    public ResponseEntity<?> login(MemberLoginRequestDto memberLoginRequestDto) {
+    public MemberLoginResponseDto login(MemberLoginRequestDto memberLoginRequestDto) {
         if(memberRepository.findByUsername(memberLoginRequestDto.getUsername()).isEmpty()){
-            return new ResponseEntity<>("해당하는 맴버가 없습니다.", HttpStatus.BAD_REQUEST);
+            throw new MemberNotFoundException("해당하는 맴버가 없습니다.");
+//            new ResponseEntity<>("해당하는 맴버가 없습니다.", HttpStatus.BAD_REQUEST);
         }
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(memberLoginRequestDto.getUsername(), memberLoginRequestDto.getPassword()));
@@ -72,7 +73,7 @@ public class MemberService {
 
         final MemberDetails memberDetails = (MemberDetails) memberDetailsService.loadUserByUsername(memberLoginRequestDto.getUsername());
 
-        return ResponseEntity.ok(new MemberLoginResponseDto(memberDetails.getId(), memberLoginRequestDto.getUsername(), accessToken, refreshToken));
+        return new MemberLoginResponseDto(memberDetails.getId(), memberLoginRequestDto.getUsername(), accessToken, refreshToken);
     }
 
     public ResponseEntity<?> reissueAuthenticationToken(TokenRequestDto tokenRequestDto) {

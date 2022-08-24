@@ -3,6 +3,7 @@ package com.example.godtudy.domain.member.controller;
 import com.example.godtudy.domain.member.dto.request.*;
 import com.example.godtudy.domain.member.dto.request.profile.FindPasswordRequestDto;
 import com.example.godtudy.domain.member.dto.request.profile.FindUsernameRequestDto;
+import com.example.godtudy.domain.member.dto.response.MemberLoginResponseDto;
 import com.example.godtudy.domain.member.dto.response.profile.FindUsernameResponseDto;
 import com.example.godtudy.domain.member.service.MemberService;
 import com.example.godtudy.domain.member.entity.Member;
@@ -38,8 +39,8 @@ public class MemberApiController {
 
     /*   로그인   */
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody MemberLoginRequestDto memberLoginRequestDto) {
-        return memberService.login(memberLoginRequestDto);
+    public ResponseEntity<MemberLoginResponseDto> login(@RequestBody MemberLoginRequestDto memberLoginRequestDto) {
+        return new ResponseEntity<>(memberService.login(memberLoginRequestDto), HttpStatus.OK);
     }
 
     /*   accesstoken만료 시 재발급   */

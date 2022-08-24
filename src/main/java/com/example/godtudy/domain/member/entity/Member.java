@@ -105,6 +105,7 @@ public class Member extends BaseEntity {
         this.bio = profileRequestDto.getBio();
         this.profileImageUrl = profileRequestDto.getProfileImageUrl();
         this.subject.clear();
+//        this.subject = new ArrayList<>();
     }
 
     //비밀번호 업데이트
