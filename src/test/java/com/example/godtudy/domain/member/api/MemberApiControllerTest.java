@@ -42,9 +42,9 @@ class MemberApiControllerTest {
 
     @BeforeEach
     void beforeEach(){
-        List<SubjectEnum> subject = new ArrayList<>();
-        subject.add(SubjectEnum.BIOLOGY);
-        subject.add(SubjectEnum.CHEMISTRY);
+        List<String> subject = new ArrayList<>();
+        subject.add("BIOLOGY");
+        subject.add("CHEMISTRY");
 
         MemberJoinForm memberJoinForm = MemberJoinForm.builder()
                 .username("swchoi1997")

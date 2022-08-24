@@ -52,7 +52,7 @@ public class ProfileService {
         member.updatePassword(passwordEncoder.encode(passwordUpdateRequestDto.getNewPassword()));
         memberRepository.save(member);
         //업데이트 후 로그아웃
-        memberService.logout(member.getUsername(),accessToken);
+        memberService.logout(member.getUsername(), accessToken);
     }
 
     public Page<ProfileResponseDto> searchMember(String username, String name, Role role, Pageable pageable) {

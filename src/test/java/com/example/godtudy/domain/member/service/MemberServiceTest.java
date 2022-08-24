@@ -41,9 +41,9 @@ class MemberServiceTest {
 
     @BeforeEach
     void beforeEach(){
-        List<SubjectEnum> subjectEnums = new ArrayList<>();
-        subjectEnums.add(SubjectEnum.BIOLOGY);
-        subjectEnums.add(SubjectEnum.CHEMISTRY);
+        List<String> subjectEnums = new ArrayList<>();
+        subjectEnums.add("BIOLOGY");
+        subjectEnums.add("CHEMISTRY");
         MemberJoinForm memberJoinForm = MemberJoinForm.builder()
                 .username("swchoi1997")
                 .password("tkddnjs4371@")
@@ -72,7 +72,7 @@ class MemberServiceTest {
                 .name("최상원")
                 .email("test40@naver.com")
                 .nickname("test40")
-                .subject(new ArrayList<SubjectEnum>(Arrays.asList(SubjectEnum.CHEMISTRY, SubjectEnum.BIOLOGY)))
+                .subject(new ArrayList<String>(Arrays.asList("CHEMISTRY", "BIOLOGY")))
                 .year("1997").month("02").day("12")
                 .build();
         //when

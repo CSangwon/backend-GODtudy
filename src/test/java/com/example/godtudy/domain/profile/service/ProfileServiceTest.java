@@ -1,19 +1,24 @@
 package com.example.godtudy.domain.profile.service;
 
 import com.example.godtudy.WithMember;
+import com.example.godtudy.domain.member.dto.request.MemberLoginRequestDto;
 import com.example.godtudy.domain.member.dto.request.profile.PasswordUpdateRequestDto;
 import com.example.godtudy.domain.member.dto.request.profile.ProfileRequestDto;
+import com.example.godtudy.domain.member.dto.response.MemberLoginResponseDto;
 import com.example.godtudy.domain.member.dto.response.ProfileResponseDto;
 import com.example.godtudy.domain.member.entity.Member;
 import com.example.godtudy.domain.member.repository.MemberRepository;
+import com.example.godtudy.domain.member.service.MemberService;
 import com.example.godtudy.domain.member.service.ProfileService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
@@ -30,6 +35,8 @@ class ProfileServiceTest {
 
     @Autowired
     PasswordEncoder passwordEncoder;
+    @Autowired
+    private MemberService memberService;
 
     @WithMember("swchoi1997")
     @DisplayName("WithMember 테스트")
@@ -69,6 +76,7 @@ class ProfileServiceTest {
                 .nickname("숲속의짜장")
                 .bio("test")
                 .profileImageUrl("test")
+                .subject(new ArrayList<>())
                 .build();
 
         //when
@@ -95,7 +103,9 @@ class ProfileServiceTest {
 
         org.junit.jupiter.api.Assertions.assertFalse(passwordEncoder.matches("swchoi1997", member1.getPassword()));
         //when
-        profileService.updatePassword(member1, passwordUpdateRequestDto);
+        MemberLoginResponseDto swchoi1997 = memberService.login(new MemberLoginRequestDto("swchoi1997", "qwer123!@#"));
+        String accessToken = "Bearer " + swchoi1997.getAccessToken();
+        profileService.updatePassword(member1, passwordUpdateRequestDto, accessToken);
 
         //then
         org.junit.jupiter.api.Assertions.assertTrue(passwordEncoder.matches("swchoi1997", member1.getPassword()));

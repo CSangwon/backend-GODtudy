@@ -44,9 +44,9 @@ class CommentServiceImplTest {
     // 맴버2 가입시키기
     @BeforeEach
     void signMember2(){
-        List<SubjectEnum> subjectEnums = new ArrayList<>();
-        subjectEnums.add(SubjectEnum.BIOLOGY);
-        subjectEnums.add(SubjectEnum.CHEMISTRY);
+        List<String> subjectEnums = new ArrayList<>();
+        subjectEnums.add("BIOLOGY");
+        subjectEnums.add("CHEMISTRY");
         MemberJoinForm memberJoinForm = MemberJoinForm.builder()
                 .username("swchoi123")
                 .password("tkddnjs4371@")

@@ -81,9 +81,9 @@ class AdminPostServiceImplTest {
 
     @BeforeEach
     void signMember2(){
-        List<SubjectEnum> subjectEnums = new ArrayList<>();
-        subjectEnums.add(SubjectEnum.BIOLOGY);
-        subjectEnums.add(SubjectEnum.CHEMISTRY);
+        List<String> subjectEnums = new ArrayList<>();
+        subjectEnums.add("BIOLOGY");
+        subjectEnums.add("CHEMISTRY");
         MemberJoinForm memberJoinForm = MemberJoinForm.builder()
                 .username("swchoi123")
                 .password("tkddnjs4371@")
@@ -360,9 +360,9 @@ class AdminPostServiceImplTest {
     }
 
     private Member tmp_member() {
-        List<SubjectEnum> subjectEnums = new ArrayList<>();
-        subjectEnums.add(SubjectEnum.BIOLOGY);
-        subjectEnums.add(SubjectEnum.CHEMISTRY);
+        List<String> subjects = new ArrayList<>();
+        subjects.add("BIOLOGY");
+        subjects.add("CHEMISTRY");
         MemberJoinForm memberJoinForm = MemberJoinForm.builder()
                 .username("test123")
                 .password("tkddnjs4371@")
@@ -370,7 +370,7 @@ class AdminPostServiceImplTest {
                 .email("test123@naver.com")
                 .nickname("test123")
                 .year("1997").month("02").day("12")
-                .subject(subjectEnums)
+                .subject(subjects)
                 .build();
         return memberService.initJoinMember(memberJoinForm, "admin");
     }

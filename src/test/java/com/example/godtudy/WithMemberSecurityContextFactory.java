@@ -33,9 +33,9 @@ public class WithMemberSecurityContextFactory implements WithSecurityContextFact
         String nickname = withMember.value();
 
 //        Set<SubjectEnum> subject = new HashSet<>();
-        List<SubjectEnum> subject = new ArrayList<>();
-        subject.add(SubjectEnum.BIOLOGY);
-        subject.add(SubjectEnum.CHEMISTRY);
+        List<String> subject = new ArrayList<>();
+        subject.add("BIOLOGY");
+        subject.add("CHEMISTRY");
 
         MemberJoinForm memberJoinForm = MemberJoinForm.builder()
                 .username(nickname)

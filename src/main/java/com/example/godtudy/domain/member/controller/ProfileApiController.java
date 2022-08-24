@@ -45,7 +45,7 @@ public class ProfileApiController {
     @PostMapping("/password")
     public ResponseEntity<?> updatePassword(@CurrentMember Member member, @RequestHeader("X-AUTH-TOKEN") String accessToken,
                                             @Valid @RequestBody PasswordUpdateRequestDto passwordUpdateRequestDto) {
-        profileService.updatePassword(member, passwordUpdateRequestDto, accessToken);
+        profileService.updatePassword(member, passwordUpdateRequestDto, accessToken.substring(7));
         return new ResponseEntity<>("Password Update", HttpStatus.OK);
     }
 
