@@ -71,9 +71,6 @@ class AdminPostServiceImplTest {
         System.out.println("adadadadas" + resource.getFile().getAbsolutePath());
         return new MockMultipartFile("file", "file.png", "image/png",
                 new FileInputStream(resource.getFile().getAbsolutePath()));
-
-//        return new MockMultipartFile("file", "file.png", "image/png",
-//                new FileInputStream("/src/test/resources/static/file/GODtudy_logo_2.png"));
     }
 
     private void deleteFile(String filePath) {
