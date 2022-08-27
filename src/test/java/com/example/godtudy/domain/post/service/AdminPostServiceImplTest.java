@@ -28,7 +28,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import org.springframework.data.domain.PageRequest;
@@ -71,7 +70,7 @@ class AdminPostServiceImplTest {
 
     private MockMultipartFile getMockUploadFile() throws IOException {
         return new MockMultipartFile("file", "file.png", "image/png",
-                new FileInputStream("/Users/forest_choi/Desktop/portfolio/GODtudy/Godtudy_File/test1.png"));
+                new FileInputStream("/Users/forest_choi/Documents/study/springboot/godtudy/godtudy/src/main/resources/static/file/GODtudy_logo_2.png"));
     }
 
     private void deleteFile(String filePath) {
