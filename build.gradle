@@ -5,7 +5,7 @@ buildscript {
 }
 
 plugins {
-    id "org.asciidoctor.jvm.convert" version "3.3.2"
+    id 'org.asciidoctor.jvm.convert' version '3.3.2'
     id 'org.springframework.boot' version '2.6.7'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
@@ -18,7 +18,8 @@ sourceCompatibility = '11'
 apply plugin: "com.ewerk.gradle.plugins.querydsl"
 
 configurations {
-    asciidoctorExt
+    querydsl.extendsFrom compileClasspath
+    asciidoctorExtensions
     compileOnly {
         extendsFrom annotationProcessor
     }
@@ -40,22 +41,25 @@ dependencies {
     implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'io.jsonwebtoken:jjwt:0.9.1'
-
     implementation 'io.springfox:springfox-boot-starter:3.0.0'
-
 
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     runtimeOnly 'com.h2database:h2'
     annotationProcessor 'org.projectlombok:lombok'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.security:spring-security-test'
 
     //querydsl 추가
     implementation 'com.querydsl:querydsl-jpa'
     implementation 'com.querydsl:querydsl-apt'
 
-    asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
+    asciidoctorExtensions 'org.springframework.restdocs:spring-restdocs-asciidoctor'
+
+    //    ##
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'com.tngtech.archunit:archunit-junit5:0.23.1'
+    //    ##
+    testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 }
 //querydsl 추가
@@ -74,9 +78,6 @@ sourceSets {
 compileQuerydsl{
     options.annotationProcessorPath = configurations.querydsl
 }
-configurations {
-    querydsl.extendsFrom compileClasspath
-}
 
 //rest docs
 ext {
@@ -85,6 +86,7 @@ ext {
 
 test {
     outputs.dir snippetsDir
+    useJUnitPlatform()
 }
 
 asciidoctor {
@@ -93,14 +95,9 @@ asciidoctor {
     dependsOn test
 }
 
-tasks.named('test') {
-    useJUnitPlatform()
-}
-
 asciidoctor.doFirst {
     delete file('src/main/resources/static/docs')
 }
-
 
 task copyDocument(type: Copy) {
     dependsOn asciidoctor
