@@ -30,6 +30,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.access.AccessDeniedException;
@@ -65,12 +66,14 @@ class AdminPostServiceImplTest {
 
     @Autowired    FileRepository fileRepository;
 
-
-
-
     private MockMultipartFile getMockUploadFile() throws IOException {
+        ClassPathResource resource = new ClassPathResource("static/file/GODtudy_logo_2.png");
+        System.out.println("adadadadas" + resource.getFile().getAbsolutePath());
         return new MockMultipartFile("file", "file.png", "image/png",
-                new FileInputStream("/Users/forest_choi/Documents/study/springboot/godtudy/godtudy/src/main/resources/static/file/GODtudy_logo_2.png"));
+                new FileInputStream(resource.getFile().getAbsolutePath()));
+
+//        return new MockMultipartFile("file", "file.png", "image/png",
+//                new FileInputStream("/src/test/resources/static/file/GODtudy_logo_2.png"));
     }
 
     private void deleteFile(String filePath) {
