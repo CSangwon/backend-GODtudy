@@ -28,6 +28,7 @@ public class ProfileResponseDto {
 
     private String profileImageUrl;
 
+    @Builder.Default
     //    private Set<Subject> subject = new HashSet<>();
     private List<SubjectEnum> subject = new ArrayList<>();
 
