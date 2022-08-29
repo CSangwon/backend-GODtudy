@@ -1,0 +1,25 @@
+= GODtudy API
+:doctype: book
+:toc: left
+:toclevels: 4
+:sectlinks:
+:icons: font
+:source-highlighter: highlightjs
+
+ifndef::snippets[]
+:snippets: ../../../build/generated-snippets
+endif::[]
+
+== Study
+=== create study
+
+==== request
+include::{snippets}/study-create/http-request.adoc[]
+
+==== request fields
+include::{snippets}/study-create/request-fields.adoc[]
+
+==== response
+include::{snippets}/study-create/http-response.adoc[]
+
+
