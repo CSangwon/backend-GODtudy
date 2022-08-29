@@ -39,8 +39,11 @@ public class StudyDto {
         this.shortDescription = study.getShortDescription();
     }
 
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     @Data
-    class Student {
+    public static class Student {
         private Long id;
         private String name;
         private String username;
@@ -52,8 +55,11 @@ public class StudyDto {
         }
     }
 
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     @Data
-    class Teacher {
+    public static class Teacher {
         private Long id;
         private String name;
         private String username;
