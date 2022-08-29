@@ -43,7 +43,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
                 .authorizeRequests()
-                .mvcMatchers("/home", "/api/member/**", "/chat").permitAll()
+                .mvcMatchers("/home", "/api/member/login").permitAll()
                 .anyRequest().authenticated()
             .and()
                 .exceptionHandling().authenticationEntryPoint(new CustomAuthenticationEntryPoint())//401
