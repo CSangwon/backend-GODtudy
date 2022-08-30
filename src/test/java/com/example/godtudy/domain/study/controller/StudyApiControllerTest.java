@@ -8,7 +8,6 @@ import com.example.godtudy.domain.study.dto.request.UpdateStudyRequestDto;
 import com.example.godtudy.domain.study.dto.response.StudyDto;
 import com.example.godtudy.domain.study.service.StudyService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.aspectj.lang.annotation.After;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,7 +16,6 @@ import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
@@ -146,8 +144,6 @@ class StudyApiControllerTest {
                                 fieldWithPath("student.username").type(JsonFieldType.STRING).description("학생 닉네임")
                         ))
                 );
-
-//        memberRepository.delete(memberRepository.findByUsername("swchoi1997").orElseThrow());
     }
 
     @WithMember("swchoi1997")
@@ -214,8 +210,6 @@ class StudyApiControllerTest {
                                 fieldWithPath("student.username").type(JsonFieldType.STRING).description("학생 닉네임")
                         ))
                 );
-//        memberRepository.delete(memberRepository.findByUsername("swchoi1997").orElseThrow());
-
     }
 
     @WithMember("swchoi1997")
@@ -273,11 +267,32 @@ class StudyApiControllerTest {
                                 fieldWithPath("student.username").type(JsonFieldType.STRING).description("학생 닉네임")
                         ))
                 );
-//        memberRepository.delete(memberRepository.findByUsername("swchoi1997").orElseThrow());
-
     }
 
+    @WithMember("swchoi1997")
+    @Test
+    public void deleteStudy() throws Exception {
+        //given
+        String deleteStudyUrl = "korean-study";
 
+        given(studyService.deleteStudy(any(Member.class), ArgumentMatchers.anyString()))
+                .willReturn(deleteStudyUrl);
 
+        //when
+        ResultActions result = this.mockMvc.perform(delete("/api/study")
+                .header("Study-Url", "korean-study")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+        );
 
+        //then
+        result.andExpect(status().isOk())
+                .andDo(document("study-delete",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        requestHeaders(
+                                headerWithName("Study-Url").description("스터디 url")
+                        )
+                ));
+    }
 }
