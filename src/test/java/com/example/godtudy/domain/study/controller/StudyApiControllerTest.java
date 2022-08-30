@@ -69,6 +69,11 @@ class StudyApiControllerTest {
                 .build();
     }
 
+    @AfterEach
+    public void after() {
+        memberRepository.delete(memberRepository.findByUsername("swchoi1997").orElseThrow());
+    }
+
     @WithMember("swchoi1997")
     @Test
     public void createStudy() throws Exception {
@@ -141,6 +146,8 @@ class StudyApiControllerTest {
                                 fieldWithPath("student.username").type(JsonFieldType.STRING).description("학생 닉네임")
                         ))
                 );
+
+//        memberRepository.delete(memberRepository.findByUsername("swchoi1997").orElseThrow());
     }
 
     @WithMember("swchoi1997")
@@ -207,6 +214,7 @@ class StudyApiControllerTest {
                                 fieldWithPath("student.username").type(JsonFieldType.STRING).description("학생 닉네임")
                         ))
                 );
+//        memberRepository.delete(memberRepository.findByUsername("swchoi1997").orElseThrow());
 
     }
 
@@ -265,6 +273,8 @@ class StudyApiControllerTest {
                                 fieldWithPath("student.username").type(JsonFieldType.STRING).description("학생 닉네임")
                         ))
                 );
+//        memberRepository.delete(memberRepository.findByUsername("swchoi1997").orElseThrow());
+
     }
 
 
