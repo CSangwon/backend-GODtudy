@@ -8,6 +8,8 @@ import com.example.godtudy.domain.study.dto.request.UpdateStudyRequestDto;
 import com.example.godtudy.domain.study.dto.response.StudyDto;
 import com.example.godtudy.domain.study.service.StudyService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.aspectj.lang.annotation.After;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
