@@ -1,10 +1,16 @@
 package com.example.godtudy.domain.todo.dto.response;
 
 import com.example.godtudy.domain.todo.entity.Todo;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Data
 public class TodoDto {
 
