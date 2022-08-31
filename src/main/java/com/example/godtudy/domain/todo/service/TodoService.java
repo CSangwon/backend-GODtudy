@@ -57,13 +57,14 @@ public class TodoService {
     }
 
     @Transactional
-    public Long updateTodo(Long todoId, UpdateTodoRequestDto updateTodoRequestDto) {
+    public TodoDto updateTodo(Long todoId, UpdateTodoRequestDto updateTodoRequestDto) {
         Todo todo = findTodoById(todoId);
 
         todo.updateTodo(updateTodoRequestDto);
         Todo updateTodo = todoRepository.save(todo);
+        TodoDto todoDto = TodoEntityToDto(updateTodo);
 
-        return updateTodo.getId();
+        return todoDto;
     }
 
     @Transactional

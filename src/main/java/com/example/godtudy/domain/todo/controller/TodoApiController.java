@@ -43,20 +43,12 @@ public class TodoApiController {
     }
 
     @PutMapping("/{studyUrl}/todo/{id}")
-    public ResponseEntity<Long> updateTodo(
+    public ResponseEntity<TodoDto> updateTodo(
             @PathVariable("id") Long todoId,
             @RequestBody UpdateTodoRequestDto updateTodoRequestDto) {
-        Long updateTodoId = todoService.updateTodo(todoId, updateTodoRequestDto);
-        return new ResponseEntity<>(updateTodoId, HttpStatus.OK);
+        TodoDto updateTodoDto = todoService.updateTodo(todoId, updateTodoRequestDto);
+        return new ResponseEntity<>(updateTodoDto, HttpStatus.OK);
     }
-
-//    @DeleteMapping("{studyUrl}/todo/{id}")
-//    public ResponseEntity<?> deleteTodo(
-//            @PathVariable("studyUrl") String studyUrl,
-//            @PathVariable("id") Long todoId) {
-//        todoService.deleteTodo(studyUrl, todoId);
-//        return new ResponseEntity<>(HttpStatus.OK);
-//    }
 
     @DeleteMapping("{studyUrl}/todo/{id}")
     public ResponseEntity<?> deleteTodo(

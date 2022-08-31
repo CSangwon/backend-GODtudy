@@ -129,13 +129,10 @@ class TodoServiceTest {
                 .build();
 
         //when
-        Long updateTodoId = todoService.updateTodo(saveTodo.getId(), updateTodoRequestDto);
-        Todo updateTodo = todoRepository.findById(updateTodoId)
-                .orElseThrow(() -> new NoSuchElementException("해당하는 할  정보가 없습니다."));
+        TodoDto updateTodoDto = todoService.updateTodo(saveTodo.getId(), updateTodoRequestDto);
 
         //then
-        assertEquals(saveTodo.getId(), updateTodoId);
-        assertEquals(content, updateTodo.getContent());
+        assertEquals(content, updateTodoDto.getContent());
     }
 
     @WithMember("swchoi1997")
