@@ -37,7 +37,7 @@ public class File {
             this.adminPost.getFiles().remove(this);
         }
         this.adminPost = adminPost;
-        adminPost.getFiles().add(this);
+//        adminPost.getFiles().add(this);
     }
 
     public void setStudyPost(StudyPost studyPost) {
@@ -45,7 +45,7 @@ public class File {
             this.studyPost.getFiles().remove(this);
         }
         this.studyPost = studyPost;
-        studyPost.getFiles().add(this);
+//        studyPost.getFiles().add(this);
     }
 
     public void setTitle(String filePath) {

@@ -1,6 +1,7 @@
 package com.example.godtudy.domain.study.entity;
 
 import com.example.godtudy.domain.member.entity.Member;
+import com.example.godtudy.domain.post.entity.StudyPost;
 import com.example.godtudy.domain.study.dto.request.UpdateStudyRequestDto;
 import com.example.godtudy.domain.todo.entity.Todo;
 import lombok.AllArgsConstructor;
@@ -34,6 +35,10 @@ public class Study {
     @Builder.Default
     @OneToMany(mappedBy = "study", cascade = CascadeType.REMOVE)
     private List<Todo> todoList = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "study", cascade = CascadeType.REMOVE)
+    private List<StudyPost> studyPosts = new ArrayList<>();
 
     private String name;
 
