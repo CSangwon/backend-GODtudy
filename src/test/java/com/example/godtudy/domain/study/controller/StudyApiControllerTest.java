@@ -120,7 +120,7 @@ class StudyApiControllerTest {
 
         //then
         result.andExpect(status().isOk())
-                .andDo(document("study-create",
+                .andDo(document("study/study-create",
                         getDocumentRequest(),
                         getDocumentResponse(),
                         requestFields(
@@ -187,7 +187,7 @@ class StudyApiControllerTest {
         );
         //then
         result.andExpect(status().isOk())
-                .andDo(document("study-update",
+                .andDo(document("study/study-update",
                         getDocumentRequest(),
                         getDocumentResponse(),
                         pathParameters(
@@ -248,7 +248,7 @@ class StudyApiControllerTest {
 
         //then
         result.andExpect(status().isOk())
-                .andDo(document("study-get-one",
+                .andDo(document("study/study-get-one",
                         getDocumentRequest(),
                         getDocumentResponse(),
                         pathParameters(
@@ -287,7 +287,7 @@ class StudyApiControllerTest {
 
         //then
         result.andExpect(status().isOk())
-                .andDo(document("study-delete",
+                .andDo(document("study/study-delete",
                         getDocumentRequest(),
                         getDocumentResponse(),
                         requestHeaders(
