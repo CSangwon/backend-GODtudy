@@ -5,6 +5,7 @@ import com.example.godtudy.domain.study.repository.StudyRepository;
 import com.example.godtudy.domain.todo.dto.request.CreateTodoRequestDto;
 import com.example.godtudy.domain.todo.dto.request.UpdateTodoRequestDto;
 import com.example.godtudy.domain.todo.dto.response.TodoDto;
+import com.example.godtudy.domain.todo.dto.response.TodoPagingDto;
 import com.example.godtudy.domain.todo.entity.Todo;
 import com.example.godtudy.domain.todo.repository.TodoRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,8 +14,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.NoSuchElementException;
 
 @Transactional(readOnly = true)
@@ -68,11 +67,13 @@ public class TodoService {
     }
 
     @Transactional
-    public void deleteTodo(String studyUrl, Long todoId) {
+    public Long deleteTodo(String studyUrl, Long todoId) {
         Todo todo = findTodoById(todoId);
         Study study = findStudyByUrl(studyUrl);
         study.getTodoList().remove(todo);
         todoRepository.delete(todo);
+
+        return todo.getId();
     }
 
     public TodoDto getTodo(Long todoId) {
@@ -80,10 +81,10 @@ public class TodoService {
         return TodoEntityToDto(todo);
     }
 
-    public Page<TodoDto> getTodos(String studyUrl, Pageable pageable) {
+    public TodoPagingDto getTodoList(String studyUrl, Pageable pageable) {
         Study study = findStudyByUrl(studyUrl);
         Page<Todo> todoPage = todoRepository.findTodoByStudy(study, pageable);
         Page<TodoDto> todoDtoPage = todoPage.map(entity -> new TodoDto(entity));
-        return todoDtoPage;
+        return new TodoPagingDto(todoDtoPage);
     }
 }

@@ -3,6 +3,7 @@ package com.example.godtudy.domain.todo.controller;
 import com.example.godtudy.domain.todo.dto.request.CreateTodoRequestDto;
 import com.example.godtudy.domain.todo.dto.request.UpdateTodoRequestDto;
 import com.example.godtudy.domain.todo.dto.response.TodoDto;
+import com.example.godtudy.domain.todo.dto.response.TodoPagingDto;
 import com.example.godtudy.domain.todo.service.TodoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -27,11 +28,11 @@ public class TodoApiController {
     }
 
     @GetMapping("/{studyUrl}/todo")
-    public ResponseEntity<Page<TodoDto>> getTodos(
+    public ResponseEntity<TodoPagingDto> getTodos(
             @PathVariable("studyUrl") String studyUrl,
             @PageableDefault(size = 12, sort = "endDate", direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<TodoDto> todoDtoPage = todoService.getTodos(studyUrl, pageable);
-        return new ResponseEntity<>(todoDtoPage, HttpStatus.OK);
+        TodoPagingDto todoPagingDto = todoService.getTodoList(studyUrl, pageable);
+        return new ResponseEntity<>(todoPagingDto, HttpStatus.OK);
     }
 
     @PostMapping("/{studyUrl}/todo")
@@ -50,11 +51,11 @@ public class TodoApiController {
         return new ResponseEntity<>(updateTodoDto, HttpStatus.OK);
     }
 
-    @DeleteMapping("{studyUrl}/todo/{id}")
-    public ResponseEntity<?> deleteTodo(
+    @DeleteMapping("{studyUrl}/todo")
+    public ResponseEntity<Long> deleteTodo(
             @PathVariable("studyUrl") String studyUrl,
-            @RequestHeader("Todo-id") Long todoId) {
-        todoService.deleteTodo(studyUrl, todoId);
-        return new ResponseEntity<>(HttpStatus.OK);
+            @RequestHeader("Todo-Id") Long todoId) {
+        Long deleteTodoId = todoService.deleteTodo(studyUrl, todoId);
+        return new ResponseEntity<>(deleteTodoId, HttpStatus.OK);
     }
 }

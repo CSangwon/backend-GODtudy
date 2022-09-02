@@ -9,6 +9,7 @@ import com.example.godtudy.domain.study.repository.StudyRepository;
 import com.example.godtudy.domain.todo.dto.request.CreateTodoRequestDto;
 import com.example.godtudy.domain.todo.dto.request.UpdateTodoRequestDto;
 import com.example.godtudy.domain.todo.dto.response.TodoDto;
+import com.example.godtudy.domain.todo.dto.response.TodoPagingDto;
 import com.example.godtudy.domain.todo.entity.Todo;
 import com.example.godtudy.domain.todo.repository.TodoRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -209,11 +210,11 @@ class TodoServiceTest {
 
         //when
         Pageable pageable = PageRequest.of(1, 2);
-        Page<TodoDto> todos = todoService.getTodos(studyUrl, pageable);
+        TodoPagingDto todos = todoService.getTodoList(studyUrl, pageable);
 
         //then
-        assertEquals(2, todos.getSize());
-        assertEquals(1, todos.getTotalPages());
+        assertEquals(2, todos.getTotalElementCount());
+        assertEquals(1, todos.getTotalPageCount());
     }
 
 
