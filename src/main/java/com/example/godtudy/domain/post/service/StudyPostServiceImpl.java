@@ -17,7 +17,6 @@ import com.example.godtudy.global.advice.exception.PostNotFoundException;
 import com.example.godtudy.global.advice.exception.StudyNotFoundException;
 import com.example.godtudy.global.file.File;
 import com.example.godtudy.global.file.FileRepository;
-import com.example.godtudy.global.file.dto.FileResponseDto;
 import com.example.godtudy.global.file.service.FileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -29,9 +28,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.PostUpdate;
 import java.io.IOException;
-import java.util.ArrayList;
+
 import java.util.List;
 
 @Service
@@ -49,7 +47,7 @@ public class StudyPostServiceImpl implements StudyPostService{
     @Override
     public PostResponseDto createPost(Member member, String post, String studyUrl, PostSaveRequestDto postSaveRequestDto) {
         studyPostBefore(member, studyUrl);
-        StudyPost studyPost = createPostBefore(member, post, postSaveRequestDto);
+        StudyPost studyPost = createPostBefore(member, studyUrl, post, postSaveRequestDto);
         studyPostRepository.save(studyPost);
 
         return PostResponseDto.builder()
@@ -64,7 +62,7 @@ public class StudyPostServiceImpl implements StudyPostService{
     @Override
     public PostResponseDto createPost(Member member, String post, String studyUrl, List<MultipartFile> files, PostSaveRequestDto postSaveRequestDto) throws IOException {
         studyPostBefore(member, studyUrl);
-        StudyPost studyPost = createPostBefore(member, post, postSaveRequestDto);
+        StudyPost studyPost = createPostBefore(member,studyUrl, post, postSaveRequestDto);
         saveFile(studyPost, files);
 
         studyPostRepository.save(studyPost);
@@ -83,7 +81,7 @@ public class StudyPostServiceImpl implements StudyPostService{
     public PostResponseDto updatePost(Member member, String post, String studyUrl, Long id, PostUpdateRequestDto postUpdateRequestDto) {
         studyPostBefore(member, studyUrl);
         validPostUpdateRequestDto(postUpdateRequestDto);
-        StudyPost studyPost = updatePostBefore(member, post, id);
+        StudyPost studyPost = updatePostBefore(member, studyUrl, post, id);
         studyPost.updateStudyPost(postUpdateRequestDto);
 
         studyPostRepository.save(studyPost);
@@ -101,7 +99,7 @@ public class StudyPostServiceImpl implements StudyPostService{
     public PostResponseDto updatePost(Member member, String post, String studyUrl, List<MultipartFile> files, Long id, PostUpdateRequestDto postUpdateRequestDto) throws IOException {
         studyPostBefore(member, studyUrl);
         validPostUpdateRequestDto(postUpdateRequestDto);
-        StudyPost studyPost = updatePostBefore(member, post, id);
+        StudyPost studyPost = updatePostBefore(member, studyUrl, post, id);
         studyPost.updateStudyPost(postUpdateRequestDto);
         saveFile(studyPost, files);
 
@@ -182,32 +180,40 @@ public class StudyPostServiceImpl implements StudyPostService{
     }
 
     private void validPostSaveRequestDto(PostSaveRequestDto postSaveRequestDto) {
+        if (postSaveRequestDto.getTitle() == null || postSaveRequestDto.getContent() == null) {
+            throw new IllegalArgumentException("제목 또는 내용을 작성해주세요");
+        }
         if (postSaveRequestDto.getTitle().isEmpty() || postSaveRequestDto.getContent().isEmpty()) {
             throw new IllegalArgumentException("제목 또는 내용을 작성해주세요");
         }
     }
 
 
-    private StudyPost createPostBefore(Member member, String post, PostSaveRequestDto postSaveRequestDto) {
+    private StudyPost createPostBefore(Member member, String studyUrl, String post, PostSaveRequestDto postSaveRequestDto) {
         validPostSaveRequestDto(postSaveRequestDto);
         StudyPost studyPost = postSaveRequestDto.studyPostToEntity();
         studyPost.setAuthor(member);
+        studyPost.setStudy(checkExistStudy(studyUrl));
         studyPost.setPostEnum(post);
 
         return studyPost;
     }
 
     private void validPostUpdateRequestDto(PostUpdateRequestDto postUpdateRequestDto) {
+        if (postUpdateRequestDto.getTitle() == null || postUpdateRequestDto.getContent() == null) {
+            throw new IllegalArgumentException("제목 또는 내용을 작성해주세요");
+        }
         if (postUpdateRequestDto.getTitle().isEmpty() || postUpdateRequestDto.getContent().isEmpty()) {
             throw new IllegalArgumentException("제목 또는 내용을 작성해주세요");
         }
     }
 
-    private StudyPost updatePostBefore(Member member, String post, Long id) {
+    private StudyPost updatePostBefore(Member member, String studyUrl, String post, Long id) {
         // 1. 글이 있는지, 2. 카테고리가 똑같은지, 3. 작성자인지, 4. 이미 파일이 존재하는지(존재하면 삭제 후 다시저장/ 반대는 그냥 초기화)
         StudyPost studyPost = existPost(id);
         checkAuthor(member, studyPost);
         checkCategory(post, studyPost);
+        checkExistStudy(studyUrl);
         beforeStudyPostUpdateFileInit(studyPost);
 
         return studyPost;

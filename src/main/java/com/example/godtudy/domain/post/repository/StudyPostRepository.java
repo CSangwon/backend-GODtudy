@@ -11,4 +11,6 @@ public interface StudyPostRepository extends JpaRepository<StudyPost, Long>, Cus
     //    Post + MEMBER 조회 -> 쿼리 1번 발생
     @EntityGraph(attributePaths = "{member}")
     Optional<StudyPost> findAuthorById(Long postId);
+
+    Optional<StudyPost> findByTitle(String title);
 }
