@@ -1,6 +1,7 @@
 package com.example.godtudy.domain.post.repository;
 
 import com.example.godtudy.domain.post.entity.AdminPost;
+import com.example.godtudy.domain.post.entity.StudyPost;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 

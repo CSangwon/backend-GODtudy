@@ -1,21 +1,26 @@
 package com.example.godtudy.domain.member.controller;
 
 import com.example.godtudy.ApiDocumentUtils;
-import com.example.godtudy.domain.member.dto.request.EmailRequestDto;
-import com.example.godtudy.domain.member.dto.request.MemberJoinForm;
-import com.example.godtudy.domain.member.dto.request.NicknameRequestDto;
-import com.example.godtudy.domain.member.dto.request.UsernameRequestDto;
+import com.example.godtudy.domain.member.dto.request.*;
+import com.example.godtudy.domain.member.dto.response.MemberLoginResponseDto;
 import com.example.godtudy.domain.member.entity.Member;
 import com.example.godtudy.domain.member.entity.Role;
+import com.example.godtudy.domain.member.redis.RedisKey;
+import com.example.godtudy.domain.member.redis.RedisService;
 import com.example.godtudy.domain.member.repository.MemberRepository;
 import com.example.godtudy.domain.member.service.MemberService;
+import com.example.godtudy.global.security.jwt.JwtTokenProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.GsonBuilder;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
@@ -31,17 +36,22 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
+import java.util.Date;
 
 import static com.example.godtudy.ApiDocumentUtils.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Transactional
@@ -55,6 +65,9 @@ class MemberApiControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private RedisService redisService;
 
     @Autowired
     private MemberService memberService;
@@ -200,14 +213,113 @@ class MemberApiControllerTest {
                 )
                 .andExpect(status().isOk())
                 .andDo(document("check-nickname-valid",
-                        getDocumentRequest(),
-                        requestFields(
-                                fieldWithPath("nickname").description("중복 확인하려는 사용자 닉네임")
-                        ))
+                                getDocumentRequest(),
+                                requestFields(
+                                        fieldWithPath("nickname").description("중복 확인하려는 사용자 닉네임")
+                                )
+                        )
                 );
     }
 
-    private String initJoin_TmpMember(){
+    @DisplayName("로그인")
+    @Test
+    public void login() throws Exception {
+        initJoin_TmpMember();
+        MemberLoginRequestDto memberLoginRequestDto = new MemberLoginRequestDto();
+        memberLoginRequestDto.setUsername("test40");
+        memberLoginRequestDto.setPassword("tkddnjs4371@");
+
+        String gsonString = new GsonBuilder().setPrettyPrinting().create().toJson(memberLoginRequestDto);
+
+        String url = BASE_URL + "/login";
+        mockMvc.perform(post(url)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(gsonString)
+                        .accept(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isOk())
+                .andDo(document("login",
+                                getDocumentRequest(),
+                                getDocumentResponse(),
+                                requestFields(
+                                        fieldWithPath("username").description("사용자 아이디"),
+                                        fieldWithPath("password").description("사용자 비밀번호")
+                                ),
+                                responseFields(
+                                        fieldWithPath("id").description("사용자 PK"),
+                                        fieldWithPath("username").description("사용자 아이디"),
+                                        fieldWithPath("accessToken").description("Access Token"),
+                                        fieldWithPath("refreshToken").description("RefreshToken")
+                                )
+                        )
+                );
+
+    }
+
+    @DisplayName("토큰재발급")
+    @Test
+    public void reissueAuthenticationToken() throws Exception{
+        initJoin_TmpMember();
+        redisService.setDataWithExpiration(RedisKey.REFRESH.getKey() + "test40",
+                createRefreshToken("test40"), JwtTokenProvider.REFRESH_TOKEN_VALID_TIME);
+        TokenRequestDto tokenRequestDto = new TokenRequestDto();
+        tokenRequestDto.setAccessToken(createAccessToken("test40"));
+        tokenRequestDto.setRefreshToken(redisService.getData(RedisKey.REFRESH.getKey() + "test40"));
+
+        String gsonString = new GsonBuilder().setPrettyPrinting().create().toJson(tokenRequestDto);
+
+        String url = BASE_URL + "/auth/token";
+        mockMvc.perform(post(url)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(gsonString)
+                        .accept(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isOk())
+                .andDo(document("accessToken reissue",
+                                getDocumentRequest(),
+                                getDocumentResponse(),
+                                requestFields(
+                                        fieldWithPath("accessToken").description("만료된 엑세스 토큰"),
+                                        fieldWithPath("refreshToken").description("만료되지않는 리프레시 토큰")
+                                ),
+                                responseFields(
+                                        fieldWithPath("accessToken").description("새로운 엑세스 토큰"),
+                                        fieldWithPath("refreshToken").description("기존 리프레시 토큰")
+                                )
+                        )
+                );
+    }
+
+    @DisplayName("로그아웃")
+    @Test
+    public void logout() throws Exception{
+        initJoin_TmpMember();
+        MemberLoginRequestDto memberLoginRequestDto = new MemberLoginRequestDto();
+        memberLoginRequestDto.setUsername("test40");
+        memberLoginRequestDto.setPassword("tkddnjs4371@");
+        MemberLoginResponseDto memberLoginResponseDto = memberService.login(memberLoginRequestDto);
+
+        String url = BASE_URL + "/logout";
+        mockMvc.perform(delete(url)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .header("Username", "test40")
+                        .header("X-AUTH-TOKEN", "Bearer " + memberLoginResponseDto.getAccessToken())
+
+                )
+                .andExpect(status().isOk())
+                .andDo(document("logout",
+                                requestHeaders(
+                                        headerWithName("Username").description("사용자 아이디"),
+                                        headerWithName("X-AUTH-TOKEN").description("엑세스 토큰")
+                                )
+                        )
+                );
+    }
+
+
+    private String initJoin_TmpMember() {
+
         MemberJoinForm newMember = MemberJoinForm.builder()
                 .username("test40")
                 .password("tkddnjs4371@")
@@ -222,7 +334,30 @@ class MemberApiControllerTest {
         return memberRepository.findByUsername("test40").orElseThrow().getEmailCheckToken();
 
     }
-    
+
+    @Value("${spring.jwt.secretKey}")
+    private String secretKey;
+
+    private String createAccessToken(String username) {
+        Claims claims = Jwts.claims().setSubject(username);
+
+        return Jwts.builder().setClaims(claims)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setSubject(username)
+                .signWith(SignatureAlgorithm.HS512, Base64.getEncoder().encodeToString(secretKey.getBytes()))
+                .setExpiration(new Date(System.currentTimeMillis() + 0)).compact();
+    }
+
+    private String createRefreshToken(String username) {
+        long REFRESH_TOKEN_VALID_TIME = 1000L * 60 * 60 * 24 * 7;
+
+        Claims claims = Jwts.claims().setSubject(username);
+        return Jwts.builder().setClaims(claims)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .signWith(SignatureAlgorithm.HS512, Base64.getEncoder().encodeToString(secretKey.getBytes()))
+                .setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_VALID_TIME)).compact();
+
+    }
     
 
 }

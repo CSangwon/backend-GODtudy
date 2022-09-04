@@ -9,7 +9,10 @@ import com.example.godtudy.domain.member.entity.Role;
 import com.example.godtudy.domain.member.repository.MemberRepository;
 import com.example.godtudy.domain.member.service.MemberService;
 import com.example.godtudy.domain.post.dto.request.PostSaveRequestDto;
+import com.example.godtudy.domain.post.dto.request.PostSearchCondition;
 import com.example.godtudy.domain.post.dto.request.PostUpdateRequestDto;
+import com.example.godtudy.domain.post.dto.response.PostInfoResponseDto;
+import com.example.godtudy.domain.post.dto.response.PostPagingDto;
 import com.example.godtudy.domain.post.dto.response.PostResponseDto;
 import com.example.godtudy.domain.post.entity.PostEnum;
 import com.example.godtudy.domain.post.entity.StudyPost;
@@ -28,6 +31,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.transaction.annotation.Transactional;
@@ -81,21 +85,7 @@ class StudyPostServiceImplTest {
         createStudy();
     }
 
-    /*
-   TODO
-    # 게시글 작성 성공(파일 유 / 무) --------------------------------------(v / v)
-    게시글 작성 실패(권한 없음 ,이름 내용 없음, 스터디가 존재하지 않음) ------------(v / v / v)
-    게시글 수정 성공(파일 유무) -------------------------------------------(v / v / v / v)
-    게시글 수정 실패(권한 없음, 이름 내용없음, 스터디가 존재하지 않음)--------------(v / v / v)
-    게시글 삭제(파일 유무) -----------------------------------------------(v / v)
-    게시글 삭제(권한없음) ------------------------------------------------(v)
-    게시글 조회 1개 ----------------------------------------------------()
-    게시글 조회 조건없음 -------------------------------------------------()
-    게시글 검색 제목일치 -------------------------------------------------()
-    게시글 검색 내용일치 -------------------------------------------------()
-    게시글 검색 제목 & 내용 일치 ------------------------------------------()
 
-    */
 
     @DisplayName("게시글 작성 성공 - 파일 없음")
     @Test
@@ -389,6 +379,50 @@ class StudyPostServiceImplTest {
                 studyPostService.deletePost(member, studyPost.getPostEnum().toString(),
                         studyPost.getStudy().getUrl(), studyPost.getId()));
     }
+
+    @DisplayName("게시글 조회 1개")
+    @Test
+    public void postFindOne() throws Exception{
+        //given
+        createStudyPostNoFile();
+
+        //when
+        PostInfoResponseDto postInfo = studyPostService.getPostInfo(studyPostRepository.findByTitle("test123").orElseThrow().getId());
+
+        //then
+        assertThat(postInfo.getTitle()).isEqualTo("test123");
+        assertThat(postInfo.getContent()).isEqualTo("test321");
+        assertThat(postInfo.getFiles()).isEmpty();
+        assertThat(postInfo.getAuthor()).isEqualTo("숲속");
+        assertThat(postInfo.getCommentInfoResponseDtoList()).isEmpty();
+    }
+
+    @DisplayName("게시글 조회 조건없음")
+    @Test
+    public void getStudyPostNotCond() throws Exception{
+        //given
+        createStudyPostNoFile();
+
+        final int PAGE = 0;
+        final int SIZE = 5;
+        PageRequest pageRequest = PageRequest.of(PAGE, SIZE);
+
+        //when
+        PostSearchCondition postSearchCondition = new PostSearchCondition();
+        PostPagingDto postList = studyPostService.getPostList(pageRequest, postSearchCondition);
+        List<StudyPost> allStudyPost = studyPostRepository.findAll();
+
+        //then
+        assertThat(postList.getTotalElementCount()).isEqualTo(allStudyPost.size());
+        assertThat(postList.getCurrentPageNum()).isEqualTo(PAGE);
+        assertThat(postList.getCurrentPageElementCount()).isEqualTo(1);
+        assertThat(postList.getTotalPageCount()).isEqualTo((allStudyPost.size() % SIZE == 0) ? allStudyPost.size() / SIZE : allStudyPost.size() / SIZE + 1);
+        assertThat(postList.getSimplePostDtoList().size()).isEqualTo(1);
+    }
+
+
+
+
 
     private void signMember(){
         List<String> subjectEnums = new ArrayList<>();

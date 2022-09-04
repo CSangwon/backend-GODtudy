@@ -132,7 +132,7 @@ public class StudyPostServiceImpl implements StudyPostService{
     //게시글 1개 조회
     @Override
     public PostInfoResponseDto getPostInfo(Long postId) {
-        return new PostInfoResponseDto(studyPostRepository.findAuthorById(postId).orElseThrow());
+        return new PostInfoResponseDto(studyPostRepository.findMemberById(postId).orElseThrow());
     }
 
     //게시물 페이징 처리
