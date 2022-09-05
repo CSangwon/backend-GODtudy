@@ -36,7 +36,7 @@ public class ProfileService {
     public void updateProfile(Member member, ProfileRequestDto profileRequestDto) {
         member.updateProfile(profileRequestDto);
 
-        for (String sub : profileRequestDto.getSubject()) {
+        for (String sub : profileRequestDto.getSubjectList()) {
             SubjectEnum title = SubjectEnum.valueOf(sub.toUpperCase(Locale.ROOT));
             Subject subject = Subject.createMemberSubject(member, title);
             subjectRepository.save(subject);

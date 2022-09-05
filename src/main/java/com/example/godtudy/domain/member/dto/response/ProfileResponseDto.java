@@ -29,9 +29,7 @@ public class ProfileResponseDto {
     private String profileImageUrl;
 
     @Builder.Default
-    //    private Set<Subject> subject = new HashSet<>();
-    private List<SubjectEnum> subject = new ArrayList<>();
-
+    private List<SubjectEnum> subjectList = new ArrayList<>();
 
     public ProfileResponseDto(Member member) {
         this.username = member.getUsername();
@@ -39,7 +37,7 @@ public class ProfileResponseDto {
         this.nickname = member.getNickname();
         this.bio = member.getBio();
         this.profileImageUrl = member.getProfileImageUrl();
-        this.subject = member.getSubject().stream().map(Subject::getTitle).collect(Collectors.toList());
+        this.subjectList = member.getSubject().stream().map(Subject::getTitle).collect(Collectors.toList());
     }
 
 }

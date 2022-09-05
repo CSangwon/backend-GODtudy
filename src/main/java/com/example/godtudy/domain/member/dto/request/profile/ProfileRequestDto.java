@@ -36,5 +36,5 @@ public class ProfileRequestDto {
     private String profileImageUrl;
 
     @Builder.Default
-    private List<String> subject = new ArrayList<>();
+    private List<String> subjectList = new ArrayList<>();
 }

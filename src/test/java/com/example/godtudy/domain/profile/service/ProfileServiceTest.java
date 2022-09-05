@@ -76,7 +76,7 @@ class ProfileServiceTest {
                 .nickname("숲속의짜장")
                 .bio("test")
                 .profileImageUrl("test")
-                .subject(new ArrayList<>())
+                .subjectList(new ArrayList<>())
                 .build();
 
         //when
