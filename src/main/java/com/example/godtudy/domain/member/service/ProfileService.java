@@ -2,7 +2,8 @@ package com.example.godtudy.domain.member.service;
 
 import com.example.godtudy.domain.member.dto.request.profile.PasswordUpdateRequestDto;
 import com.example.godtudy.domain.member.dto.request.profile.ProfileRequestDto;
-import com.example.godtudy.domain.member.dto.response.ProfileResponseDto;
+import com.example.godtudy.domain.member.dto.response.profile.ProfilePagingDto;
+import com.example.godtudy.domain.member.dto.response.profile.ProfileResponseDto;
 import com.example.godtudy.domain.member.entity.Member;
 import com.example.godtudy.domain.member.entity.Role;
 import com.example.godtudy.domain.member.entity.Subject;
@@ -55,10 +56,10 @@ public class ProfileService {
         memberService.logout(member.getUsername(), accessToken);
     }
 
-    public Page<ProfileResponseDto> searchMember(String username, String name, Role role, Pageable pageable) {
+    public ProfilePagingDto searchMember(String username, String name, Role role, Pageable pageable) {
         Page<Member> members = memberRepository.findByUsernameContainsAndNameContainsAndRole(username, name, role, pageable);
-        Page<ProfileResponseDto> memberList = members.map(entity -> new ProfileResponseDto(entity)); // entity == member
+        Page<ProfileResponseDto> profileDto = members.map(entity -> new ProfileResponseDto(entity)); // entity == member
 
-        return memberList;
+        return new ProfilePagingDto(profileDto);
     }
 }

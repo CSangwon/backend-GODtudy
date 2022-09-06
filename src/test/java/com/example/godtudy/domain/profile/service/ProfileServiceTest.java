@@ -5,7 +5,7 @@ import com.example.godtudy.domain.member.dto.request.MemberLoginRequestDto;
 import com.example.godtudy.domain.member.dto.request.profile.PasswordUpdateRequestDto;
 import com.example.godtudy.domain.member.dto.request.profile.ProfileRequestDto;
 import com.example.godtudy.domain.member.dto.response.MemberLoginResponseDto;
-import com.example.godtudy.domain.member.dto.response.ProfileResponseDto;
+import com.example.godtudy.domain.member.dto.response.profile.ProfileResponseDto;
 import com.example.godtudy.domain.member.entity.Member;
 import com.example.godtudy.domain.member.repository.MemberRepository;
 import com.example.godtudy.domain.member.service.MemberService;
@@ -14,7 +14,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 

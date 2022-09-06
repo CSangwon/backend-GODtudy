@@ -1,4 +1,4 @@
-package com.example.godtudy.domain.member.dto.response;
+package com.example.godtudy.domain.member.dto.response.profile;
 
 import com.example.godtudy.domain.member.entity.Member;
 import com.example.godtudy.domain.member.entity.Subject;
