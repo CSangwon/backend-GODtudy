@@ -2,7 +2,7 @@ package com.example.godtudy.domain.member.controller;
 
 import com.example.godtudy.WithMember;
 import com.example.godtudy.domain.member.dto.request.profile.ProfileRequestDto;
-import com.example.godtudy.domain.member.dto.response.ProfileResponseDto;
+import com.example.godtudy.domain.member.dto.response.profile.ProfileResponseDto;
 import com.example.godtudy.domain.member.entity.Member;
 import com.example.godtudy.domain.member.entity.SubjectEnum;
 import com.example.godtudy.domain.member.repository.MemberRepository;

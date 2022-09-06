@@ -1,10 +1,7 @@
 package com.example.godtudy.domain.member.controller;
 
-import com.example.godtudy.ApiDocumentUtils;
 import com.example.godtudy.domain.member.dto.request.*;
 import com.example.godtudy.domain.member.dto.response.MemberLoginResponseDto;
-import com.example.godtudy.domain.member.entity.Member;
-import com.example.godtudy.domain.member.entity.Role;
 import com.example.godtudy.domain.member.redis.RedisKey;
 import com.example.godtudy.domain.member.redis.RedisService;
 import com.example.godtudy.domain.member.repository.MemberRepository;
@@ -40,9 +37,6 @@ import java.util.Base64;
 import java.util.Date;
 
 import static com.example.godtudy.ApiDocumentUtils.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -51,7 +45,6 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Transactional
@@ -62,9 +55,6 @@ class MemberApiControllerTest {
     private final static String BASE_URL = "/api/member";
 
     private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @Autowired
     private RedisService redisService;

@@ -31,8 +31,6 @@ public class AdminPostApiController {
     public ResponseEntity<?> createAdminPost(@PathVariable String post, @CurrentMember Member member,
                                                @RequestPart PostSaveRequestDto postSaveRequestDto,
                                                @RequestPart(required = false) List<MultipartFile> files) throws IOException {
-
-
         if (files == null) {
             return postService.createPost(member, post, postSaveRequestDto);
         }
