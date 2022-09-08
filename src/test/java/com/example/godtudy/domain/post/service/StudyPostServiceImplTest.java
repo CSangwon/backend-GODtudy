@@ -188,7 +188,7 @@ class StudyPostServiceImplTest {
         PostUpdateRequestDto postUpdateRequestDto = PostUpdateRequestDto.builder().title("test321").content("test123").build();
 
         //when
-        PostResponseDto post = studyPostService.updatePost(member, studyPost.getPostEnum().toString(),
+        PostResponseDto post = studyPostService.updatePost(member, studyPost.getPostEnum().toString().substring(6),
                 studyPost.getStudy().getUrl(), studyPost.getId(), postUpdateRequestDto);
 
         //then
@@ -217,7 +217,7 @@ class StudyPostServiceImplTest {
         PostUpdateRequestDto postUpdateRequestDto = PostUpdateRequestDto.builder().title("test321").content("test123").build();
 
         //when
-        PostResponseDto post = studyPostService.updatePost(member, studyPost.getPostEnum().toString(),
+        PostResponseDto post = studyPostService.updatePost(member, studyPost.getPostEnum().toString().substring(6),
                 studyPost.getStudy().getUrl(), multipartFiles, studyPost.getId(), postUpdateRequestDto);
 
         //then
@@ -240,9 +240,10 @@ class StudyPostServiceImplTest {
         StudyPost studyPost = studyPostRepository.findByTitle("test123").orElseThrow();
 
         PostUpdateRequestDto postUpdateRequestDto = PostUpdateRequestDto.builder().title("test321").content("test123").build();
-
+        System.out.println("123123123");
+        System.out.println(studyPost.getPostEnum().toString().substring(7));
         //when
-        PostResponseDto post = studyPostService.updatePost(member, studyPost.getPostEnum().toString(),
+        PostResponseDto post = studyPostService.updatePost(member, studyPost.getPostEnum().toString().substring(6),
                 studyPost.getStudy().getUrl(), studyPost.getId(), postUpdateRequestDto);
 
         //then
@@ -270,7 +271,7 @@ class StudyPostServiceImplTest {
         PostUpdateRequestDto postUpdateRequestDto = PostUpdateRequestDto.builder().title("test321").content("test123").build();
 
         //when
-        PostResponseDto post = studyPostService.updatePost(member, studyPost.getPostEnum().toString(),
+        PostResponseDto post = studyPostService.updatePost(member,   studyPost.getPostEnum().toString().substring(6),
                 studyPost.getStudy().getUrl(), multipartFiles, studyPost.getId(), postUpdateRequestDto);
 
         //then
