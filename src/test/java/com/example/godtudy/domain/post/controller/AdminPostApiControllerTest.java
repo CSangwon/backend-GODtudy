@@ -31,11 +31,8 @@ import org.springframework.web.context.WebApplicationContext;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 
-import static com.example.godtudy.ApiDocumentUtils.getDocumentRequest;
 import static com.example.godtudy.ApiDocumentUtils.getDocumentResponse;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -105,7 +102,8 @@ class AdminPostApiControllerTest {
 
         String gsonString = new GsonBuilder().setPrettyPrinting().create().toJson(postSaveRequestDto);
 //        String gsonString = objectMapper.writeValueAsString()
-        MockMultipartFile json = new MockMultipartFile("postSaveRequestDto", "postSaveRequestDto", "application/json", gsonString.getBytes(StandardCharsets.UTF_8));
+        MockMultipartFile json = new MockMultipartFile("postSaveRequestDto", "postSaveRequestDto",
+                "application/json", gsonString.getBytes(StandardCharsets.UTF_8));
 
         mockMvc.perform(RestDocumentationRequestBuilders.multipart(BASE_URL + "/{post}/new", "notice")
                         .file(json).file(getMockUploadFile())
