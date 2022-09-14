@@ -68,7 +68,6 @@ class AdminPostServiceImplTest {
 
     private MockMultipartFile getMockUploadFile() throws IOException {
         ClassPathResource resource = new ClassPathResource("static/file/GODtudy_logo_2.png");
-        System.out.println("adadadadas" + resource.getFile().getAbsolutePath());
         return new MockMultipartFile("file", "file.png", "image/png",
                 new FileInputStream(resource.getFile().getAbsolutePath()));
     }

@@ -19,6 +19,7 @@ import com.example.godtudy.global.file.File;
 import com.example.godtudy.global.file.FileRepository;
 import com.example.godtudy.global.file.service.FileService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -32,6 +33,7 @@ import java.io.IOException;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -230,7 +232,7 @@ public class StudyPostServiceImpl implements StudyPostService{
     }
 
     private void checkCategory(String post, StudyPost studyPost) {
-        if (!studyPost.getPostEnum().toString().equals(post.toUpperCase()))
+        if (!studyPost.getPostEnum().toString().equals("STUDY_" + post.toUpperCase()))
             throw new AccessDeniedException("잘못된 카테고리 입니다.");
     }
 
