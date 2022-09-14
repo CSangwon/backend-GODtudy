@@ -100,7 +100,7 @@ class MemberApiControllerTest {
                         .content(gsonString)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andDo(document("member-join-success",
+                .andDo(document("member/member-join-success",
                                 getDocumentRequest(),
                                 pathParameters(
                                         parameterWithName("role").description("스터디 url")
@@ -133,7 +133,7 @@ class MemberApiControllerTest {
                         .accept(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isOk())
-                .andDo(document("tmp-member-check-email-valid",requestParameters(
+                .andDo(document("member/tmp-member-check-email-valid",requestParameters(
                                 parameterWithName("token").description("이메일 인증토큰"),
                                 parameterWithName("email").description("인증해야할 이메일")
                         )));
@@ -156,7 +156,7 @@ class MemberApiControllerTest {
                         .accept(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isOk())
-                .andDo(document("check-username-valid",
+                .andDo(document("member/check-username-valid",
                         getDocumentRequest(),
                         requestFields(
                                 fieldWithPath("username").description("중복 확인하려는 사용자 아이디")
@@ -202,7 +202,7 @@ class MemberApiControllerTest {
                         .accept(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isOk())
-                .andDo(document("check-nickname-valid",
+                .andDo(document("member/check-nickname-valid",
                                 getDocumentRequest(),
                                 requestFields(
                                         fieldWithPath("nickname").description("중복 확인하려는 사용자 닉네임")
@@ -228,7 +228,7 @@ class MemberApiControllerTest {
                         .accept(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isOk())
-                .andDo(document("login",
+                .andDo(document("member/login",
                                 getDocumentRequest(),
                                 getDocumentResponse(),
                                 requestFields(
@@ -265,7 +265,7 @@ class MemberApiControllerTest {
                         .accept(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isOk())
-                .andDo(document("accessToken reissue",
+                .andDo(document("member/accessToken-reissue",
                                 getDocumentRequest(),
                                 getDocumentResponse(),
                                 requestFields(
@@ -298,7 +298,7 @@ class MemberApiControllerTest {
 
                 )
                 .andExpect(status().isOk())
-                .andDo(document("logout",
+                .andDo(document("member/logout",
                                 requestHeaders(
                                         headerWithName("Username").description("사용자 아이디"),
                                         headerWithName("X-AUTH-TOKEN").description("엑세스 토큰")
