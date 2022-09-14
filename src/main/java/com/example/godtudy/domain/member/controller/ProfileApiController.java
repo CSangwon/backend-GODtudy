@@ -2,14 +2,14 @@ package com.example.godtudy.domain.member.controller;
 
 import com.example.godtudy.domain.member.dto.request.profile.PasswordUpdateRequestDto;
 import com.example.godtudy.domain.member.dto.request.profile.ProfileRequestDto;
-import com.example.godtudy.domain.member.dto.response.ProfileResponseDto;
+import com.example.godtudy.domain.member.dto.response.profile.ProfilePagingDto;
+import com.example.godtudy.domain.member.dto.response.profile.ProfileResponseDto;
 import com.example.godtudy.domain.member.entity.CurrentMember;
 import com.example.godtudy.domain.member.entity.Member;
 import com.example.godtudy.domain.member.entity.Role;
 import com.example.godtudy.domain.member.service.ProfileService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -51,12 +51,12 @@ public class ProfileApiController {
 
     //프로필 목록 검색
     @GetMapping("/list")
-    public ResponseEntity<?> getProfiles(
+    public ResponseEntity<ProfilePagingDto> getProfiles(
             @RequestParam(value = "username") String username,
             @RequestParam(value = "name") String name,
             @RequestParam(value = "role") Role role,
             @PageableDefault(size = 12, sort = "username", direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<ProfileResponseDto> profileResponseDtoPage = profileService.searchMember(username, name, role, pageable);
-        return new ResponseEntity<>(profileResponseDtoPage, HttpStatus.OK);
+        ProfilePagingDto profilePagingDto = profileService.searchMember(username, name, role, pageable);
+        return new ResponseEntity<>(profilePagingDto, HttpStatus.OK);
     }
 }

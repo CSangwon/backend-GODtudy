@@ -74,11 +74,11 @@ public class MemberApiController {
     @GetMapping("/check-email-token")
     public ResponseEntity<?> checkEmailToken(@RequestParam String token, @RequestParam String email) {
         return memberService.checkEmailToken(token, email);
-
     }
 
+
     /*     아이디 중복 확인     */
-    @PostMapping("/join/student/username")
+    @PostMapping("/join/username-check")
     public ResponseEntity<?> usernameCheck(@Valid @RequestBody UsernameRequestDto usernameRequestDto, Errors errors) {
         memberService.usernameCheckDuplication(usernameRequestDto);
         if (errors.hasErrors()) {
@@ -88,7 +88,7 @@ public class MemberApiController {
     }
 
     /*     이메일 중복 확인     */
-    @PostMapping("/join/student/email")
+    @PostMapping("/join/email-check")
     public ResponseEntity<?> emailCheck(@Valid @RequestBody EmailRequestDto emailRequestDto, Errors errors) {
         memberService.emailCheckDuplication(emailRequestDto);
         if (errors.hasErrors()) {
@@ -98,7 +98,7 @@ public class MemberApiController {
     }
 
     /*     닉네임 중복 확인     */
-    @PostMapping("/join/student/nickname")
+    @PostMapping("/join/nickname-check")
     public ResponseEntity<?> nicknameCheck(@Valid @RequestBody NicknameRequestDto nicknameRequestDto, Errors errors) {
         memberService.nicknameCheckDuplication(nicknameRequestDto);
         if (errors.hasErrors()) {

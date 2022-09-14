@@ -4,6 +4,7 @@ import com.example.godtudy.domain.BaseEntity;
 import com.example.godtudy.domain.comment.entity.Comment;
 import com.example.godtudy.domain.member.entity.Member;
 import com.example.godtudy.domain.post.dto.request.PostUpdateRequestDto;
+import com.example.godtudy.domain.study.entity.Study;
 import com.example.godtudy.global.file.File;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -43,6 +44,9 @@ public class StudyPost extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Study study;
+
     @Builder.Default
     @OneToMany(mappedBy = "adminPost", orphanRemoval = true, cascade = ALL) //, orphanRemoval = true, cascade = ALL
     @OrderBy("id asc")
@@ -57,6 +61,14 @@ public class StudyPost extends BaseEntity {
         member.getStudyPosts().add(this);
     }
 
+    public void setStudy(Study study) {
+        if (this.study != null) {
+            this.study.getStudyPosts().remove(this);
+        }
+        this.study = study;
+        study.getStudyPosts().add(this);
+    }
+
     public void addFiles(File file) {
         this.files.add(file);
         if (file.getStudyPost()!= this) {
@@ -65,7 +77,7 @@ public class StudyPost extends BaseEntity {
     }
 
     public void setPostEnum(String post) {
-        this.postEnum = PostEnum.valueOf(post.toUpperCase());
+        this.postEnum = PostEnum.valueOf("STUDY_" + post.toUpperCase());
     }
 
     public void initFiles() {

@@ -83,8 +83,10 @@ public class StudyPostApiController {
 
     @GetMapping("{studyUrl}/post/{post}")
     public ResponseEntity<ResultResponse<PostPagingDto>> getAdminPostList(@PathVariable String studyUrl, @PathVariable String post,
-                                                                          @RequestBody PostSearchCondition postSearchCondition,
+                                                                          @RequestParam("title") String title,
+                                                                          @RequestParam("content") String content,
                                                                           @PageableDefault(size = 12, sort = "createdDate", direction = Sort.Direction.DESC) Pageable pageable) {
+        PostSearchCondition postSearchCondition = new PostSearchCondition(title, content);
         ResultResponse<PostPagingDto> result = ResultResponse.<PostPagingDto>builder()
                 .response(postService.getPostList(pageable, postSearchCondition))
                 .status(HttpStatus.OK).build();

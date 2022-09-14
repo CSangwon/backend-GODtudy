@@ -26,8 +26,6 @@ public class PostInfoResponseDto {
 
     private String author;
 
-//    private List<File> files;
-
     private List<FileResponseDto> files = new ArrayList<>();
 
     private List<CommentInfoResponseDto> commentInfoResponseDtoList = new ArrayList<>();

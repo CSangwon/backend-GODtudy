@@ -3,11 +3,9 @@ package com.example.godtudy.domain.post.dto.response;
 import com.example.godtudy.domain.post.entity.PostEnum;
 import com.example.godtudy.global.file.File;
 import com.example.godtudy.global.file.dto.FileResponseDto;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.web.multipart.MultipartFile;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,11 +20,16 @@ public class PostResponseDto {
 
     private String author;
 
-//    private List<File> files;
     private List<FileResponseDto> files = new ArrayList<>();
 
     private PostEnum postEnum;
 
+    public PostResponseDto(String title, String content, String author,  PostEnum postEnum) {
+        this.title = title;
+        this.content = content;
+        this.author = author;
+        this.postEnum = postEnum;
+    }
 
     public PostResponseDto(String title, String content, String author, List<FileResponseDto> files, PostEnum postEnum) {
         this.title = title;
@@ -36,6 +39,7 @@ public class PostResponseDto {
         for (FileResponseDto file : files) {
             this.files.add(file);
         }
+
     }
 
     public static PostResponseDto.PostResponseDtoBuilder builder(){
@@ -79,6 +83,9 @@ public class PostResponseDto {
         }
 
         public PostResponseDto build() {
+            if (this.files == null){
+                return new PostResponseDto(this.title, this.content, this.author, this.postEnum);
+            }
             return new PostResponseDto(this.title, this.content, this.author, this.files, this.postEnum);
         }
     }

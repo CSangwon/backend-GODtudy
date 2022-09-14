@@ -68,7 +68,6 @@ class AdminPostServiceImplTest {
 
     private MockMultipartFile getMockUploadFile() throws IOException {
         ClassPathResource resource = new ClassPathResource("static/file/GODtudy_logo_2.png");
-        System.out.println("adadadadas" + resource.getFile().getAbsolutePath());
         return new MockMultipartFile("file", "file.png", "image/png",
                 new FileInputStream(resource.getFile().getAbsolutePath()));
     }
@@ -141,8 +140,6 @@ class AdminPostServiceImplTest {
 
         //then
         AdminPost test1 = adminPostRepository.findByTitle("test1").orElseThrow();
-
-        System.out.println(test1.getFiles().get(1));
 
         assertThat(test1).isNotNull();
         assertThat(test1.getTitle()).isEqualTo("test1");
@@ -475,14 +472,6 @@ class AdminPostServiceImplTest {
                 postService.deletePost(tmpMember, post, adminPost.getId()));
     }
 
-
-
-    //TODO 현재 짜야하는 테스트코드
-    /*
-    1. memberService에서 맴버 삭제 시 게시글, 댓글 사라지게 해야함
-    2. postService에서 post삭제 시 댓글 삭제 해줘야함
-    3. 게시글 조회 시 댓글까지 조회되는지 확인 : 댓글의 대댓글까지 조화가 되야함!!
-     */
 
     @Test
     @DisplayName("삭제시 댓글도 같이 삭제")

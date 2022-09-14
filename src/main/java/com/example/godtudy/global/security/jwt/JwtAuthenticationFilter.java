@@ -48,7 +48,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
             if(jwtTokenProvider.isTokenExpired(accessToken)) {
                 throw new JwtException("access token is expired");
             }
-            // Access Token 이 redis에 없는경우
+            // Access Token 이 redis에 없는경우(블랙리스트)
             String redisAccessToken = redisService.getData("logout" + accessToken);
             if (redisAccessToken == null){
                 // Access Token 이 유효한 경우
