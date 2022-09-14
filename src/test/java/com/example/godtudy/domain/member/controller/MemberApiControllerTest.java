@@ -179,7 +179,7 @@ class MemberApiControllerTest {
                         .accept(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isOk())
-                .andDo(document("check-email-valid",
+                .andDo(document("member/check-email-valid",
                         getDocumentRequest(),
                         requestFields(
                                 fieldWithPath("email").description("중복 확인하려는 사용자 이메일")
