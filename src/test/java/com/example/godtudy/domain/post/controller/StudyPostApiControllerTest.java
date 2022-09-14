@@ -308,7 +308,7 @@ class StudyPostApiControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andDo(document("adminPost/adminPost-List",
+                .andDo(document("studyPost/studyPost-List",
                                 getDocumentResponse(),
                                 requestParameters(
                                         parameterWithName("title").description("검색하려는 게시글 제목 : Null허용"),

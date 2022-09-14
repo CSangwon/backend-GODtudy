@@ -9,17 +9,502 @@
 ifndef::snippets[]
 :snippets: ../../../build/generated-snippets
 endif::[]
+== Member
+
+=== Join Member
+==== Request
+include::{snippets}/member/member-join-success/http-request.adoc[]
+
+==== Request Fields
+include::{snippets}/member/member-join-success/request-fields.adoc[]
+
+==== Request Path Parameter
+include::{snippets}/member/member-join-success/path-parameters.adoc[]
+
+==== Response
+include::{snippets}/member/member-join-success/http-response.adoc[]
+
+
+=== Check Email Valid
+==== Request
+include::{snippets}/member/tmp-member-check-email-valid/http-request.adoc[]
+
+==== Request Parameter
+include::{snippets}/member/tmp-member-check-email-valid/request-parameters.adoc[]
+
+==== Response
+include::{snippets}/member/tmp-member-check-email-valid/http-response.adoc[]
+
+
+=== Check Email Valid
+==== Request
+include::{snippets}/member/check-email-valid/http-request.adoc[]
+
+==== Request Field
+include::{snippets}/member/check-email-valid/request-fields.adoc[]
+
+==== Response
+include::{snippets}/member/check-email-valid/http-response.adoc[]
+
+
+=== Check NickName Valid
+==== Request
+include::{snippets}/member/check-nickname-valid/http-request.adoc[]
+
+==== Request Field
+include::{snippets}/member/check-nickname-valid/request-fields.adoc[]
+
+==== Response
+include::{snippets}/member/check-nickname-valid/http-response.adoc[]
+
+
+=== Check Username Valid
+==== Request
+include::{snippets}/member/check-username-valid/http-request.adoc[]
+
+==== Request Field
+include::{snippets}/member/check-username-valid/request-fields.adoc[]
+
+==== Response
+include::{snippets}/member/check-username-valid/http-response.adoc[]
+
+
+=== Login
+==== Request
+include::{snippets}/member/login/http-request.adoc[]
+
+==== Request Field
+include::{snippets}/member/login/request-fields.adoc[]
+
+==== Response
+include::{snippets}/member/login/http-response.adoc[]
+
+==== Response Field
+include::{snippets}/member/login/response-fields.adoc[]
+
+
+=== Logout
+include::{snippets}/member/logout/http-request.adoc[]
+
+==== Request Header
+include::{snippets}/member/logout/request-headers.adoc[]
+
+==== Response
+include::{snippets}/member/logout/http-response.adoc[]
+
+
+=== AccessToken Reissue
+==== Request
+include::{snippets}/member/accessToken-reissue/http-request.adoc[]
+
+==== Request Field
+include::{snippets}/member/accessToken-reissue/request-fields.adoc[]
+
+==== Response
+include::{snippets}/member/accessToken-reissue/http-response.adoc[]
+
+==== Response Field
+include::{snippets}/member/accessToken-reissue/response-fields.adoc[]
+
+
+== AdminPost
+=== AdminPost-Create
+==== Request
+include::{snippets}/adminPost/adminPost-create/curl-request.adoc[]
+
+==== Request Part
+include::{snippets}/adminPost/adminPost-create/request-parts.adoc[]
+
+==== Request Path Parameter
+include::{snippets}/adminPost/adminPost-create/path-parameters.adoc[]
+
+==== Response
+include::{snippets}/adminPost/adminPost-create/http-response.adoc[]
+
+
+=== AdminPost-Update
+==== Request
+include::{snippets}/adminPost/adminPost-update/curl-request.adoc[]
+
+==== Request Part
+include::{snippets}/adminPost/adminPost-update/request-parts.adoc[]
+
+==== Request Path Parameter
+include::{snippets}/adminPost/adminPost-update/path-parameters.adoc[]
+
+==== Response
+include::{snippets}/adminPost/adminPost-update/http-response.adoc[]
+
+=== AdminPost-Delete
+==== Request
+include::{snippets}/adminPost/adminPost-delete/curl-request.adoc[]
+
+==== Request Header
+include::{snippets}/adminPost/adminPost-delete/request-headers.adoc[]
+
+==== Response
+include::{snippets}/adminPost/adminPost-delete/http-response.adoc[]
+
+
+=== AdminPost-Info
+==== Request
+include::{snippets}/adminPost/adminPost-Info/http-request.adoc[]
+
+==== Request Path Parameter
+include::{snippets}/adminPost/adminPost-Info/path-parameters.adoc[]
+
+==== Response
+include::{snippets}/adminPost/adminPost-Info/http-response.adoc[]
+
+==== Response Field
+include::{snippets}/adminPost/adminPost-Info/response-fields.adoc[]
+
+
+=== AdminPost-List
+==== Request
+include::{snippets}/adminPost/adminPost-List/http-request.adoc[]
+
+==== Request Parameter
+include::{snippets}/adminPost/adminPost-List/request-parameters.adoc[]
+
+==== Response
+include::{snippets}/adminPost/adminPost-List/http-response.adoc[]
+
+==== Response Field
+include::{snippets}/adminPost/adminPost-List/response-fields.adoc[]
+
+
+== StudyPost
+=== StudyPost-Create
+==== Request
+include::{snippets}/studyPost/studyPost-create/curl-request.adoc[]
+
+==== Request Part
+include::{snippets}/studyPost/studyPost-create/request-parts.adoc[]
+
+==== Request Path Parameter
+include::{snippets}/studyPost/studyPost-create/path-parameters.adoc[]
+
+==== Response
+include::{snippets}/studyPost/studyPost-create/http-response.adoc[]
+
+==== Response Field
+include::{snippets}/studyPost/studyPost-create/response-fields.adoc[]
+
+
+=== StudyPost-Update
+==== Request
+include::{snippets}/studyPost/studyPost-update/curl-request.adoc[]
+
+==== Request Part
+include::{snippets}/studyPost/studyPost-update/request-parts.adoc[]
+
+==== Request Path Parameter
+include::{snippets}/studyPost/studyPost-update/path-parameters.adoc[]
+
+==== Response
+include::{snippets}/studyPost/studyPost-update/http-response.adoc[]
+
+==== Response Field
+include::{snippets}/studyPost/studyPost-update/response-fields.adoc[]
+
+
+=== StudyPost-Delete
+==== Request
+include::{snippets}/studyPost/studyPost-delete/curl-request.adoc[]
+
+==== Request Header
+include::{snippets}/studyPost/studyPost-delete/request-headers.adoc[]
+
+==== Response
+include::{snippets}/studyPost/studyPost-delete/http-response.adoc[]
+
+
+=== StudyPost-Info
+==== Request
+include::{snippets}/studyPost/studyPost-Info/http-request.adoc[]
+
+==== Request Path Parameter
+include::{snippets}/studyPost/studyPost-Info/path-parameters.adoc[]
+==== Response
+include::{snippets}/studyPost/studyPost-Info/http-response.adoc[]
+==== Response Field
+include::{snippets}/studyPost/studyPost-Info/response-fields.adoc[]
+
+=== StudyPost-List
+==== Request
+include::{snippets}/studyPost/studyPost-List/http-request.adoc[]
+==== Request Parameter
+include::{snippets}/studyPost/studyPost-List/request-parameters.adoc[]
+==== Response
+include::{snippets}/studyPost/studyPost-List/http-response.adoc[]
+==== Response Field
+include::{snippets}/studyPost/studyPost-List/response-fields.adoc[]
+
+
+== Profile
+=== update profile
+
+==== request
+include::{snippets}/profile/profile-update/http-request.adoc[]
+
+==== request fields
+include::{snippets}/profile/profile-update/request-fields.adoc[]
+
+==== response
+include::{snippets}/profile/profile-update/http-response.adoc[]
+
+
+=== get profile
+
+==== request
+include::{snippets}/profile/profile-get-one/http-request.adoc[]
+
+==== request path parameters
+include::{snippets}/profile/profile-get-one/path-parameters.adoc[]
+
+==== response
+include::{snippets}/profile/profile-get-one/http-response.adoc[]
+
+==== response fields
+include::{snippets}/profile/profile-get-one/response-fields.adoc[]
+
+
+=== get profile list
+
+==== request
+include::{snippets}/profile/profile-get-list/http-request.adoc[]
+
+==== request parameters
+include::{snippets}/profile/profile-get-list/request-parameters.adoc[]
+
+==== response
+include::{snippets}/profile/profile-get-list/http-response.adoc[]
+
+==== response fields
+include::{snippets}/profile/profile-get-one/response-fields.adoc[]
+
+
+=== password update
+
+==== request
+include::{snippets}/profile/password-update/http-request.adoc[]
+
+==== request header
+include::{snippets}/profile/password-update/request-headers.adoc[]
+
+==== request body
+include::{snippets}/profile/password-update/request-body.adoc[]
+
+==== response
+include::{snippets}/profile/password-update/http-response.adoc[]
+
 
 == Study
 === create study
 
 ==== request
-include::{snippets}/study-create/http-request.adoc[]
+include::{snippets}/study/study-create/http-request.adoc[]
 
 ==== request fields
-include::{snippets}/study-create/request-fields.adoc[]
+include::{snippets}/study/study-create/request-fields.adoc[]
 
 ==== response
-include::{snippets}/study-create/http-response.adoc[]
+include::{snippets}/study/study-create/http-response.adoc[]
+
+==== response fields
+include::{snippets}/study/study-create/response-fields.adoc[]
 
 
+=== update study
+
+==== request
+include::{snippets}/study/study-update/http-request.adoc[]
+
+==== request path parameters
+include::{snippets}/study/study-update/path-parameters.adoc[]
+
+==== request fields
+include::{snippets}/study/study-update/request-fields.adoc[]
+
+==== response
+include::{snippets}/study/study-update/http-response.adoc[]
+
+==== response fields
+include::{snippets}/study/study-update/response-fields.adoc[]
+
+
+=== get study
+
+==== request
+include::{snippets}/study/study-get-one/http-request.adoc[]
+
+==== request path parameters
+include::{snippets}/study/study-get-one/path-parameters.adoc[]
+
+==== response
+include::{snippets}/study/study-get-one/http-response.adoc[]
+
+==== response fields
+include::{snippets}/study/study-get-one/response-fields.adoc[]
+
+
+=== delete study
+
+==== request
+include::{snippets}/study/study-delete/http-request.adoc[]
+
+==== request headers
+include::{snippets}/study/study-delete/request-headers.adoc[]
+
+==== response
+include::{snippets}/study/study-delete/http-response.adoc[]
+
+
+== Todo
+=== create todo
+
+==== request
+include::{snippets}/todo/todo-create/http-request.adoc[]
+
+==== request path parameters
+include::{snippets}/todo/todo-create/path-parameters.adoc[]
+
+==== request fields
+include::{snippets}/todo/todo-create/request-fields.adoc[]
+
+==== response
+include::{snippets}/todo/todo-create/http-response.adoc[]
+
+==== response fields
+include::{snippets}/todo/todo-create/response-fields.adoc[]
+
+
+=== update todo
+
+==== request
+include::{snippets}/todo/todo-update/http-request.adoc[]
+
+==== request path parameters
+include::{snippets}/todo/todo-update/path-parameters.adoc[]
+
+==== request fields
+include::{snippets}/todo/todo-update/request-fields.adoc[]
+
+==== response
+include::{snippets}/todo/todo-update/http-response.adoc[]
+
+==== response fields
+include::{snippets}/todo/todo-update/response-fields.adoc[]
+
+
+=== get todo
+
+==== request
+include::{snippets}/todo/todo-get-one/http-request.adoc[]
+
+==== request path parameters
+include::{snippets}/todo/todo-get-one/path-parameters.adoc[]
+
+==== response
+include::{snippets}/todo/todo-get-one/http-response.adoc[]
+
+==== response fields
+include::{snippets}/todo/todo-get-one/response-fields.adoc[]
+
+
+=== get todo list
+
+==== request
+include::{snippets}/todo/todo-get-list/http-request.adoc[]
+
+==== request path parameters
+include::{snippets}/todo/todo-get-list/path-parameters.adoc[]
+
+==== response
+include::{snippets}/todo/todo-get-list/http-response.adoc[]
+
+==== response fields
+include::{snippets}/todo/todo-get-list/response-fields.adoc[]
+
+
+=== delete todo
+
+==== request
+include::{snippets}/todo/todo-delete/http-request.adoc[]
+
+==== request headers
+include::{snippets}/todo/todo-delete/request-headers.adoc[]
+
+==== response
+include::{snippets}/todo/todo-delete/http-response.adoc[]
+
+
+== Comment
+=== create comment
+
+==== request
+include::{snippets}/comment/comment-create/http-request.adoc[]
+
+==== request path parameters
+include::{snippets}/comment/comment-create/path-parameters.adoc[]
+
+==== request fields
+include::{snippets}/comment/comment-create/request-fields.adoc[]
+
+==== response
+include::{snippets}/comment/comment-create/http-response.adoc[]
+
+==== response fields
+include::{snippets}/comment/comment-create/response-fields.adoc[]
+
+
+=== create child comment
+
+==== request
+include::{snippets}/comment/child-comment-create/http-request.adoc[]
+
+==== request path parameters
+include::{snippets}/comment/child-comment-create/path-parameters.adoc[]
+
+==== request fields
+include::{snippets}/comment/child-comment-create/request-fields.adoc[]
+
+==== response
+include::{snippets}/comment/child-comment-create/http-response.adoc[]
+
+==== response fields
+include::{snippets}/comment/child-comment-create/response-fields.adoc[]
+
+
+=== update comment
+
+==== request
+include::{snippets}/comment/comment-update/http-request.adoc[]
+
+==== request path parameters
+include::{snippets}/comment/comment-update/path-parameters.adoc[]
+
+==== request fields
+include::{snippets}/comment/comment-update/request-fields.adoc[]
+
+==== response
+include::{snippets}/comment/comment-update/http-response.adoc[]
+
+==== response fields
+include::{snippets}/comment/comment-update/response-fields.adoc[]
+
+
+=== delete comment
+
+==== request
+include::{snippets}/comment/comment-delete/http-request.adoc[]
+
+==== request path parameters
+include::{snippets}/comment/comment-delete/path-parameters.adoc[]
+
+==== request headers
+include::{snippets}/comment/comment-delete/request-headers.adoc[]
+
+==== response
+include::{snippets}/comment/comment-delete/http-response.adoc[]
