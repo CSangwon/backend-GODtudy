@@ -25,6 +25,7 @@ import static javax.persistence.CascadeType.ALL;
 public class StudyPost extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "studyPost_Id")
     private Long id;
 
     @Column(nullable = false)
@@ -38,7 +39,7 @@ public class StudyPost extends BaseEntity {
     private List<File> files = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, name = "category")
     private PostEnum postEnum;
 
     @ManyToOne(fetch = FetchType.LAZY)
