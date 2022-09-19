@@ -1,4 +1,4 @@
-#GODtudy
+# 📝 GODtudy
 
 <img src="./src/main/resources/static/file/GODtudy_logo_2.png" width="200"/>
 
