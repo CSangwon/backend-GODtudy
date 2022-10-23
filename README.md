@@ -24,7 +24,7 @@
 ## ⚙️ 기능 소개
 ### Spring REST Docs
 
-[GODtudy Spring REST Docs](https://godtudy.github.io/backend/index.html)  
+[GODtudy Spring REST Docs](https://rape-seed.github.io/GODtudy/)  
 Spring Rest Docs를 적용해 만든 API 문서입니다.
 > #### 적용한 이유?
 > - 제품 코드에 영향이 없다 : 실제 제품 코드에 어노테이션을 추가하거나 다른 코드를 추가할 필요 없음 
